@@ -14,37 +14,46 @@ penguin-Dash/
 ├── src/
 │   ├── app/                     # Bootstrap: wires everything together
 │   │   ├── App.tsx              # Root component (Providers + RouterProvider)
-│   │   ├── router.tsx           # createBrowserRouter route definitions
-│   │   └── providers.tsx        # QueryClientProvider + ReactQueryDevtools
+│   │   ├── router.tsx           # Route config (`routes`) + browser router
+│   │   └── providers.tsx        # QueryClient + CurrentUser providers
 │   ├── config/
-│   │   └── env.ts               # Typed, Zod-validated env module (single source)
-│   ├── features/                # Feature modules (empty in Task 1)
-│   │   └── <feature>/           # auth/, products/, categories/, etc.
-│   │       ├── components/      # Feature-specific React components
-│   │       ├── hooks/           # Feature-specific hooks (useProducts, etc.)
-│   │       └── api.ts           # Feature API calls (typed, uses generated client)
+│   │   ├── env.ts               # Typed, Zod-validated env module (single source)
+│   │   ├── routes.ts            # Central route path registry
+│   │   ├── route-handle.ts      # RouteHandle type (title + breadcrumb)
+│   │   └── navigation.ts        # Central nav config (groups, items, role filter)
+│   ├── features/                # Feature modules
+│   │   └── auth/                # Role model + placeholder current user (Task 2)
+│   │       ├── roles.ts         # Role, Permission, matrix, helpers
+│   │       ├── types.ts         # AdminUser UI type
+│   │       └── current-user.tsx # CurrentUserProvider + useCurrentUser
 │   ├── pages/                   # Route-level page components
-│   │   ├── HomePage.tsx         # Foundation confirmation page (Task 1)
-│   │   └── NotFoundPage.tsx     # 404 fallback
+│   │   ├── DashboardOverviewPage.tsx
+│   │   ├── LoginPlaceholderPage.tsx
+│   │   ├── ForbiddenPage.tsx / NotFoundPage.tsx
+│   │   ├── _shared/ModulePlaceholder.tsx   # Shared placeholder scaffold
+│   │   ├── catalog/            # Categories, Brands, Products(+detail/form/refs), Packs, Media
+│   │   ├── personalization/    # Attributes, Quiz, Recommendation rules
+│   │   ├── sales/              # Orders (+ detail)
+│   │   └── account/           # Profile
 │   ├── shared/                  # Cross-feature code
 │   │   ├── components/
-│   │   │   └── ui/              # shadcn/ui generated components
-│   │   ├── hooks/               # Shared custom hooks
-│   │   └── lib/
-│   │       └── utils.ts         # cn() Tailwind class utility
-│   ├── styles/
-│   │   └── globals.css          # Tailwind directives + shadcn CSS variables
+│   │   │   ├── ui/             # shadcn/ui generated components
+│   │   │   ├── layout/         # Shell: DashboardLayout, Sidebar, Header, etc.
+│   │   │   └── common/         # App building blocks + page states
+│   │   ├── hooks/             # Shared hooks (use-media-query)
+│   │   └── lib/utils.ts        # cn() Tailwind class utility
+│   ├── styles/globals.css       # Design tokens + Tailwind directives
 │   ├── test/
-│   │   ├── setup.ts             # @testing-library/jest-dom + MSW server lifecycle
-│   │   ├── utils/
-│   │   │   └── render.tsx       # Custom render with QueryClient + MemoryRouter
-│   │   └── mocks/
-│   │       ├── server.ts        # MSW Node.js server
-│   │       └── handlers.ts      # MSW request handlers (grows per task)
+│   │   ├── setup.ts            # jest-dom + MSW server lifecycle
+│   │   ├── utils/render.tsx     # Render with QueryClient + CurrentUser + Router
+│   │   ├── utils/router.tsx     # Render real routes via memory data router
+│   │   └── mocks/             # MSW server + handlers
 │   ├── main.tsx                 # Application entry point
 │   └── vite-env.d.ts            # Vite client type reference
 ├── docs/
 │   ├── ARCHITECTURE.md          # This file
+│   ├── DASHBOARD_CONCEPTION.md  # Sitemap, routes, navigation, role rules
+│   ├── DESIGN_SYSTEM.md         # Tokens, typography, components, states
 │   ├── PROGRESS_LOG.md          # Task completion history
 │   └── TEST_PLAN.md             # Testing strategy
 ├── public/                      # Static assets
@@ -78,17 +87,71 @@ Add new components with:
 npx shadcn@latest add <component>
 ```
 
-### 4. Custom Test Render (`src/test/utils/render.tsx`)
+### 4. Custom Test Render (`src/test/utils/`)
 
-All component tests use the custom `render` from `src/test/utils/render.tsx`, which wraps components in:
-- `QueryClientProvider` (with retry disabled for tests)
-- `MemoryRouter` (with configurable initial entries)
+Component tests use `render` from `src/test/utils/render.tsx`, which wraps the
+tree in:
+- `QueryClientProvider` (retry disabled)
+- `CurrentUserProvider` (role configurable via the `role` option — drives
+  permission-gated UI in tests)
+- `MemoryRouter` (configurable initial entries)
 
-This ensures tests match the real app context without requiring browser routing.
+Route-level tests use `renderWithRouter` from `src/test/utils/router.tsx`, which
+mounts the real `routes` through a `createMemoryRouter` data router so
+data-router hooks (`useMatches`, `Outlet`) work.
 
 ### 5. MSW for API Mocking
 
 MSW (Mock Service Worker) intercepts network requests in tests via a Node.js server. Handlers are registered in `src/test/mocks/handlers.ts`. The server is configured with `onUnhandledRequest: 'error'` so accidental network calls in tests fail loudly.
+
+### 6. Application Shell (`src/shared/components/layout/`)
+
+`DashboardLayout` is the parent route element for the entire authenticated area.
+It composes:
+
+- `Sidebar` — persistent desktop navigation (`≥ lg`), collapsible to an icon
+  rail; collapse state persisted in `localStorage`.
+- `MobileNav` — a Radix `Sheet` drawer for `< lg`, opened from the header.
+- `Header` — sticky top bar with the drawer/collapse triggers, breadcrumbs, and
+  the user menu.
+- `Breadcrumbs` — derived from matched routes' `handle.breadcrumb` via
+  `useMatches()`.
+- `<Outlet />` — the routed page, inside a focusable `#main-content` target with
+  a skip-to-content link.
+
+`SidebarNav` is rendered by both the desktop sidebar and the mobile drawer, so
+there is a single source of nav rendering.
+
+### 7. Central Navigation Config (`src/config/navigation.ts`)
+
+All sidebar items are declared once as ordered `NavGroup[]`. Nothing hardcodes
+nav items in components. `getNavigationForRole(role)` filters items by their
+`requiredPermission` and drops empty groups, so navigation is role-aware and
+testable. Route paths come from `src/config/routes.ts`; titles/breadcrumbs come
+from each route's `handle` (`src/config/route-handle.ts`).
+
+### 8. Role-Aware UI Strategy (`src/features/auth/`)
+
+`roles.ts` mirrors the backend permission matrix as coarse capabilities
+(`read`, `write`, `media:manage`, `orders:update-status`,
+`recommendations:preview`). The current user flows through `CurrentUserProvider`
+/ `useCurrentUser`; in Task 2 it returns an obvious **placeholder** OWNER and
+will be swapped for `GET /auth/me` in Task 3.
+
+UI gating uses `<PermissionGuard permission=… roles=…>` to hide actions the user
+cannot perform. This is **usability only** — the backend stays authoritative.
+Because all roles can `read` every page, navigation is identical across roles
+today; the split appears on write actions (hidden for STAFF).
+
+### 9. Shared State Patterns
+
+- **Server state** → TanStack Query (configured in `providers.tsx`); business
+  hooks arrive with the features that need them.
+- **Current user** → React context (`CurrentUserProvider`), a single source the
+  whole shell reads from.
+- **Local UI state** (sidebar collapsed, drawer open) → component `useState`,
+  persisted to `localStorage` where it should survive reloads.
+- **Route metadata** (title, breadcrumb) → route `handle`, read via `useMatches`.
 
 ## Future: OpenAPI Client Generation (Task 14)
 

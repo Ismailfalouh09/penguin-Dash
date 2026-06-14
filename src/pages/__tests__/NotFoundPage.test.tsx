@@ -1,22 +1,25 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@/test/utils/render'
 import { NotFoundPage } from '../NotFoundPage'
+import { ForbiddenPage } from '../ForbiddenPage'
 
 describe('NotFoundPage', () => {
-  it('renders the 404 heading', () => {
+  it('renders the not-found heading and a link back to the dashboard', () => {
     render(<NotFoundPage />)
-    expect(screen.getByRole('heading', { name: '404' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Page not found' })).toBeInTheDocument()
+    const link = screen.getByRole('link', { name: 'Back to dashboard' })
+    expect(link).toHaveAttribute('href', '/dashboard')
   })
+})
 
-  it('shows a page not found message', () => {
-    render(<NotFoundPage />)
-    expect(screen.getByText('Page Not Found')).toBeInTheDocument()
-  })
-
-  it('renders a link back to home', () => {
-    render(<NotFoundPage />)
-    const link = screen.getByRole('link', { name: 'Back to Home' })
-    expect(link).toBeInTheDocument()
-    expect(link).toHaveAttribute('href', '/')
+describe('ForbiddenPage', () => {
+  it('explains the lack of permission and links back to the dashboard', () => {
+    render(<ForbiddenPage />)
+    expect(screen.getByRole('heading', { name: 'Access denied' })).toBeInTheDocument()
+    expect(screen.getByText(/don.t have permission/i)).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Back to dashboard' })).toHaveAttribute(
+      'href',
+      '/dashboard'
+    )
   })
 })

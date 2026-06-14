@@ -17,6 +17,18 @@ npm run dev
 
 Open [http://localhost:5173](http://localhost:5173) in your browser.
 
+## Current status
+
+- **Task 1 — Foundation**: ✅ tooling, strict TS, router, query, Tailwind, shadcn, testing.
+- **Task 2 — Conception & design system**: ✅ responsive dashboard shell
+  (collapsible sidebar + mobile drawer + header + breadcrumbs), central
+  navigation config, design tokens, shared UI/page states, and placeholder pages
+  for every planned module. **No business API integration or authentication yet.**
+- **Task 3 — Authentication**: ⏳ next.
+
+The dashboard runs against placeholder data only; a clearly-marked placeholder
+user drives the shell until authentication lands in Task 3.
+
 ## Commands
 
 | Command | Description |
@@ -65,7 +77,9 @@ The backend OpenAPI contract lives in `frontend-handoff/`:
 
 ## Documentation
 
-- [Architecture](docs/ARCHITECTURE.md) — Project structure and patterns
+- [Architecture](docs/ARCHITECTURE.md) — Project structure, shell, and patterns
+- [Dashboard Conception](docs/DASHBOARD_CONCEPTION.md) — Sitemap, routes, navigation, role rules
+- [Design System](docs/DESIGN_SYSTEM.md) — Tokens, typography, components, states
 - [Test Plan](docs/TEST_PLAN.md) — Testing strategy
 - [Progress Log](docs/PROGRESS_LOG.md) — Task completion history
 - [Frontend Roadmap](FRONTEND_ROADMAP.md) — Planned tasks 1–16

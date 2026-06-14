@@ -3,9 +3,12 @@
 ## Philosophy
 
 - Tests verify behavior, not implementation
-- No test touches the real backend, database, or internet
+- No test touches the real backend, database, internet, real JWT, or real account
 - MSW intercepts any accidental network calls and fails loudly (`onUnhandledRequest: 'error'`)
-- The custom render utility (`src/test/utils/render.tsx`) provides a consistent test environment
+- `src/test/utils/render.tsx` renders components with QueryClient + CurrentUser
+  (role configurable) + MemoryRouter; `src/test/utils/router.tsx` renders the real
+  routes through a memory **data** router for route-level tests
+- Small role fixtures (`makeTestUser(role)`) drive permission/visibility tests
 
 ## Test Types
 
@@ -13,29 +16,52 @@
 For pure functions, utilities, and Zod schemas. No React setup needed.
 
 Examples:
-- `src/config/__tests__/env.test.ts` — validates env schema parsing
-- `src/shared/lib/__tests__/utils.test.ts` — cn() utility
+- `src/config/__tests__/env.test.ts` — env schema parsing
+- `src/config/__tests__/navigation.test.ts` — nav config & role filtering
+- `src/features/auth/__tests__/roles.test.ts` — permission matrix
 
 ### Component Tests
 For React components in isolation. Use the custom render utility.
 
 Examples:
-- `src/pages/__tests__/HomePage.test.tsx`
-- `src/pages/__tests__/NotFoundPage.test.tsx`
+- `src/shared/components/common/__tests__/PermissionGuard.test.tsx` — role gating
+- `src/shared/components/common/__tests__/states.test.tsx` — empty/error/loading
+- `src/shared/components/layout/__tests__/SidebarNav.test.tsx` — nav rendering
+- `src/shared/components/layout/__tests__/DashboardLayout.test.tsx` — shell, drawer, collapse
+- `src/pages/__tests__/module-pages.test.tsx` — placeholders & permission actions
 - `src/shared/components/ui/__tests__/button.test.tsx`
 
-### Integration Tests (future)
-For feature workflows that span multiple components and API calls.
-MSW handlers will simulate backend responses.
+### Route Integration Tests
+Exercise the real route tree through a memory data router.
 
-## Coverage Goals (Task 1)
+Examples:
+- `src/app/__tests__/App.test.tsx` — routes, redirect, nested params, 404/403, login
 
-| Area | Coverage Goal |
+### Feature Integration Tests (future)
+For feature workflows spanning components and API calls. MSW handlers will
+simulate backend responses.
+
+## Coverage Goals
+
+**Task 1 — Foundation**
+
+| Area | Goal |
 |---|---|
-| Foundation pages | 100% |
-| shadcn UI components | Render + behavior tests |
 | Env config schema | All valid/invalid cases |
+| shadcn UI components | Render + behavior |
 | App providers | QueryClient + Router integration |
+
+**Task 2 — Conception & shell**
+
+| Area | Goal |
+|---|---|
+| Role/permission model | Full matrix |
+| Navigation config | Structure + role filtering |
+| Permission gating | OWNER shows / STAFF hides write actions |
+| Page states | Empty, Error (+retry), Loading (a11y), Coming-soon |
+| Application shell | Renders, mobile drawer opens, sidebar collapses, skip link |
+| Routing | Every placeholder route, nested params, 404 (in shell), 403, login (standalone) |
+| Accessibility | Nav landmark, skip-to-content, keyboard-operable controls |
 
 ## Running Tests
 
@@ -66,7 +92,7 @@ export const handlers = [
 src/
   pages/
     __tests__/
-      HomePage.test.tsx
+      module-pages.test.tsx
   features/
     products/
       __tests__/

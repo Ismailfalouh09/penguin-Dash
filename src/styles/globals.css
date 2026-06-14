@@ -2,50 +2,84 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * Penguin Beauty Admin — Design Tokens
+ * Light mode first. A warm, soft, professional palette suited to a beauty
+ * ecommerce administration tool. All colors are raw HSL channels consumed
+ * via hsl(var(--token)) in tailwind.config.ts, which keeps opacity modifiers
+ * (e.g. bg-primary/90, bg-success/10) working.
+ */
+
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    /* Surfaces & text */
+    --background: 30 33% 99%; /* warm off-white app canvas */
+    --foreground: 326 16% 15%; /* warm near-black ink */
+    --card: 0 0% 100%; /* clean white surfaces */
+    --card-foreground: 326 16% 15%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-    --radius: 0.5rem;
+    --popover-foreground: 326 16% 15%;
+
+    /* Brand accent — muted aubergine/plum, refined and professional */
+    --primary: 327 36% 30%;
+    --primary-foreground: 30 33% 99%;
+
+    /* Neutral support */
+    --secondary: 24 20% 95%;
+    --secondary-foreground: 326 18% 22%;
+    --muted: 24 20% 95%;
+    --muted-foreground: 326 7% 44%;
+    --accent: 338 44% 95%; /* soft rose highlight surface */
+    --accent-foreground: 327 36% 30%;
+
+    /* Semantic status */
+    --destructive: 0 72% 48%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 142 52% 34%;
+    --success-foreground: 0 0% 100%;
+    --warning: 35 92% 42%;
+    --warning-foreground: 0 0% 100%;
+    --info: 214 78% 47%;
+    --info-foreground: 0 0% 100%;
+
+    /* Lines & focus */
+    --border: 24 16% 90%;
+    --input: 24 16% 90%;
+    --ring: 327 36% 30%;
+
+    --radius: 0.625rem;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --background: 326 18% 8%;
+    --foreground: 30 20% 96%;
+    --card: 326 16% 11%;
+    --card-foreground: 30 20% 96%;
+    --popover: 326 16% 11%;
+    --popover-foreground: 30 20% 96%;
+
+    --primary: 338 54% 74%;
+    --primary-foreground: 326 30% 14%;
+
+    --secondary: 326 10% 18%;
+    --secondary-foreground: 30 20% 96%;
+    --muted: 326 10% 18%;
+    --muted-foreground: 326 8% 64%;
+    --accent: 326 14% 22%;
+    --accent-foreground: 30 20% 96%;
+
+    --destructive: 0 62% 52%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 142 48% 46%;
+    --success-foreground: 0 0% 100%;
+    --warning: 35 86% 56%;
+    --warning-foreground: 326 30% 14%;
+    --info: 214 72% 62%;
+    --info-foreground: 326 30% 14%;
+
+    --border: 326 12% 22%;
+    --input: 326 12% 22%;
+    --ring: 338 54% 74%;
   }
 }
 
@@ -53,7 +87,28 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
+    font-feature-settings:
+      'rlig' 1,
+      'calt' 1;
+  }
+
+  /* Always-visible focus ring for keyboard users */
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { env } from '@/config/env'
+import { CurrentUserProvider } from '@/features/auth/current-user'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -18,7 +19,8 @@ interface ProvidersProps {
 export function Providers({ children }: ProvidersProps) {
   return (
     <QueryClientProvider client={queryClient}>
-      {children}
+      {/* Placeholder current user — replaced by real /auth/me in Task 3. */}
+      <CurrentUserProvider>{children}</CurrentUserProvider>
       {env.VITE_ENABLE_QUERY_DEVTOOLS && <ReactQueryDevtools initialIsOpen={false} />}
     </QueryClientProvider>
   )

@@ -27,6 +27,23 @@ Admin dashboard frontend for a beauty-pack recommendation system. Backend API co
 - The `components.json` file configures the CLI; always use `npx shadcn@latest add <component>`
 - Components land in `src/shared/components/ui/`
 - Never modify generated shadcn component internals — wrap them instead
+- **Windows quirk**: the CLI writes generated files to a literal `@/shared/components/ui/`
+  folder at the repo root instead of resolving the alias. After running it, move
+  the files into `src/shared/components/ui/` and delete the stray `@` folder.
+
+### Navigation, shell & routes
+- All sidebar items are defined in `src/config/navigation.ts` — never hardcode nav
+  items in components. Route paths live in `src/config/routes.ts`.
+- New pages render inside `DashboardLayout` (add them as children of `/` in
+  `src/app/router.tsx`) with a `handle: { title, breadcrumb }`.
+- Pages go in `src/pages/<section>/`; use `PageContainer` + `PageHeader` and the
+  shared state components from `src/shared/components/common/`.
+
+### Roles & permissions
+- `src/features/auth/roles.ts` mirrors the backend matrix; gate write actions with
+  `<PermissionGuard permission="write">`. The backend stays authoritative.
+- The current user comes from `useCurrentUser()` — a **placeholder** until Task 3
+  swaps it for `GET /auth/me`.
 
 ### API Client (future)
 - OpenAPI client will be generated from `frontend-handoff/openapi.json`
@@ -35,9 +52,11 @@ Admin dashboard frontend for a beauty-pack recommendation system. Backend API co
 
 ### Testing
 - Tests live in `__tests__/` folders co-located with the code they test
-- Use the custom `render` from `src/test/utils/render.tsx` for component tests (includes QueryClient + MemoryRouter)
+- Use `render` from `src/test/utils/render.tsx` for component tests (QueryClient +
+  CurrentUser + MemoryRouter; pass `{ role }` to test permission-gated UI)
+- Use `renderWithRouter` from `src/test/utils/router.tsx` for route-level tests
 - MSW handlers go in `src/test/mocks/handlers.ts`
-- Tests must not hit the real backend, database, or internet
+- Tests must not hit the real backend, database, internet, or use a real JWT/account
 
 ### Code Quality
 - Always run `npm run lint` and `npm run format:check` before committing

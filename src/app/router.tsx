@@ -1,14 +1,166 @@
-import { createBrowserRouter } from 'react-router-dom'
-import { HomePage } from '@/pages/HomePage'
+import { createBrowserRouter, Navigate, type RouteObject } from 'react-router-dom'
+import type { RouteHandle } from '@/config/route-handle'
+import { ROUTES } from '@/config/routes'
+import { DashboardLayout } from '@/shared/components/layout/DashboardLayout'
+import { DashboardOverviewPage } from '@/pages/DashboardOverviewPage'
+import { LoginPlaceholderPage } from '@/pages/LoginPlaceholderPage'
+import { ForbiddenPage } from '@/pages/ForbiddenPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
+import { CategoriesPage } from '@/pages/catalog/CategoriesPage'
+import { BrandsPage } from '@/pages/catalog/BrandsPage'
+import { ProductsPage } from '@/pages/catalog/ProductsPage'
+import { ProductDetailPage } from '@/pages/catalog/ProductDetailPage'
+import { ProductFormPage } from '@/pages/catalog/ProductFormPage'
+import { ProductReferencesPage } from '@/pages/catalog/ProductReferencesPage'
+import { PacksPage } from '@/pages/catalog/PacksPage'
+import { PackDetailPage } from '@/pages/catalog/PackDetailPage'
+import { PackFormPage } from '@/pages/catalog/PackFormPage'
+import { MediaPage } from '@/pages/catalog/MediaPage'
+import { AttributesPage } from '@/pages/personalization/AttributesPage'
+import { QuizPage } from '@/pages/personalization/QuizPage'
+import { RecommendationRulesPage } from '@/pages/personalization/RecommendationRulesPage'
+import { OrdersPage } from '@/pages/sales/OrdersPage'
+import { OrderDetailPage } from '@/pages/sales/OrderDetailPage'
+import { ProfilePage } from '@/pages/account/ProfilePage'
 
-export const router = createBrowserRouter([
+/** Typed helper so each route's handle is checked against RouteHandle. */
+const handle = (h: RouteHandle): RouteHandle => h
+
+/** Route configuration, exported so tests can build a memory router from it. */
+export const routes: RouteObject[] = [
+  {
+    path: ROUTES.login,
+    element: <LoginPlaceholderPage />,
+  },
   {
     path: '/',
-    element: <HomePage />,
+    element: <DashboardLayout />,
+    handle: handle({ title: 'Dashboard', breadcrumb: 'Dashboard' }),
+    children: [
+      { index: true, element: <Navigate to={ROUTES.dashboard} replace /> },
+      {
+        path: 'dashboard',
+        element: <DashboardOverviewPage />,
+        handle: handle({ title: 'Overview', breadcrumb: 'Overview' }),
+      },
+
+      // Catalog
+      {
+        path: 'categories',
+        element: <CategoriesPage />,
+        handle: handle({ title: 'Categories', breadcrumb: 'Categories' }),
+      },
+      {
+        path: 'brands',
+        element: <BrandsPage />,
+        handle: handle({ title: 'Brands', breadcrumb: 'Brands' }),
+      },
+      {
+        path: 'products',
+        handle: handle({ title: 'Products', breadcrumb: 'Products' }),
+        children: [
+          { index: true, element: <ProductsPage /> },
+          {
+            path: 'new',
+            element: <ProductFormPage />,
+            handle: handle({ title: 'New product', breadcrumb: 'New' }),
+          },
+          {
+            path: ':productId',
+            element: <ProductDetailPage />,
+            handle: handle({ title: 'Product details', breadcrumb: 'Details' }),
+          },
+          {
+            path: ':productId/edit',
+            element: <ProductFormPage />,
+            handle: handle({ title: 'Edit product', breadcrumb: 'Edit' }),
+          },
+          {
+            path: ':productId/references',
+            element: <ProductReferencesPage />,
+            handle: handle({ title: 'Product references', breadcrumb: 'References' }),
+          },
+        ],
+      },
+      {
+        path: 'packs',
+        handle: handle({ title: 'Packs', breadcrumb: 'Packs' }),
+        children: [
+          { index: true, element: <PacksPage /> },
+          {
+            path: 'new',
+            element: <PackFormPage />,
+            handle: handle({ title: 'New pack', breadcrumb: 'New' }),
+          },
+          {
+            path: ':packId',
+            element: <PackDetailPage />,
+            handle: handle({ title: 'Pack details', breadcrumb: 'Details' }),
+          },
+          {
+            path: ':packId/edit',
+            element: <PackFormPage />,
+            handle: handle({ title: 'Edit pack', breadcrumb: 'Edit' }),
+          },
+        ],
+      },
+      {
+        path: 'media',
+        element: <MediaPage />,
+        handle: handle({ title: 'Media library', breadcrumb: 'Media library' }),
+      },
+
+      // Personalization
+      {
+        path: 'attributes',
+        element: <AttributesPage />,
+        handle: handle({ title: 'Attributes', breadcrumb: 'Attributes' }),
+      },
+      {
+        path: 'quiz',
+        element: <QuizPage />,
+        handle: handle({ title: 'Quiz', breadcrumb: 'Quiz' }),
+      },
+      {
+        path: 'recommendation-rules',
+        element: <RecommendationRulesPage />,
+        handle: handle({ title: 'Recommendation rules', breadcrumb: 'Recommendation rules' }),
+      },
+
+      // Sales
+      {
+        path: 'orders',
+        handle: handle({ title: 'Orders', breadcrumb: 'Orders' }),
+        children: [
+          { index: true, element: <OrdersPage /> },
+          {
+            path: ':orderId',
+            element: <OrderDetailPage />,
+            handle: handle({ title: 'Order details', breadcrumb: 'Details' }),
+          },
+        ],
+      },
+
+      // Administration
+      {
+        path: 'profile',
+        element: <ProfilePage />,
+        handle: handle({ title: 'Profile', breadcrumb: 'Profile' }),
+      },
+      {
+        path: 'forbidden',
+        element: <ForbiddenPage />,
+        handle: handle({ title: 'Access denied', breadcrumb: 'Access denied' }),
+      },
+
+      // Catch-all (inside the shell so navigation is preserved)
+      {
+        path: '*',
+        element: <NotFoundPage />,
+        handle: handle({ title: 'Page not found', breadcrumb: 'Not found' }),
+      },
+    ],
   },
-  {
-    path: '*',
-    element: <NotFoundPage />,
-  },
-])
+]
+
+export const router = createBrowserRouter(routes)

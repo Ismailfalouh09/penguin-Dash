@@ -1,5 +1,57 @@
 # Progress Log
 
+## Task 2 — Dashboard Conception & Design System
+
+**Date:** 2026-06-14
+**Status:** Completed
+
+### What Was Done
+
+- Defined the information architecture: sitemap, route map, navigation hierarchy,
+  and role visibility rules (`docs/DASHBOARD_CONCEPTION.md`).
+- Established the design system — warm, professional beauty-admin palette with
+  semantic status tokens, typography, spacing, radius, soft shadow scale, and
+  responsive/accessibility rules (`docs/DESIGN_SYSTEM.md`, `globals.css`,
+  `tailwind.config.ts`).
+- Added 15 shadcn/ui components (dropdown-menu, sheet, avatar, breadcrumb, badge,
+  separator, skeleton, tooltip, dialog, alert-dialog, input, select, tabs, label,
+  scroll-area).
+- Centralized navigation in `src/config/navigation.ts` with route constants
+  (`routes.ts`) and route handles (`route-handle.ts`); role-aware filtering.
+- Built the role/permission model and a **placeholder** current-user context
+  (`src/features/auth/`) — clearly marked, to be replaced by `/auth/me` in Task 3.
+- Built the responsive application shell: collapsible desktop sidebar, mobile
+  Sheet drawer, sticky header, breadcrumbs, user menu, skip-to-content link.
+- Built shared app components & page states: `AppLogo`, `PageContainer`,
+  `PageHeader`, `SectionCard`, `StatusBadge`, `EmptyState`, `ErrorState`,
+  `LoadingState`, `ComingSoonState`, `DesignPreview`, `PermissionGuard`.
+- Created placeholder pages for every module + dashboard overview, login (design
+  preview), forbidden (403), and a shell-aware not-found (404). No fake data.
+- Wired the full route map (`/login`, `/dashboard`, catalog/personalization/
+  sales/account routes, `/forbidden`, `*`) with titles & breadcrumbs.
+- Added 40+ tests (roles, navigation filter, permission gating, page states,
+  sidebar nav, shell behavior, route integration) — 55 tests total passing.
+- Verified lint, format:check, test, build all pass; browser-verified the shell.
+- Updated `ARCHITECTURE.md`, `README.md`, `FRONTEND_ROADMAP.md`; added
+  `DASHBOARD_CONCEPTION.md` and `DESIGN_SYSTEM.md`.
+
+### Key Decisions
+
+- **Conception/shell before auth**: built the shell and design system first
+  (prerequisites for every screen); authentication moved to Task 3.
+- **Central navigation config** — single source for sidebar + mobile drawer; no
+  hardcoded nav items.
+- **Role-aware UI via `PermissionGuard`** — hides write actions for STAFF for
+  usability; backend stays authoritative. All roles can read every page, so
+  navigation is identical across roles today.
+- **Placeholder current user via context** — swappable for `GET /auth/me` in
+  Task 3 without touching the shell.
+- **Routes exported as config** so tests run the real route tree through a memory
+  data router.
+- **No invented analytics** — overview metrics render as planned placeholders.
+
+---
+
 ## Task 1 — Frontend Foundation
 
 **Date:** 2026-06-14  
