@@ -8,18 +8,19 @@
 | **Task 2** | Dashboard Conception & Design System — sitemap, routes, navigation config, responsive shell, design tokens, shared UI states, placeholder pages | ✅ **Completed** |
 | **Task 3** | Backend API Integration Foundation — Orval-generated typed client, central HTTP client, error normalization, TanStack Query integration, MSW foundation, diagnostics | ✅ **Completed** |
 | **Task 4** | Authentication — Login page, JWT storage, `GET /auth/me`, Bearer injection, protected routes, real current-user | ✅ **Completed** |
-| **Task 5** | Categories — List, create, edit, delete, image upload | ⏳ **Next** |
-| Task 6 | Brands — List, create, edit, delete |
-| Task 7 | Attributes & Options — Attribute groups, options, deactivation |
-| Task 8 | Products — List, create, edit, image gallery management |
-| Task 9 | Product References — SKU variants, stock management, swatch images |
-| Task 10 | Packs — Bundle management, pack image gallery |
-| Task 11 | Quiz — Question list, create, edit, reorder |
-| Task 12 | Recommendation Rules — Rule builder, preview engine |
-| Task 13 | Orders — Order list, order detail, status updates |
-| Task 14 | Media Library — Generic media upload, entity-specific image management |
-| Task 15 | Role-Based Access Control — Enforce STAFF restrictions across modules |
-| Task 16 | Polish & Production Readiness — Error boundaries, route guards, a11y audit |
+| **Task 5** | Shared operational components — data table, pagination, search/filters, URL state, form layout, dialogs, toasts | ✅ **Completed** |
+| **Task 6** | Categories — List, create, edit, delete, image upload | ⏳ **Next** |
+| Task 7 | Brands — List, create, edit, delete |
+| Task 8 | Attributes & Options — Attribute groups, options, deactivation |
+| Task 9 | Products — List, create, edit, image gallery management |
+| Task 10 | Product References — SKU variants, stock management, swatch images |
+| Task 11 | Packs — Bundle management, pack image gallery |
+| Task 12 | Quiz — Question list, create, edit, reorder |
+| Task 13 | Recommendation Rules — Rule builder, preview engine |
+| Task 14 | Orders — Order list, order detail, status updates |
+| Task 15 | Media Library — Generic media upload, entity-specific image management |
+| Task 16 | Role-Based Access Control — Enforce STAFF restrictions across modules |
+| Task 17 | Polish & Production Readiness — Error boundaries, route guards, a11y audit |
 
 > Ordering note: authentication and the OpenAPI client were originally sketched
 > elsewhere in the plan. In practice the conception/shell (Task 2) and the typed

@@ -25,6 +25,7 @@ import { OrdersPage } from '@/pages/sales/OrdersPage'
 import { OrderDetailPage } from '@/pages/sales/OrderDetailPage'
 import { ProfilePage } from '@/pages/account/ProfilePage'
 import { DiagnosticsPage } from '@/pages/DiagnosticsPage'
+import { ComponentsDemoPage } from '@/pages/ComponentsDemoPage'
 
 /** Typed helper so each route's handle is checked against RouteHandle. */
 const handle = (h: RouteHandle): RouteHandle => h
@@ -171,6 +172,13 @@ export const routes: RouteObject[] = [
             path: 'diagnostics',
             element: <DiagnosticsPage />,
             handle: handle({ title: 'API diagnostics', breadcrumb: 'API diagnostics' }),
+          },
+
+          // Development-only shared-components demo (Task 5A; not in navigation).
+          {
+            path: 'components-demo',
+            element: <ComponentsDemoPage />,
+            handle: handle({ title: 'Shared components demo', breadcrumb: 'Components demo' }),
           },
 
           // Catch-all (inside the shell so navigation is preserved)

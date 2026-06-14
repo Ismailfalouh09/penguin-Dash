@@ -1,5 +1,85 @@
 # Progress Log
 
+## Task 5 — Shared Operational Components
+
+**Date:** 2026-06-14
+**Status:** Completed
+
+### What Was Done
+
+Built the reusable component and hook layer that all CRUD feature tasks (6–14) will consume. No business entities were touched; no backend API calls were added.
+
+**Data table system** (`src/shared/components/data-table/`):
+- `DataTable<TData>` — TanStack Table v8 in manual (server-driven) mode. Accepts `columns`, `data`, `sort` (controlled server sort), optional `rowSelection`/`onRowSelectionChange`, `onRowClick`, and renders inline loading (`SkeletonTable`), empty (`EmptyState`) and error (`ErrorState`) states. Responsive via `overflow-x-auto`. Row selection column via `selectionColumn<T>()`.
+- `DataTablePagination` — shows range text ("Showing X–Y of Z"), page-size `<Select>`, prev/next + numbered pages with ellipsis; all derived from `PaginationMeta`; no internal state.
+- `DataTableToolbar` — composable toolbar with search/filters left, actions right, shared "Clear filters" button.
+- `SearchInput` — debounced (300 ms default), local draft for snappy typing, syncs with external value changes; clear button.
+- `SelectFilter` — generic single-select filter; null = no filter (ALL sentinel for Radix compatibility).
+- `DateFilter` — native `<input type="date">`, keyboard/a11y friendly, zero new deps.
+- `RowActions` — labeled dropdown trigger (never icon-only), supports destructive items, separators, stopPropagation.
+- `SkeletonTable` — skeleton placeholder shaped like the real table; announces busy state.
+
+**Pagination types** (`src/shared/lib/pagination.ts`):
+- `PaginationMeta` — mirrors the backend envelope (`page`, `pageSize`, `totalItems`, `totalPages`, `hasNextPage`, `hasPreviousPage`).
+- `buildPaginationMeta`, `describePageRange`, `DEFAULT_PAGE_SIZE_OPTIONS`.
+
+**URL query state** (`src/shared/hooks/use-list-query-state.ts`):
+- `useListQueryState(options?)` — single source for parsing/serializing `page`, `limit`, `search`, `sortBy`, `sortOrder`, and arbitrary feature filters. URL is the source of truth; browser back/forward restores state. Invalid values fall back safely. `page=1` and default limit pruned from URL. All setters except `setPage` reset to page 1. `setSort(col)` toggles asc/desc when the column is already active.
+
+**UI primitives** (`src/shared/components/ui/`):
+- `table.tsx` — shadcn-style `Table`/`TableHeader`/`TableBody`/`TableRow`/`TableHead`/`TableCell`/`TableCaption`.
+- `checkbox.tsx` — accessible checkbox on a native input (no new Radix dep); supports `indeterminate` state for select-all.
+- `form.tsx` — React Hook Form field wiring: `Form`, `FormField`, `FormItem`, `FormLabel` (required `*`), `FormControl`, `FormDescription`, `FormMessage`. A11y `aria-describedby`/`aria-invalid` wired automatically.
+- `toast.tsx` — lightweight context-based toast system (`ToastProvider`, viewport, `ToastItem`); tones: default, success, error, warning, info; auto-dismiss; accessible (`role="region"`, `role="status"`, `aria-live`). No external dep (no Sonner).
+
+**Form layout** (`src/shared/components/forms/`):
+- `FormLayout` — max-width-constrained single-column form container.
+- `FormSection` — renders a `SectionCard` wrapping a vertical field stack.
+- `FormActions` — submit (with `Loader2` spinner), cancel (optional), secondary slot; stacks on mobile.
+
+**Feedback** (`src/shared/components/feedback/`):
+- `ConfirmDialog` — accessible `AlertDialog`, `isPending` keeps dialog open during async confirm.
+- `DeleteConfirmDialog` — specialises with delete/archive copy and destructive confirm button.
+
+**Hooks**:
+- `use-toast.ts` — `useToast()`, throws if used outside `ToastProvider`.
+- `use-confirm-dialog.ts` — `useConfirmDialog<T>()`, manages open + target.
+- `use-debounced-value.ts` — `useDebouncedValue(value, delay)`.
+- `use-unsaved-changes-warning.ts` — `useUnsavedChangesWarning(when)`, wires `beforeunload`.
+
+**Query-state helpers** (`src/lib/api/query-state.ts`):
+- `resolveQueryViewState` — collapses query flags to `'loading' | 'error' | 'empty' | 'ready'`.
+- `toErrorMessage` / `toApiError` — normalize thrown values.
+- `useMutationFeedback` — composes `onSuccess`/`onError` handlers with toasts; spread into `useMutation`.
+
+**Common components** (`src/shared/components/common/`):
+- Added `ForbiddenState` — inline "access denied" state for embedding inside a page section (distinct from the full-page `ForbiddenPage`).
+
+**Providers**:
+- `ToastProvider` added inside `QueryClientProvider`, wrapping `AuthProvider`, so mutation feedback hooks can raise toasts from anywhere.
+
+**Demo page**:
+- `src/pages/ComponentsDemoPage.tsx` — dev-only at `/components-demo` (not in sidebar). Static sample data (labeled non-production). Exercises table, pagination, search, status filter, column sorting, row selection, row actions, empty state, delete confirmation dialog, success/error toasts, and form layout with field errors.
+
+### Results
+
+- **Build**: `npm run build` green — 1 888 modules, 0 type errors.
+- **Lint**: 0 errors; 1 pre-existing `react-refresh/only-export-components` warning in `form.tsx` (inherent to the shadcn RHF pattern; same as other ui/ files).
+- **Tests**: 90 passed / 0 failed (16 test files) — no regressions.
+- No business CRUD pages added. Generated API files unchanged. `.env` not staged. `frontend-handoff/` not modified.
+
+### Key Decisions
+
+- **URL = source of truth for list state**: `useListQueryState` is the only URL parser; components never call `useSearchParams` themselves.
+- **No Sonner**: built a lightweight context-based toast (100 lines) rather than adding a new dependency; same behavior, same API surface.
+- **No Radix Checkbox**: native `<input type="checkbox">` with visually-hidden appearance and Tailwind peer styling; supports `indeterminate` via a ref effect; no new dep.
+- **Manual (server-driven) table throughout**: `DataTable` does zero client-side sorting/filtering/pagination, so it works equally against any real backend list endpoint.
+- **`ConfirmDialog` stays open during async**: `preventDefault` on the action button + `isPending` prop prevent auto-close; the caller controls closure on completion.
+- **`useMutationFeedback` uses `...args` spread**: TanStack Query v5's mutation callbacks changed to 4-argument signatures; spread avoids the TS arity error without casting.
+- **Demo uses clearly labeled static data**: no fake production entities, no backend calls, not in the sidebar.
+
+---
+
 ## Task 4 — Authentication
 
 **Date:** 2026-06-14

@@ -105,6 +105,22 @@ backend responses; register them with `server.use(...)` + the `apiUrl` helper.
 > API-layer tests never need a running backend, DB, real JWT, internet, or
 > Cloudinary — MSW intercepts everything.
 
+**Task 5 — Shared Operational Components**
+
+These components are generic and contain no business logic, so the coverage goal for Task 5 itself is narrow. Coverage grows as each CRUD feature task adds integration tests. No comprehensive unit tests were added in Task 5.
+
+| Area | Goal (added in feature tasks) |
+|---|---|
+| `useListQueryState` | Param parsing, fallbacks, sort toggle, filter/clear, page reset |
+| `DataTable` | Column rendering, sort header click, empty/error/loading states |
+| `DataTablePagination` | Range text, prev/next disabled states, page-size change |
+| `SearchInput` | Debounce delay, external-value sync, clear button |
+| `SelectFilter` | null ↔ ALL sentinel mapping |
+| `ConfirmDialog` | Open/close, `isPending` blocking, confirm callback |
+| `useMutationFeedback` | Success toast, error toast, composed callbacks |
+| `FormActions` | Submit spinner when `isSubmitting`, cancel click |
+| Form field primitives | `aria-invalid` when error, `aria-describedby` wiring |
+
 ## Running Tests
 
 ```bash
@@ -113,20 +129,41 @@ npm run test:watch     # Watch mode (development)
 npm run test:coverage  # Coverage report
 ```
 
-## MSW Handler Pattern (future tasks)
+## MSW Handler Pattern (feature tasks)
 
-When adding feature tests that need API responses:
+When adding feature tests that need API responses, register handlers with `server.use(...)`:
 
 ```ts
-// src/test/mocks/handlers.ts
 import { http, HttpResponse } from 'msw'
+import { server } from '@/test/mocks/server'
+import { apiUrl } from '@/test/mocks/api'
 
-export const handlers = [
-  http.get('http://localhost:3000/admin/products', () => {
-    return HttpResponse.json({ data: [], meta: { page: 1, pageSize: 20, totalItems: 0, totalPages: 0, hasNextPage: false, hasPreviousPage: false } })
-  }),
-]
+// Paginated list — matches the backend PaginationMeta envelope
+server.use(
+  http.get(apiUrl('/admin/categories'), () =>
+    HttpResponse.json({
+      data: [{ id: '1', name: 'Serums', slug: 'serums' }],
+      meta: { page: 1, pageSize: 20, totalItems: 1, totalPages: 1, hasNextPage: false, hasPreviousPage: false },
+    })
+  )
+)
+
+// Mutation success
+server.use(
+  http.delete(apiUrl('/admin/categories/:id'), () =>
+    HttpResponse.json({ id: '1' })
+  )
+)
+
+// Error response
+server.use(
+  http.post(apiUrl('/admin/categories'), () =>
+    HttpResponse.json({ statusCode: 409, message: 'Slug already exists', error: 'Conflict' }, { status: 409 })
+  )
+)
 ```
+
+The `apiUrl` helper prefixes the configured base URL. Use `server.use(...)` inside individual test cases (or `beforeEach`) to override the default handlers for that test. Handlers registered with `server.use` are reset after each test by the `afterEach(() => server.resetHandlers())` in `test/setup.ts`.
 
 ## Test File Naming
 

@@ -64,6 +64,44 @@ Admin dashboard frontend for a beauty-pack recommendation system. Backend API co
 - Do not manually recreate DTOs / copy Prisma models, and never modify
   `frontend-handoff/` files.
 
+### Shared operational components (Task 5 — required for all CRUD tasks)
+
+All list pages, form pages, confirmation dialogs and toast feedback follow a fixed pattern. Do not reinvent these — reuse them directly.
+
+**List page**
+1. `const list = useListQueryState({ defaultSortBy, defaultSortOrder })` at the top.
+2. Pass `{ page: list.page, limit: list.limit, search: list.search, sortBy: list.sortBy, sortOrder: list.sortOrder, ...list.filters }` to the TanStack Query list hook.
+3. Render `<DataTableToolbar>` + `<DataTable sort={{ sortBy: list.sortBy, sortOrder: list.sortOrder, onSortChange: list.setSort }}>` + `<DataTablePagination meta={...} onPageChange={list.setPage} onPageSizeChange={list.setLimit}>`.
+4. Wire delete/archive via `useConfirmDialog` + `<DeleteConfirmDialog>` + `useMutationFeedback`.
+- Import from `@/shared/components/data-table` (barrel), `@/shared/components/feedback`, `@/shared/hooks/use-list-query-state`, `@/shared/hooks/use-confirm-dialog`, `@/lib/api/query-state`.
+
+**Form page**
+1. `useForm<T>({ resolver: zodResolver(schema), defaultValues })`.
+2. `<Form {...form}><form onSubmit={form.handleSubmit(onSubmit)}><FormLayout><FormSection title="...">...</FormSection><FormActions submitLabel="Save" onCancel={...} isSubmitting={isPending} /></FormLayout></form></Form>`.
+3. `useUnsavedChangesWarning(formState.isDirty && !formState.isSubmitting)`.
+4. Import from `@/shared/components/forms` (barrel re-exports both layout and RHF field primitives).
+
+**Toasts & mutation feedback**
+- Toasts: `const { toast } = useToast()` then `toast({ tone: 'success'|'error'|'warning'|'info', title, description })`.
+- Mutations: spread `...useMutationFeedback({ success: { title }, onSuccess: () => queryClient.invalidateQueries(...) })` into `useMutation(...)`.
+
+**URL state rules**
+- Never call `useSearchParams` in feature components — always go through `useListQueryState`.
+- `list.setSort(columnId)` toggles asc/desc when the column is already active.
+- `list.setFilter('status', 'active')` sets a filter; `list.setFilter('status', null)` clears it.
+- `list.clearFilters()` wipes search + all filters, resets to page 1.
+
+**Column definitions**
+- Use `ColumnDef<TData, unknown>` from `@/shared/components/data-table`.
+- Set `id` to the backend `sortBy` field name and `enableSorting: true` to enable a sortable header.
+- Add a `selectionColumn<TData>()` as the first column when row selection is needed.
+- Put per-row actions in a trailing column using `<RowActions label="Actions for X" actions={[...]} />` — never use an unlabeled icon button.
+
+**Page states**
+- `resolveQueryViewState({ isLoading, isError, isEmpty, hasData })` in `src/lib/api/query-state.ts` reduces query flags to `'loading' | 'error' | 'empty' | 'ready'`.
+- `DataTable` handles loading/empty/error inline — no conditional rendering needed around it.
+- Use `<ForbiddenState>` (from `@/shared/components/common`) for inline 403s inside a page section, not for whole-route 403s (those use `<ForbiddenPage>` via `RoleGuard`).
+
 ### Testing
 - Tests live in `__tests__/` folders co-located with the code they test
 - Use `render` from `src/test/utils/render.tsx` for component tests (QueryClient +

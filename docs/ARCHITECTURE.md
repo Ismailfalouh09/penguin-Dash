@@ -39,6 +39,7 @@ penguin-Dash/
 │   ├── pages/                   # Route-level page components
 │   │   ├── DashboardOverviewPage.tsx
 │   │   ├── DiagnosticsPage.tsx          # Dev-only API diagnostics (/diagnostics)
+│   │   ├── ComponentsDemoPage.tsx       # Dev-only shared-components demo (/components-demo)
 │   │   ├── LoginPage.tsx                # Real login form (POST /auth/login)
 │   │   ├── ForbiddenPage.tsx / NotFoundPage.tsx
 │   │   ├── _shared/ModulePlaceholder.tsx   # Shared placeholder scaffold
@@ -46,20 +47,34 @@ penguin-Dash/
 │   │   ├── personalization/    # Attributes, Quiz, Recommendation rules
 │   │   ├── sales/              # Orders (+ detail)
 │   │   └── account/           # Profile
-│   ├── lib/api/                 # API integration layer (Task 3)
+│   ├── lib/api/                 # API integration layer (Tasks 3–5)
 │   │   ├── http-client.ts       # Single fetch client / Orval mutator
 │   │   ├── errors.ts            # ApiError model + normalization helpers
 │   │   ├── query-client.ts      # Shared QueryClient factory + retry policy
+│   │   ├── query-state.ts       # Query-state helpers: resolveQueryViewState,
+│   │   │                        #   useMutationFeedback, toErrorMessage (Task 5)
 │   │   ├── contract-info.ts     # Static backend contract metadata
 │   │   ├── index.ts            # Public API barrel (+ generated models)
 │   │   └── generated/          # Orval output — DO NOT EDIT (models/ + endpoints/<tag>/)
 │   ├── shared/                  # Cross-feature code
 │   │   ├── components/
-│   │   │   ├── ui/             # shadcn/ui generated components
+│   │   │   ├── ui/             # shadcn/ui primitives + custom: table, checkbox,
+│   │   │   │                   #   form (RHF), toast
 │   │   │   ├── layout/         # Shell: DashboardLayout, Sidebar, Header, etc.
-│   │   │   └── common/         # App building blocks + page states
-│   │   ├── hooks/             # Shared hooks (use-media-query)
-│   │   └── lib/utils.ts        # cn() Tailwind class utility
+│   │   │   ├── common/         # App building blocks + page states + ForbiddenState
+│   │   │   ├── data-table/     # Generic table system (Task 5): DataTable,
+│   │   │   │                   #   DataTablePagination, DataTableToolbar, SearchInput,
+│   │   │   │                   #   SelectFilter, DateFilter, RowActions, SkeletonTable,
+│   │   │   │                   #   selectionColumn
+│   │   │   ├── forms/          # Form layout (Task 5): FormLayout, FormSection,
+│   │   │   │                   #   FormActions (+ re-exports RHF field primitives)
+│   │   │   └── feedback/       # Dialogs (Task 5): ConfirmDialog, DeleteConfirmDialog
+│   │   ├── hooks/              # Shared hooks: use-media-query, use-list-query-state,
+│   │   │                       #   use-debounced-value, use-toast, use-confirm-dialog,
+│   │   │                       #   use-unsaved-changes-warning
+│   │   └── lib/
+│   │       ├── utils.ts        # cn() Tailwind class utility
+│   │       └── pagination.ts   # PaginationMeta type + helpers (matches backend envelope)
 │   ├── styles/globals.css       # Design tokens + Tailwind directives
 │   ├── test/
 │   │   ├── setup.ts            # jest-dom + MSW server lifecycle
@@ -202,6 +217,144 @@ Bearer authentication is injected per-request via `src/features/auth/auth-interc
 using the `registerRequestInterceptor` hook in `http-client.ts`. The generated
 client and `http-client.ts` were not modified for auth — the interceptor extension
 point was designed for this in Task 3. Full details: [API_INTEGRATION.md](API_INTEGRATION.md).
+
+### 11. Shared Operational Components (`src/shared/components/data-table/`, `forms/`, `feedback/`)
+
+Task 5 added a layer of entity-agnostic components that every CRUD feature reuses. The guiding principle is **URL = source of truth for list-page state** and **components must not duplicate query-string parsing**.
+
+#### Data Table
+
+`DataTable<TData>` is built on TanStack Table v8 in manual (server-driven) mode — it does no client-side sorting, filtering, or pagination. It receives pre-fetched rows and reports sort intent through a controlled `sort` prop. Inline states (loading → `SkeletonTable`, empty → `EmptyState`, error → `ErrorState`) mean list pages need no conditional rendering logic.
+
+Column definitions use the `ColumnDef<TData, unknown>` type from `@tanstack/react-table`. Mark `enableSorting: true` on a column and set its `id` equal to the backend `sortBy` field name. Optional row selection is controlled via `rowSelection`/`onRowSelectionChange`; use `selectionColumn<T>()` to prepend the select-all header and per-row checkboxes. Per-row actions go in a dedicated column using `RowActions` (always labelled — never icon-only).
+
+#### Server-Side Pagination
+
+`DataTablePagination` receives a `PaginationMeta` object matching the backend envelope:
+
+```ts
+{ page, pageSize, totalItems, totalPages, hasNextPage, hasPreviousPage }
+```
+
+It shows a "Showing X–Y of Z" range, a page-size `<Select>`, prev/next buttons, and numbered pages with ellipsis for direct navigation. All actions call the parent (URL state) — the component holds no internal page state. Disabled states derive from `meta`.
+
+#### URL Query State
+
+`useListQueryState(options?)` in `src/shared/hooks/use-list-query-state.ts` is the **single parser and serializer** for list-page URL params. Components never parse `useSearchParams` themselves.
+
+Recognised params: `page`, `limit`, `search`, `sortBy`, `sortOrder`. Any other non-reserved key is treated as a feature filter and surfaced via `state.filters`. Invalid values fall back safely (bad page/limit → defaults; bad sortOrder → default). `page=1` and the default limit are pruned from the URL to keep it clean. Any setter except `setPage` resets to page 1. Browser back/forward restores table state automatically because everything is in the URL.
+
+Usage:
+
+```ts
+const list = useListQueryState({ defaultSortBy: 'createdAt', defaultSortOrder: 'desc' })
+// list.page, list.limit, list.search, list.sortBy, list.sortOrder, list.filters
+// list.setSearch(q)  list.setPage(n)  list.setLimit(n)  list.setSort(col)
+// list.setFilter('status', 'active')  list.clearFilters()
+```
+
+#### Search and Filters
+
+`SearchInput` debounces keystrokes (300 ms default) against a local draft state and emits the settled value via `onChange`. It synchronizes with external value changes (browser back/clear-all) without clobbering active typing.
+
+`SelectFilter` maps null/'' to a sentinel `__all__` value (Radix Select disallows empty strings) and emits `null` for "no filter". It is entirely generic — no business-specific option values are baked in.
+
+`DateFilter` uses the native `<input type="date">` for zero-dep keyboard- and screen-reader support. Emits `null` when cleared.
+
+Compose them inside `DataTableToolbar`:
+
+```tsx
+<DataTableToolbar
+  hasActiveFilters={list.hasActiveFilters}
+  onClearFilters={list.clearFilters}
+  search={<SearchInput value={list.search} onChange={list.setSearch} />}
+  filters={<SelectFilter label="Status" value={list.filters.status ?? null} onChange={(v) => list.setFilter('status', v)} options={[...]} />}
+  actions={<Button>New</Button>}
+/>
+```
+
+#### Form Layout
+
+Form pages use React Hook Form (with `@hookform/resolvers/zod`) and the `Form`/`FormField`/`FormItem`/`FormLabel`/`FormControl`/`FormMessage` primitives from `src/shared/components/ui/form.tsx`. These wire accessible `aria-describedby`/`aria-invalid` attributes and surface errors automatically.
+
+Wrap the form tree with `FormLayout` (width-constrained column), group related fields in `FormSection` (renders as a `SectionCard`), and close with `FormActions` (submit + cancel + optional secondary slot):
+
+```tsx
+<Form {...form}>
+  <form onSubmit={form.handleSubmit(onSubmit)}>
+    <FormLayout>
+      <FormSection title="Details">
+        <FormField name="name" control={form.control} render={({ field }) => (
+          <FormItem>
+            <FormLabel required>Name</FormLabel>
+            <FormControl><Input {...field} /></FormControl>
+            <FormMessage />
+          </FormItem>
+        )} />
+      </FormSection>
+      <FormActions submitLabel="Save" onCancel={() => navigate(-1)} isSubmitting={isPending} />
+    </FormLayout>
+  </form>
+</Form>
+```
+
+`useUnsavedChangesWarning(formState.isDirty && !formState.isSubmitting)` triggers the browser `beforeunload` prompt when there are unsaved changes.
+
+#### Confirmation Dialogs
+
+`ConfirmDialog` wraps the accessible `AlertDialog` primitive (focus-trapped, escape-closeable). Pass `isPending={true}` to keep the dialog open while an async mutation runs (the dialog closes only when the caller is done). `DeleteConfirmDialog` specialises it with delete/archive copy and a destructive confirm button.
+
+Manage dialog state with `useConfirmDialog<T>()`:
+
+```ts
+const confirm = useConfirmDialog<Category>()
+// confirm.open(category)  confirm.close()  confirm.isOpen  confirm.target
+```
+
+#### Toast Notifications
+
+`ToastProvider` (in `app/providers.tsx`) owns a lightweight toast queue and renders the viewport fixed to the bottom-right. `useToast()` exposes `{ toast, dismiss }`. Call `toast({ tone, title, description })` from anywhere inside the provider tree; tones: `default`, `success`, `error`, `warning`, `info`.
+
+`useMutationFeedback({ success, errorTitle, onSuccess, onError })` in `src/lib/api/query-state.ts` returns `onSuccess`/`onError` handlers that raise a toast automatically, composable with feature-specific cache invalidation:
+
+```ts
+const mutation = useMutation({
+  mutationFn: deleteCategory,
+  ...useMutationFeedback({
+    success: { title: 'Deleted', description: 'Category removed.' },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['categories'] }),
+  }),
+})
+```
+
+#### How Future CRUD Tasks Should Use These Components
+
+A standard list page:
+
+1. Call `useListQueryState(...)` at the top.
+2. Pass `{ page, limit, search, sortBy, sortOrder, filters }` to the TanStack Query list hook.
+3. Resolve a view state with `resolveQueryViewState({ isLoading, isError, isEmpty })`.
+4. Render `<DataTableToolbar>` + `<DataTable sort={...}>` + `<DataTablePagination meta={...}>`.
+5. Wire delete/archive through `useConfirmDialog` + `DeleteConfirmDialog` + `useMutationFeedback`.
+
+A standard form page:
+
+1. `useForm<T>({ resolver: zodResolver(schema) })`.
+2. Wrap with `<Form>` → `<FormLayout>` → `<FormSection>` → fields → `<FormActions>`.
+3. Use `useUnsavedChangesWarning(formState.isDirty)`.
+4. Submit with `useMutation` + `useMutationFeedback`.
+
+Never duplicate URL query-string parsing. Never re-implement pagination or search debouncing. Never show raw API errors — use `toErrorMessage` or `useMutationFeedback`.
+
+#### Accessibility Expectations
+
+- Every icon-only interactive element must have a visible or `sr-only` label (`aria-label`).
+- Sort headers use `aria-sort` (`ascending`/`descending`/`none`).
+- Table loading state uses `role="status" aria-busy="true"` with an `sr-only` label.
+- `ConfirmDialog` is focus-trapped and escape-closeable via Radix `AlertDialog`.
+- Toast viewport has `role="region" aria-label="Notifications"`; items use `role="status" aria-live="polite"`.
+- `FormLabel` with `required` renders an accessible `*` indicator (hidden from screen readers as decoration; field's `aria-required` comes from the underlying input).
+- All custom interactive controls (`Checkbox`, sort buttons, search-clear) are keyboard-navigable with visible focus rings.
 
 ## TypeScript Configuration
 

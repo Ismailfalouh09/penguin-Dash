@@ -29,11 +29,19 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
   restoration via `GET /auth/me`, Bearer-header injection, protected and guest
   routes, requested-route redirect, role guards, `401`/`403` handling, logout +
   query-cache cleanup. No refresh-token flow (single access token only).
-- **Task 5 — Categories**: ⏳ next.
+- **Task 5 — Shared operational components**: ✅ generic data table (TanStack Table
+  v8, server-side sort/pagination/filtering, loading/empty/error states, row
+  selection, row actions), pagination control, search/filter toolbar, URL
+  query-state hook, form-layout components (RHF wiring, field errors, required
+  indication, submit loading), confirmation and delete dialogs, toast notification
+  system, `ForbiddenState` inline component, pagination types matching the backend
+  envelope. A dev-only demo at `/components-demo` exercises all components.
+- **Task 6 — Categories**: ⏳ next.
 
 The full authentication system is live. Every route behind `/` requires a valid
 admin session; unauthenticated visitors are sent to `/login` with the original
-destination preserved for redirect after sign-in.
+destination preserved for redirect after sign-in. The shared component layer is
+ready for all CRUD feature tasks (6–14).
 
 ## Commands
 

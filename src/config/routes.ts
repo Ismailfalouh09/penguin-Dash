@@ -37,4 +37,6 @@ export const ROUTES = {
 
   /** Development-only API diagnostics. */
   diagnostics: '/diagnostics',
+  /** Development-only shared-components demo (Task 5A). */
+  componentsDemo: '/components-demo',
 } as const
