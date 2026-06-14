@@ -41,7 +41,14 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
   modules reuse the Task 5 shared component layer (data table, pagination, search,
   filters, form layout, confirmation dialogs, toasts, URL state). Brand logo
   upload is not in scope (no backend contract for it).
-- **Task 7 — Attributes**: ⏳ next.
+- **Task 7 — Products**: ✅ product list (search, status/isActive filters,
+  server-side sort/pagination), product detail view (info, pricing, cover + gallery,
+  references summary), product create/edit form (category + brand selection, slug
+  auto-generation, pricing, status, isActive), cover image upload/replace/remove,
+  gallery image upload/delete/promote-to-cover, product archive (cascades to
+  references on the backend). Product references and stock management are deferred
+  to Task 8.
+- **Task 8 — Product References & Stock**: ⏳ next.
 
 The full authentication system is live. Every route behind `/` requires a valid
 admin session; unauthenticated visitors are sent to `/login` with the original

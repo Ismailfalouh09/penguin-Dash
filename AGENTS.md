@@ -124,6 +124,34 @@ Each catalog feature follows this three-layer structure. Do not reinvent it.
 
 **Deactivation rule**: never implement hard-delete in the UI unless the backend explicitly exposes a DELETE endpoint. Always use the deactivate pattern.
 
+### Products CRUD extension (Task 7)
+
+Products extend the Task 6 catalog pattern with additional concerns. Reference these when building Task 8 (Product References) or similar.
+
+**Archive vs deactivate**: products use `POST /admin/products/:id/archive` (not a deactivate endpoint). Archiving cascades to all product references on the backend. An archived product's status becomes `'ARCHIVED'`; the UI hides the Archive button for already-archived products.
+
+**Product status enum**: `'DRAFT' | 'ACTIVE' | 'ARCHIVED'`. The list page filters by this enum via a `SelectFilter` (statusFilter). A separate `isActive` boolean filter controls visibility independently.
+
+**Nullable Orval types**: fields like `brand`, `coverImage`, `sku` may be typed as `string | null` in generated types. Use `typeof x === 'string'` guards before treating them as strings (do not use `x ?? ''` which would accept `null`).
+
+**Product detail page** (`ProductDetailPage`): read-only view. Shows name, slug, category, brand, status, base price, cover + gallery via `ProductGallery`, and a reference summary table (code, name, SKU, stock, status). "Edit" and "Archive" buttons are `PermissionGuard`-wrapped. The "References" button links to `ProductReferencesPage`.
+
+**Product form page** (`ProductFormPage`): handles both create (`/products/new`) and edit (`/products/:productId/edit`) via a single `mode: 'create' | 'edit'` prop. On create, navigates to the products list on success. On edit, navigates to the product detail page. The gallery section is only rendered in edit mode (requires an existing `productId`). `STAFF` users are blocked from this page (inline `ForbiddenState`).
+
+**Slug auto-generation**: when `mode === 'create'` and the slug field is empty, blurring the name field auto-fills the slug (lowercase, hyphens, strips non-alnum chars).
+
+**Category + brand loading**: `ProductForm` calls `useCategoryList({ pageSize: 100 })` and `useBrandList({ pageSize: 100 })` inline. Brand is optional; an internal `__none__` sentinel maps to "No brand" in the Radix `Select`.
+
+**ProductGallery** (`src/features/products/components/ProductGallery.tsx`):
+- Cover: upload via `productMediaControllerUpload(productId, { file, role: 'COVER' })`. Replace existing cover with a new upload. Remove via `productMediaControllerDelete`.
+- Gallery: upload via `productMediaControllerUpload(productId, { file, role: 'GALLERY' })`. Delete individual gallery images. Promote a gallery image to cover via `productMediaControllerUpdate(productId, imageId, { role: 'COVER' })`.
+- All operations invalidate `getAdminProductsControllerFindOneQueryKey(productId)`.
+- `canWrite` requires both `can('write')` AND `can('media:manage')`.
+
+**Cache invalidation**:
+- List key: `['/admin/products']` — invalidated by create, update, archive.
+- Detail key: `getAdminProductsControllerFindOneQueryKey(id)` — invalidated by update, archive, any image operation.
+
 ### Testing
 - Tests live in `__tests__/` folders co-located with the code they test
 - Use `render` from `src/test/utils/render.tsx` for component tests (QueryClient +

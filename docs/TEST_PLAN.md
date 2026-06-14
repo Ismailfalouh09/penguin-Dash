@@ -137,6 +137,25 @@ No dedicated unit or component tests were added in Task 6 (the shared component 
 
 Use the MSW handler pattern in the existing [handler section](#msw-handler-pattern-feature-tasks) — register `GET /admin/categories`, `GET /admin/brands`, `PATCH /admin/categories/:id/deactivate`, etc.
 
+**Task 7 — Products**
+
+No dedicated unit or component tests were added in Task 7. Feature integration tests should be added as follow-up work.
+
+| Area | Goal (follow-up) |
+|---|---|
+| `ProductsPage` | List renders rows, thumbnail column, search, status/isActive filters, archive confirm flow |
+| `ProductDetailPage` | Loads product, renders info/pricing/gallery/refs summary, archive navigates to list |
+| `ProductFormPage` (create) | Form submit → create → success toast → redirect to list |
+| `ProductFormPage` (edit) | Load detail, populate form, update → navigate to detail |
+| `ProductGallery` | Cover upload replaces cover; gallery add appends; delete confirm flow; promote-to-cover updates role |
+| `ProductReferencesPage` | Loads product name, renders ComingSoonState placeholder |
+| `useProductArchive` | Calls archive endpoint, invalidates list and detail keys |
+| `useProductImageUpload / Delete` | Calls upload/delete endpoints, invalidates detail key only |
+
+MSW handlers needed: `GET /admin/products`, `GET /admin/products/:id`, `POST /admin/products`, `PATCH /admin/products/:id`, `POST /admin/products/:id/archive`, `POST /admin/products/:id/media`, `DELETE /admin/products/:id/media/:imageId`, `PATCH /admin/products/:id/media/:imageId`.
+
+Use `apiUrl('/admin/products')` from `src/test/mocks/api.ts`. The paginated list response must match the backend envelope (`{ data: [...], meta: { page, pageSize, totalItems, totalPages, hasNextPage, hasPreviousPage } }`).
+
 ## Running Tests
 
 ```bash

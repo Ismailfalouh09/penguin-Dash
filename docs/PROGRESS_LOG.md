@@ -1,5 +1,59 @@
 # Progress Log
 
+## Task 7 — Products
+
+**Date:** 2026-06-14
+**Status:** Completed
+
+### What Was Done
+
+Implemented full product CRUD management including a product list page, product detail view, combined create/edit form page, a media gallery component, and a placeholder references page.
+
+**Products feature** (`src/features/products/`):
+- `use-products.ts` — hooks: `useProductList`, `useProductDetail`, `useProductCreate`, `useProductUpdate`, `useProductArchive`, `useProductImageUpload`, `useProductImageDelete`, `useProductImageReorder`. All write hooks use the manual `useState`/`useCallback` pattern (same as Task 6). `useProductArchive` takes the product ID as an argument (not scoped at construction time) so a single hook instance handles any product from the list. Image hooks are scoped to a `productId` at construction time and invalidate only the detail key. Create/update/archive invalidate the list key `['/admin/products']`; update and archive also invalidate `getAdminProductsControllerFindOneQueryKey(id)`.
+- `ProductColumns.tsx` — `useProductColumns({ onArchive })` returns column definitions. Columns: cover thumbnail, name + slug, category, brand, base price + currency, reference count (with icon), status badge, row actions. Row actions: View (always), Edit + Archive (OWNER/ADMIN only). Archive action is hidden when `product.status === 'ARCHIVED'`. Uses `useCurrentUser().can('write')` for role checks.
+- `ProductForm.tsx` — RHF + Zod for `name`, `slug`, `description`, `categoryId`, `brandId`, `basePrice`, `costPrice`, `currency`, `status`, `isActive`. Loads category and brand lists inline via `useCategoryList` / `useBrandList`. Brand is optional with a `__none__` sentinel. Slug auto-generates from name on blur (create mode only, when slug is empty). Cancel navigates to `/products`.
+- `ProductGallery.tsx` — self-contained cover + gallery management. Cover: upload, replace, remove. Gallery: add images, delete individual images, promote to cover (via `productMediaControllerUpdate` role update). All three operations (upload, delete, update) go through separate hooks and invalidate the product detail query. Requires `canWrite` prop (caller combines `can('write') && can('media:manage')`).
+
+**Pages** (`src/pages/catalog/`):
+- `ProductsPage.tsx` — list page with `SearchInput`, `SelectFilter` for `status` (DRAFT/ACTIVE/ARCHIVED), `SelectFilter` for `isActive` (boolean), `DataTable`, `DataTablePagination`, `PermissionGuard`-wrapped "New product" button, `ConfirmDialog` for archive. Replaces the Task 2 `ModulePlaceholder`.
+- `ProductDetailPage.tsx` — read-only detail view. Shows product info, pricing, `ProductGallery` (full CRUD if `can('write') && can('media:manage')`), and a references summary table (code/name/SKU/stock/status). "Edit" and "Archive" buttons are `PermissionGuard`-wrapped. Archive navigates to the products list on success.
+- `ProductFormPage.tsx` — unified create + edit page. Determines mode from the `productId` route param. In edit mode: loads detail, shows loading/error states, then form + gallery. In create mode: form only (no gallery until product exists). `STAFF` users see an inline `ForbiddenState` rather than a redirect.
+- `ProductReferencesPage.tsx` — placeholder page for Task 8. Loads the product detail to show the product name in the page header, then renders `ComingSoonState` listing the planned reference/stock features.
+
+**Routing** (`src/app/router.tsx`, `src/config/routes.ts`):
+- Products nested-route group: index (list), `new`, `:productId` (detail), `:productId/edit`, `:productId/references`.
+- Route constants: `ROUTES.products`, `ROUTES.productNew`, `ROUTES.product(id)`, `ROUTES.productEdit(id)`, `ROUTES.productReferences(id)`.
+
+**Cache-invalidation conventions**:
+- List key: `['/admin/products']` — invalidated by create, update, archive.
+- Detail key: `getAdminProductsControllerFindOneQueryKey(id)` — invalidated by update, archive, and every image operation (upload, delete, update).
+
+**Role behavior**:
+- OWNER, ADMIN, STAFF all see the product list, search, filters, detail view, and gallery thumbnails.
+- "New product" button is `<PermissionGuard permission="write">`-gated (STAFF does not see it).
+- Edit and Archive row actions are conditionally rendered when `can('write')`.
+- `ProductFormPage` renders `ForbiddenState` inline for STAFF (write check before rendering).
+- Gallery write controls (upload, delete, promote) are controlled by `canWrite = can('write') && can('media:manage')`.
+
+### Results
+
+- **Build**: green — no type errors.
+- **Lint**: 0 errors.
+- **No new tests added** — follow-up integration tests are planned (see TEST_PLAN.md Task 7 section).
+- Generated API files unchanged. `.env` not staged. `frontend-handoff/` not modified. No backend code added.
+
+### Key Decisions
+
+- **Archive over deactivate**: products use the `archive` endpoint (not `deactivate`). The UI reflects this: `status === 'ARCHIVED'` hides the Archive action; there is no "restore" from the UI.
+- **Unified form page**: a single `ProductFormPage` handles both create and edit rather than two separate page files. The mode is derived from the presence of `productId` in the route params. This reduces duplication and keeps the form component ignorant of routing.
+- **Gallery on detail + form pages**: `ProductGallery` is rendered on both `ProductDetailPage` (for quick access) and `ProductFormPage` (in edit mode). The gallery always operates on the real product ID, never on unsaved state.
+- **`media:manage` permission for gallery writes**: gallery controls require `can('media:manage')` in addition to `can('write')`, matching the backend role matrix.
+- **References page is a placeholder**: `ProductReferencesPage` intentionally renders `ComingSoonState` to reserve the route and make navigation consistent. Full CRUD arrives in Task 8.
+- **Nullable Orval guard**: `sku` is typed `string | null` in the generated types; the detail page and columns use `typeof ref.sku === 'string' ? ref.sku : '—'` rather than nullish coalescing to satisfy TypeScript strict mode.
+
+---
+
 ## Task 6 — Categories & Brands
 
 **Date:** 2026-06-14

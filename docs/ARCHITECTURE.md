@@ -26,9 +26,12 @@ penguin-Dash/
 │   │   ├── categories/          # Category CRUD + image upload (Task 6)
 │   │   │   ├── components/      # CategoryForm, CategoryColumns, CategoryImageUpload
 │   │   │   └── hooks/           # use-categories.ts (list/detail/create/update/deactivate/image)
-│   │   └── brands/              # Brand CRUD (Task 6)
-│   │       ├── components/      # BrandForm, BrandColumns
-│   │       └── hooks/           # use-brands.ts (list/detail/create/update/deactivate)
+│   │   ├── brands/              # Brand CRUD (Task 6)
+│   │   │   ├── components/      # BrandForm, BrandColumns
+│   │   │   └── hooks/           # use-brands.ts (list/detail/create/update/deactivate)
+│   │   └── products/            # Product CRUD + media gallery (Task 7)
+│   │       ├── components/      # ProductForm, ProductColumns, ProductGallery
+│   │       └── hooks/           # use-products.ts (list/detail/create/update/archive/image)
 │   │       ├── roles.ts         # Role, Permission, matrix, helpers
 │   │       ├── types.ts         # AdminUser UI type + fromCurrentAdmin mapper
 │   │       ├── auth-context.ts  # AuthContext + AuthContextValue + AuthStatus
@@ -390,6 +393,37 @@ Categories and brands are never hard-deleted from the UI. The list page offers a
 
 **Category image workflow** (`CategoryImageUpload`):
 Displayed on the `CategoryEditPage` (edit mode only, above the form). Shows the current image (`currentImage.urls.card`), previews the selected file locally before upload, calls `categoryMediaControllerReplace` (multipart), and calls `categoryMediaControllerDelete` with a confirm dialog for removal. Invalidates both the detail and list queries after each operation. Brand logo upload is **not implemented** — no backend contract exists for it in the current OpenAPI spec.
+
+### 13. Product Feature Extensions (Task 7)
+
+Products extend the Task 6 CRUD pattern with a richer set of concerns.
+
+**Archive instead of deactivate**: products are never soft-deleted or deactivated via a checkbox — they are archived via `POST /admin/products/:id/archive`. Archiving sets `status = 'ARCHIVED'` and the backend cascades to deactivate all linked references. The Archive button is hidden from the UI once a product is already archived.
+
+**Product status lifecycle**: `DRAFT → ACTIVE → ARCHIVED`. Displayed as a `StatusBadge` (warning/success/neutral tones). The list page exposes a `SelectFilter` for `status` (DRAFT/ACTIVE/ARCHIVED) and a separate `SelectFilter` for `isActive` (boolean).
+
+**Combined form page**: `ProductFormPage` serves both create (`/products/new`) and edit (`/products/:productId/edit`) modes. The `productId` route param determines mode. In edit mode it loads the product detail, renders `ProductForm mode="edit"`, and below the form shows the `ProductGallery` section (media:manage gated). In create mode the gallery is hidden until a product ID exists.
+
+**Slug auto-generation**: when the slug field is empty and focus leaves the name field (create mode only), the form auto-fills the slug by lower-casing the name, stripping non-alphanumeric characters, and joining words with hyphens. The slug remains editable.
+
+**Category and brand selection**: `ProductForm` fetches `useCategoryList({ pageSize: 100 })` and `useBrandList({ pageSize: 100 })` inline to populate `<Select>` dropdowns. Category is required; brand is optional (a `__none__` sentinel maps to "No brand" for Radix Select compatibility). Both selects show a "Loading…" placeholder while their queries settle.
+
+**ProductGallery** (`src/features/products/components/ProductGallery.tsx`):
+- Renders a cover section (single image, `role: 'COVER'`) and a gallery grid (`role: 'GALLERY'`).
+- Cover upload/replace: `productMediaControllerUpload(productId, { file, role: 'COVER' })` (multipart).
+- Gallery add: `productMediaControllerUpload(productId, { file, role: 'GALLERY' })`.
+- Image delete: `productMediaControllerDelete(productId, imageId)` — works for both cover and gallery; confirmed via `ConfirmDialog`.
+- Promote to cover: `productMediaControllerUpdate(productId, imageId, { role: 'COVER' })` — updates an existing gallery image's role; a star button appears on gallery card hover.
+- All operations invalidate `getAdminProductsControllerFindOneQueryKey(productId)` (detail only; list thumbnail updates on next list fetch).
+- Requires `canWrite = can('write') && can('media:manage')`. Rendered inside `<PermissionGuard permission="media:manage">` on `ProductFormPage`.
+
+**ProductDetailPage** (`src/pages/catalog/ProductDetailPage.tsx`):
+- Read-only view showing product info, pricing, the gallery (read + write depending on permissions), and a references summary table.
+- The references table shows `referenceCode`, `referenceName`, `sku`, `stockQuantity`, and `isActive` for each reference returned in `product.references`. It is a summary only — full management is on the `ProductReferencesPage`.
+- Archive action is `PermissionGuard`-wrapped; on success, navigates back to the products list.
+
+**ProductReferencesPage** (`src/pages/catalog/ProductReferencesPage.tsx`):
+- Placeholder page. Loads the product name via `useProductDetail` to show a meaningful title, then renders `ComingSoonState` with a planned-features list. Full implementation deferred to Task 8.
 
 ## TypeScript Configuration
 

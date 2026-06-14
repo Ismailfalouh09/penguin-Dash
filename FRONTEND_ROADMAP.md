@@ -10,13 +10,13 @@
 | **Task 4** | Authentication — Login page, JWT storage, `GET /auth/me`, Bearer injection, protected routes, real current-user | ✅ **Completed** |
 | **Task 5** | Shared operational components — data table, pagination, search/filters, URL state, form layout, dialogs, toasts | ✅ **Completed** |
 | **Task 6** | Categories & Brands — List, create, edit, deactivate, image upload (categories); list, create, edit, deactivate (brands) | ✅ **Completed** |
-| **Task 7** | Attributes & Options — Attribute groups, options, deactivation | ⏳ **Next** |
-| Task 8 | Products — List, create, edit, image gallery management |
-| Task 9 | Product References — SKU variants, stock management, swatch images |
-| Task 10 | Packs — Bundle management, pack image gallery |
-| Task 11 | Quiz — Question list, create, edit, reorder |
-| Task 12 | Recommendation Rules — Rule builder, preview engine |
-| Task 13 | Orders — Order list, order detail, status updates |
+| **Task 7** | Products — List, create, edit, archive, cover + gallery image management, detail view, references placeholder | ✅ **Completed** |
+| **Task 8** | Product References & Stock — SKU variants, stock management, swatch images | ⏳ **Next** |
+| Task 9 | Packs — Bundle management, pack image gallery |
+| Task 10 | Quiz — Question list, create, edit, reorder |
+| Task 11 | Recommendation Rules — Rule builder, preview engine |
+| Task 12 | Orders — Order list, order detail, status updates |
+| Task 13 | Attributes & Options — Attribute groups, options, deactivation |
 | Task 14 | Media Library — Generic media upload, entity-specific image management |
 | Task 15 | Role-Based Access Control — Enforce STAFF restrictions across modules |
 | Task 16 | Polish & Production Readiness — Error boundaries, route guards, a11y audit |
