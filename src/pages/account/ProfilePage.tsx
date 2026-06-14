@@ -1,15 +1,9 @@
 import { useCurrentUser } from '@/features/auth/current-user'
 import { ROLE_LABELS } from '@/features/auth/roles'
-import {
-  ComingSoonState,
-  PageContainer,
-  PageHeader,
-  SectionCard,
-  StatusBadge,
-} from '@/shared/components/common'
+import { ComingSoonState, PageContainer, PageHeader, SectionCard } from '@/shared/components/common'
 
 export function ProfilePage() {
-  const { user, isPlaceholder } = useCurrentUser()
+  const { user } = useCurrentUser()
 
   return (
     <PageContainer>
@@ -18,8 +12,7 @@ export function ProfilePage() {
       <div className="mt-6 space-y-6">
         <SectionCard
           title="Account"
-          description="Loaded from GET /auth/me once authentication is implemented (Task 3)."
-          action={isPlaceholder ? <StatusBadge tone="warning">Placeholder data</StatusBadge> : null}
+          description="Loaded from GET /auth/me for the signed-in admin."
         >
           <dl className="grid gap-4 sm:grid-cols-2">
             <div>

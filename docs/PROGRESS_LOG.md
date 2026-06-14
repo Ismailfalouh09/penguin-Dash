@@ -1,5 +1,88 @@
 # Progress Log
 
+## Task 4 — Authentication
+
+**Date:** 2026-06-14
+**Status:** Completed
+
+### What Was Done
+
+- Replaced the Task 2 placeholder current-user with a full authentication system
+  built entirely in `src/features/auth/`.
+- Built **token storage** (`token-storage.ts`): `sessionStorage`-backed
+  `getStoredToken` / `setStoredToken` / `clearStoredToken`. Tab-scoped, handles
+  SSR and privacy-mode gracefully. Token is never logged, never in a URL.
+- Built the **Bearer-header interceptor** (`auth-interceptor.ts`): calls
+  `registerRequestInterceptor` on the single HTTP client; reads the token at
+  request time so login/logout take effect immediately without re-installing.
+- Built the **global 401 event bus** (`auth-events.ts`): a module-level handler
+  registry that lets the `QueryClient` (which lives outside React) trigger an
+  auth teardown without importing React or the context directly.
+- Updated the **QueryClient** (`query-client.ts`): added global `QueryCache` and
+  `MutationCache` error handlers that call `notifyUnauthorized()` on any 401.
+  403 is intentionally ignored — the session is valid; the UI handles it locally.
+- Built **`AuthProvider`** (`AuthProvider.tsx`): installs the interceptor once,
+  restores a stored session on startup via `GET /auth/me` (or discards an
+  invalid/expired token), exposes `login` (POST → store token → GET /auth/me) and
+  `logout` (clear token, set `admin = null`, flush the query cache). Registers the
+  global 401 handler to the same teardown as manual logout.
+- Built **`useAuth`** (`use-auth.ts`): typed accessor for `AuthContext`.
+- Built **`ProtectedRoute`** (`ProtectedRoute.tsx`): shows a full-page loader
+  while the session is being restored; redirects unauthenticated users to `/login`
+  with `state.from` preserved; renders `<CurrentUserProvider>` + `<Outlet />`
+  for authenticated users.
+- Built **`GuestRoute`** (`GuestRoute.tsx`): prevents authenticated admins from
+  landing on `/login`; redirects to `state.from` (the originally requested route)
+  or `/dashboard` after login.
+- Built **`RoleGuard`** (`RoleGuard.tsx`): route-level authorization redirect to
+  `/forbidden` for authenticated users lacking the required role or permission.
+  Can wrap a route branch (via `<Outlet />`) or a single element (via `children`).
+- Built the **login page** (`src/pages/LoginPage.tsx`): React Hook Form + Zod
+  (`login-schema.ts`), delegates to `useAuth().login`, shows a `401` "Incorrect
+  email or password" message or a generic API error message; navigation is handled
+  by `GuestRoute` on session change.
+- Built `FullPageLoader` (`src/shared/components/common/FullPageLoader.tsx`): a
+  centred spinner used by `ProtectedRoute` and `GuestRoute` during session restore.
+- Updated **`CurrentUserProvider`** (`current-user.tsx`): added a real
+  `ProviderFromAuth` path that reads the signed-in admin from `useAuth()` (used in
+  the app); the explicit-user override path (used in tests and previews) is
+  preserved unchanged.
+- Updated **`UserMenu`** (`UserMenu.tsx`): now calls `useAuth().logout` + navigates
+  to `/login` on sign-out instead of being a static placeholder.
+- Updated **`ProfilePage`** (`ProfilePage.tsx`): shows real admin data from
+  `useCurrentUser()` instead of placeholder text.
+- Removed `src/pages/LoginPlaceholderPage.tsx` (replaced by the real login page).
+- Wired the router (`router.tsx`) with `GuestRoute` wrapping `/login` and
+  `ProtectedRoute` wrapping all authenticated routes. `providers.tsx` replaced
+  `CurrentUserProvider` with `AuthProvider`.
+- Updated test utilities (`render.tsx`, `router.tsx`) to stub `AuthContext`
+  directly so tests never depend on a real token or API call. Added
+  `unauthenticated` option to `renderWithRouter` for guest-session tests.
+- Updated the login route test (`App.test.tsx`) to verify the real login form
+  instead of the removed design-preview placeholder.
+- **Test result**: 90 tests, 90 passed, 0 failed (all 16 test files passing).
+- **Build**: TypeScript + Vite production build clean, 0 type errors.
+- **Lint**: 0 errors, 3 pre-existing shadcn/ui fast-refresh warnings (unchanged).
+
+### Key Decisions
+
+- **`sessionStorage` over `localStorage`**: tab-scoped, cleared on tab close —
+  safer default for an admin tool. No "remember me" requirement.
+- **No refresh-token flow**: the backend issues a single access token with no
+  refresh endpoint in the current OpenAPI contract. When the token expires, a 401
+  on any request tears down the session and redirects to `/login`.
+- **Interceptor reads token at request time**: avoids stale captures; login and
+  logout take effect for the very next request without re-registering.
+- **`AuthContext` stubbed in tests**: both `render` and `renderWithRouter` supply a
+  pre-built `AuthContextValue`; no `AuthProvider` boot cycle runs in tests, so
+  tests are fast and deterministic.
+- **`CurrentUserProvider` only inside `ProtectedRoute`**: keeps the "guaranteed
+  non-null admin" invariant in the type system rather than null-checking everywhere.
+- **403 not handled globally**: a Forbidden response means the session is valid;
+  only the requesting feature or route handles it (e.g. `RoleGuard → /forbidden`).
+
+---
+
 ## Task 3 — Backend API Integration Foundation
 
 **Date:** 2026-06-14

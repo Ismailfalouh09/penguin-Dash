@@ -15,21 +15,31 @@ penguin-Dash/
 │   ├── app/                     # Bootstrap: wires everything together
 │   │   ├── App.tsx              # Root component (Providers + RouterProvider)
 │   │   ├── router.tsx           # Route config (`routes`) + browser router
-│   │   └── providers.tsx        # QueryClient + CurrentUser providers
+│   │   └── providers.tsx        # QueryClient + AuthProvider
 │   ├── config/
 │   │   ├── env.ts               # Typed, Zod-validated env module (single source)
 │   │   ├── routes.ts            # Central route path registry
 │   │   ├── route-handle.ts      # RouteHandle type (title + breadcrumb)
 │   │   └── navigation.ts        # Central nav config (groups, items, role filter)
 │   ├── features/                # Feature modules
-│   │   └── auth/                # Role model + placeholder current user (Task 2)
+│   │   └── auth/                # Full authentication system (Task 4)
 │   │       ├── roles.ts         # Role, Permission, matrix, helpers
-│   │       ├── types.ts         # AdminUser UI type
-│   │       └── current-user.tsx # CurrentUserProvider + useCurrentUser
+│   │       ├── types.ts         # AdminUser UI type + fromCurrentAdmin mapper
+│   │       ├── auth-context.ts  # AuthContext + AuthContextValue + AuthStatus
+│   │       ├── auth-events.ts   # Global 401 handler registry (decoupled from React)
+│   │       ├── auth-interceptor.ts # Bearer-header request interceptor
+│   │       ├── token-storage.ts # sessionStorage accessors (get/set/clear)
+│   │       ├── login-schema.ts  # Zod schema for login form (email + password)
+│   │       ├── AuthProvider.tsx # Session owner: login, logout, restore, 401 handler
+│   │       ├── use-auth.ts      # useAuth() hook (reads AuthContext)
+│   │       ├── current-user.tsx # CurrentUserProvider + useCurrentUser
+│   │       ├── ProtectedRoute.tsx # Redirects unauthenticated users to /login
+│   │       ├── GuestRoute.tsx   # Redirects authenticated users away from /login
+│   │       └── RoleGuard.tsx    # Route-level role/permission redirect to /forbidden
 │   ├── pages/                   # Route-level page components
 │   │   ├── DashboardOverviewPage.tsx
 │   │   ├── DiagnosticsPage.tsx          # Dev-only API diagnostics (/diagnostics)
-│   │   ├── LoginPlaceholderPage.tsx
+│   │   ├── LoginPage.tsx                # Real login form (POST /auth/login)
 │   │   ├── ForbiddenPage.tsx / NotFoundPage.tsx
 │   │   ├── _shared/ModulePlaceholder.tsx   # Shared placeholder scaffold
 │   │   ├── catalog/            # Categories, Brands, Products(+detail/form/refs), Packs, Media
@@ -138,18 +148,36 @@ nav items in components. `getNavigationForRole(role)` filters items by their
 testable. Route paths come from `src/config/routes.ts`; titles/breadcrumbs come
 from each route's `handle` (`src/config/route-handle.ts`).
 
-### 8. Role-Aware UI Strategy (`src/features/auth/`)
+### 8. Authentication System (`src/features/auth/`)
 
-`roles.ts` mirrors the backend permission matrix as coarse capabilities
-(`read`, `write`, `media:manage`, `orders:update-status`,
-`recommendations:preview`). The current user flows through `CurrentUserProvider`
-/ `useCurrentUser`; in Task 2 it returns an obvious **placeholder** OWNER and
-will be swapped for `GET /auth/me` in Task 3.
+**Session ownership** — `AuthProvider` owns the full auth lifecycle: installs the
+Bearer interceptor once, restores a stored session via `GET /auth/me` on startup,
+exposes `login` (POST /auth/login → store token → GET /auth/me) and `logout`
+(clear token + clear query cache). It sits inside `QueryClientProvider` so it can
+flush the cache on logout.
 
-UI gating uses `<PermissionGuard permission=… roles=…>` to hide actions the user
-cannot perform. This is **usability only** — the backend stays authoritative.
-Because all roles can `read` every page, navigation is identical across roles
-today; the split appears on write actions (hidden for STAFF).
+**Token storage** — The access token is kept in `sessionStorage` (scoped to the
+browser tab; cleared when the tab closes). It is read at request time by the
+interceptor, never logged, never embedded in URLs.
+
+**Route protection** — `ProtectedRoute` blocks unauthenticated access and
+redirects to `/login`, preserving the original destination in router state so
+`GuestRoute` can redirect back after sign-in. `GuestRoute` prevents
+already-signed-in admins from seeing the login form.
+
+**Role gating** — `RoleGuard` redirects unauthorized but authenticated users to
+`/forbidden`. `<PermissionGuard>` hides write actions inline (usability only;
+backend stays authoritative). `roles.ts` mirrors the backend matrix.
+
+**401 handling** — `QueryClient`'s global error handlers call `notifyUnauthorized`
+on any 401. `AuthProvider` registers the handler so a stale token on any request
+tears down the whole session and sends the admin back to `/login`. 403 is
+intentionally left to feature-level handling (session is valid, just lacks permission).
+
+**Current user** — `CurrentUserProvider` is rendered inside `ProtectedRoute`, so
+it always has a real authenticated admin from `GET /auth/me`. Tests stub
+`AuthContext` directly via `AuthContext.Provider` — no real API calls, no real
+token.
 
 ### 9. Shared State Patterns
 
@@ -168,9 +196,12 @@ into `src/lib/api/generated/` (isolated, never hand-edited). Every request flows
 through one handwritten fetch client (`http-client.ts`, the Orval mutator), and
 every failure is normalized to an `ApiError` (`errors.ts`). Components never
 build backend URLs or call `fetch` directly; they use generated hooks
-(`useQuery`/`useMutation`). Authentication is not wired here yet — a request
-interceptor registry is the documented extension point for Task 4. Full details:
-[API_INTEGRATION.md](API_INTEGRATION.md).
+(`useQuery`/`useMutation`).
+
+Bearer authentication is injected per-request via `src/features/auth/auth-interceptor.ts`
+using the `registerRequestInterceptor` hook in `http-client.ts`. The generated
+client and `http-client.ts` were not modified for auth — the interceptor extension
+point was designed for this in Task 3. Full details: [API_INTEGRATION.md](API_INTEGRATION.md).
 
 ## TypeScript Configuration
 

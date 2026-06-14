@@ -1,9 +1,11 @@
 import { createBrowserRouter, Navigate, type RouteObject } from 'react-router-dom'
 import type { RouteHandle } from '@/config/route-handle'
 import { ROUTES } from '@/config/routes'
+import { GuestRoute } from '@/features/auth/GuestRoute'
+import { ProtectedRoute } from '@/features/auth/ProtectedRoute'
 import { DashboardLayout } from '@/shared/components/layout/DashboardLayout'
 import { DashboardOverviewPage } from '@/pages/DashboardOverviewPage'
-import { LoginPlaceholderPage } from '@/pages/LoginPlaceholderPage'
+import { LoginPage } from '@/pages/LoginPage'
 import { ForbiddenPage } from '@/pages/ForbiddenPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 import { CategoriesPage } from '@/pages/catalog/CategoriesPage'
@@ -30,142 +32,154 @@ const handle = (h: RouteHandle): RouteHandle => h
 /** Route configuration, exported so tests can build a memory router from it. */
 export const routes: RouteObject[] = [
   {
-    path: ROUTES.login,
-    element: <LoginPlaceholderPage />,
+    // Guest-only: authenticated admins are redirected away from /login.
+    element: <GuestRoute />,
+    children: [
+      {
+        path: ROUTES.login,
+        element: <LoginPage />,
+      },
+    ],
   },
   {
-    path: '/',
-    element: <DashboardLayout />,
-    handle: handle({ title: 'Dashboard', breadcrumb: 'Dashboard' }),
+    // Everything below requires an authenticated session.
+    element: <ProtectedRoute />,
     children: [
-      { index: true, element: <Navigate to={ROUTES.dashboard} replace /> },
       {
-        path: 'dashboard',
-        element: <DashboardOverviewPage />,
-        handle: handle({ title: 'Overview', breadcrumb: 'Overview' }),
-      },
-
-      // Catalog
-      {
-        path: 'categories',
-        element: <CategoriesPage />,
-        handle: handle({ title: 'Categories', breadcrumb: 'Categories' }),
-      },
-      {
-        path: 'brands',
-        element: <BrandsPage />,
-        handle: handle({ title: 'Brands', breadcrumb: 'Brands' }),
-      },
-      {
-        path: 'products',
-        handle: handle({ title: 'Products', breadcrumb: 'Products' }),
+        path: '/',
+        element: <DashboardLayout />,
+        handle: handle({ title: 'Dashboard', breadcrumb: 'Dashboard' }),
         children: [
-          { index: true, element: <ProductsPage /> },
+          { index: true, element: <Navigate to={ROUTES.dashboard} replace /> },
           {
-            path: 'new',
-            element: <ProductFormPage />,
-            handle: handle({ title: 'New product', breadcrumb: 'New' }),
+            path: 'dashboard',
+            element: <DashboardOverviewPage />,
+            handle: handle({ title: 'Overview', breadcrumb: 'Overview' }),
+          },
+
+          // Catalog
+          {
+            path: 'categories',
+            element: <CategoriesPage />,
+            handle: handle({ title: 'Categories', breadcrumb: 'Categories' }),
           },
           {
-            path: ':productId',
-            element: <ProductDetailPage />,
-            handle: handle({ title: 'Product details', breadcrumb: 'Details' }),
+            path: 'brands',
+            element: <BrandsPage />,
+            handle: handle({ title: 'Brands', breadcrumb: 'Brands' }),
           },
           {
-            path: ':productId/edit',
-            element: <ProductFormPage />,
-            handle: handle({ title: 'Edit product', breadcrumb: 'Edit' }),
+            path: 'products',
+            handle: handle({ title: 'Products', breadcrumb: 'Products' }),
+            children: [
+              { index: true, element: <ProductsPage /> },
+              {
+                path: 'new',
+                element: <ProductFormPage />,
+                handle: handle({ title: 'New product', breadcrumb: 'New' }),
+              },
+              {
+                path: ':productId',
+                element: <ProductDetailPage />,
+                handle: handle({ title: 'Product details', breadcrumb: 'Details' }),
+              },
+              {
+                path: ':productId/edit',
+                element: <ProductFormPage />,
+                handle: handle({ title: 'Edit product', breadcrumb: 'Edit' }),
+              },
+              {
+                path: ':productId/references',
+                element: <ProductReferencesPage />,
+                handle: handle({ title: 'Product references', breadcrumb: 'References' }),
+              },
+            ],
           },
           {
-            path: ':productId/references',
-            element: <ProductReferencesPage />,
-            handle: handle({ title: 'Product references', breadcrumb: 'References' }),
+            path: 'packs',
+            handle: handle({ title: 'Packs', breadcrumb: 'Packs' }),
+            children: [
+              { index: true, element: <PacksPage /> },
+              {
+                path: 'new',
+                element: <PackFormPage />,
+                handle: handle({ title: 'New pack', breadcrumb: 'New' }),
+              },
+              {
+                path: ':packId',
+                element: <PackDetailPage />,
+                handle: handle({ title: 'Pack details', breadcrumb: 'Details' }),
+              },
+              {
+                path: ':packId/edit',
+                element: <PackFormPage />,
+                handle: handle({ title: 'Edit pack', breadcrumb: 'Edit' }),
+              },
+            ],
+          },
+          {
+            path: 'media',
+            element: <MediaPage />,
+            handle: handle({ title: 'Media library', breadcrumb: 'Media library' }),
+          },
+
+          // Personalization
+          {
+            path: 'attributes',
+            element: <AttributesPage />,
+            handle: handle({ title: 'Attributes', breadcrumb: 'Attributes' }),
+          },
+          {
+            path: 'quiz',
+            element: <QuizPage />,
+            handle: handle({ title: 'Quiz', breadcrumb: 'Quiz' }),
+          },
+          {
+            path: 'recommendation-rules',
+            element: <RecommendationRulesPage />,
+            handle: handle({ title: 'Recommendation rules', breadcrumb: 'Recommendation rules' }),
+          },
+
+          // Sales
+          {
+            path: 'orders',
+            handle: handle({ title: 'Orders', breadcrumb: 'Orders' }),
+            children: [
+              { index: true, element: <OrdersPage /> },
+              {
+                path: ':orderId',
+                element: <OrderDetailPage />,
+                handle: handle({ title: 'Order details', breadcrumb: 'Details' }),
+              },
+            ],
+          },
+
+          // Administration
+          {
+            path: 'profile',
+            element: <ProfilePage />,
+            handle: handle({ title: 'Profile', breadcrumb: 'Profile' }),
+          },
+          {
+            path: 'forbidden',
+            element: <ForbiddenPage />,
+            handle: handle({ title: 'Access denied', breadcrumb: 'Access denied' }),
+          },
+
+          // Development-only API diagnostics (not in sidebar navigation).
+          {
+            path: 'diagnostics',
+            element: <DiagnosticsPage />,
+            handle: handle({ title: 'API diagnostics', breadcrumb: 'API diagnostics' }),
+          },
+
+          // Catch-all (inside the shell so navigation is preserved)
+          {
+            path: '*',
+            element: <NotFoundPage />,
+            handle: handle({ title: 'Page not found', breadcrumb: 'Not found' }),
           },
         ],
-      },
-      {
-        path: 'packs',
-        handle: handle({ title: 'Packs', breadcrumb: 'Packs' }),
-        children: [
-          { index: true, element: <PacksPage /> },
-          {
-            path: 'new',
-            element: <PackFormPage />,
-            handle: handle({ title: 'New pack', breadcrumb: 'New' }),
-          },
-          {
-            path: ':packId',
-            element: <PackDetailPage />,
-            handle: handle({ title: 'Pack details', breadcrumb: 'Details' }),
-          },
-          {
-            path: ':packId/edit',
-            element: <PackFormPage />,
-            handle: handle({ title: 'Edit pack', breadcrumb: 'Edit' }),
-          },
-        ],
-      },
-      {
-        path: 'media',
-        element: <MediaPage />,
-        handle: handle({ title: 'Media library', breadcrumb: 'Media library' }),
-      },
-
-      // Personalization
-      {
-        path: 'attributes',
-        element: <AttributesPage />,
-        handle: handle({ title: 'Attributes', breadcrumb: 'Attributes' }),
-      },
-      {
-        path: 'quiz',
-        element: <QuizPage />,
-        handle: handle({ title: 'Quiz', breadcrumb: 'Quiz' }),
-      },
-      {
-        path: 'recommendation-rules',
-        element: <RecommendationRulesPage />,
-        handle: handle({ title: 'Recommendation rules', breadcrumb: 'Recommendation rules' }),
-      },
-
-      // Sales
-      {
-        path: 'orders',
-        handle: handle({ title: 'Orders', breadcrumb: 'Orders' }),
-        children: [
-          { index: true, element: <OrdersPage /> },
-          {
-            path: ':orderId',
-            element: <OrderDetailPage />,
-            handle: handle({ title: 'Order details', breadcrumb: 'Details' }),
-          },
-        ],
-      },
-
-      // Administration
-      {
-        path: 'profile',
-        element: <ProfilePage />,
-        handle: handle({ title: 'Profile', breadcrumb: 'Profile' }),
-      },
-      {
-        path: 'forbidden',
-        element: <ForbiddenPage />,
-        handle: handle({ title: 'Access denied', breadcrumb: 'Access denied' }),
-      },
-
-      // Development-only API diagnostics (not in sidebar navigation).
-      {
-        path: 'diagnostics',
-        element: <DiagnosticsPage />,
-        handle: handle({ title: 'API diagnostics', breadcrumb: 'API diagnostics' }),
-      },
-
-      // Catch-all (inside the shell so navigation is preserved)
-      {
-        path: '*',
-        element: <NotFoundPage />,
-        handle: handle({ title: 'Page not found', breadcrumb: 'Not found' }),
       },
     ],
   },

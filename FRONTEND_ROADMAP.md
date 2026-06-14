@@ -7,8 +7,8 @@
 | **Task 1** | Foundation — Vite + React + TypeScript + Router + Query + Tailwind + shadcn + Testing | ✅ **Completed** |
 | **Task 2** | Dashboard Conception & Design System — sitemap, routes, navigation config, responsive shell, design tokens, shared UI states, placeholder pages | ✅ **Completed** |
 | **Task 3** | Backend API Integration Foundation — Orval-generated typed client, central HTTP client, error normalization, TanStack Query integration, MSW foundation, diagnostics | ✅ **Completed** |
-| **Task 4** | Authentication — Login page, JWT storage, `GET /auth/me`, Bearer injection, protected routes, real current-user | ⏳ **Next** |
-| Task 5 | Categories — List, create, edit, delete, image upload |
+| **Task 4** | Authentication — Login page, JWT storage, `GET /auth/me`, Bearer injection, protected routes, real current-user | ✅ **Completed** |
+| **Task 5** | Categories — List, create, edit, delete, image upload | ⏳ **Next** |
 | Task 6 | Brands — List, create, edit, delete |
 | Task 7 | Attributes & Options — Attribute groups, options, deactivation |
 | Task 8 | Products — List, create, edit, image gallery management |

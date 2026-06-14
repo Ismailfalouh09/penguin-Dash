@@ -24,12 +24,16 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
   navigation config, design tokens, shared UI/page states, placeholder pages.
 - **Task 3 — API integration foundation**: ✅ Orval-generated typed client +
   TanStack Query hooks, one central HTTP client, error normalization, dev
-  diagnostics, MSW foundation. **No authentication or business pages yet.**
-- **Task 4 — Authentication**: ⏳ next.
+  diagnostics, MSW foundation.
+- **Task 4 — Authentication**: ✅ login page, JWT storage (sessionStorage), session
+  restoration via `GET /auth/me`, Bearer-header injection, protected and guest
+  routes, requested-route redirect, role guards, `401`/`403` handling, logout +
+  query-cache cleanup. No refresh-token flow (single access token only).
+- **Task 5 — Categories**: ⏳ next.
 
-The dashboard runs against placeholder data only; a clearly-marked placeholder
-user drives the shell until authentication lands in Task 4. The generated API
-client is ready for features but no screen calls the backend yet.
+The full authentication system is live. Every route behind `/` requires a valid
+admin session; unauthenticated visitors are sent to `/login` with the original
+destination preserved for redirect after sign-in.
 
 ## Commands
 

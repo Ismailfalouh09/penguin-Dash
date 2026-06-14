@@ -1,7 +1,8 @@
 import { LogOut, User, ChevronDown } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { ROUTES } from '@/config/routes'
 import { useCurrentUser } from '@/features/auth/current-user'
+import { useAuth } from '@/features/auth/use-auth'
 import { ROLE_LABELS } from '@/features/auth/roles'
 import { Avatar, AvatarFallback } from '@/shared/components/ui/avatar'
 import { Badge } from '@/shared/components/ui/badge'
@@ -26,12 +27,19 @@ function initials(name: string): string {
 }
 
 /**
- * Header user menu. Shows the (placeholder) current user, role, and a logout
- * action. Logout is a non-functional placeholder in Task 2 — real auth and
- * `GET /auth/me` arrive in Task 3.
+ * Header user menu. Shows the authenticated admin (from GET /auth/me), their
+ * role, and a working logout action that clears the session and returns to the
+ * login screen.
  */
 export function UserMenu() {
-  const { user, isPlaceholder } = useCurrentUser()
+  const { user } = useCurrentUser()
+  const { logout } = useAuth()
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    logout()
+    navigate(ROUTES.login, { replace: true })
+  }
 
   return (
     <DropdownMenu>
@@ -58,11 +66,6 @@ export function UserMenu() {
           <span className="text-xs font-normal text-muted-foreground">{user.email}</span>
           <span className="mt-1 flex items-center gap-2">
             <Badge variant="secondary">{ROLE_LABELS[user.role]}</Badge>
-            {isPlaceholder && (
-              <Badge variant="outline" className="text-[10px] uppercase">
-                Placeholder
-              </Badge>
-            )}
           </span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
@@ -73,10 +76,9 @@ export function UserMenu() {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem disabled className="text-muted-foreground">
+        <DropdownMenuItem onSelect={handleLogout}>
           <LogOut className="mr-2 size-4" aria-hidden="true" />
           Log out
-          <span className="ml-auto text-[10px] uppercase tracking-wide">Task 3</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -1,6 +1,7 @@
 import { render, type RenderOptions } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { MemoryRouter } from 'react-router-dom'
+import { AuthContext, type AuthContextValue } from '@/features/auth/auth-context'
 import { CurrentUserProvider } from '@/features/auth/current-user'
 import type { AdminUser } from '@/features/auth/types'
 import type { Role } from '@/features/auth/roles'
@@ -21,6 +22,18 @@ export function makeTestUser(role: Role = 'OWNER'): AdminUser {
     fullName: `Test ${role}`,
     email: `${role.toLowerCase()}@test.local`,
     role,
+    isActive: true,
+  }
+}
+
+/** Stub auth context value for tests — no real API calls, no token storage. */
+function makeTestAuthValue(admin: AdminUser): AuthContextValue {
+  return {
+    status: 'authenticated',
+    admin,
+    isAuthenticated: true,
+    login: () => Promise.resolve(),
+    logout: () => undefined,
   }
 }
 
@@ -38,11 +51,14 @@ interface AllProvidersProps {
 
 function AllProviders({ children, initialEntries, role }: AllProvidersProps) {
   const queryClient = createTestQueryClient()
+  const admin = makeTestUser(role)
   return (
     <QueryClientProvider client={queryClient}>
-      <CurrentUserProvider user={makeTestUser(role)}>
-        <MemoryRouter initialEntries={initialEntries}>{children}</MemoryRouter>
-      </CurrentUserProvider>
+      <AuthContext.Provider value={makeTestAuthValue(admin)}>
+        <CurrentUserProvider user={admin}>
+          <MemoryRouter initialEntries={initialEntries}>{children}</MemoryRouter>
+        </CurrentUserProvider>
+      </AuthContext.Provider>
     </QueryClientProvider>
   )
 }

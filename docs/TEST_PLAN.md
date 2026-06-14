@@ -31,11 +31,15 @@ Examples:
 - `src/pages/__tests__/module-pages.test.tsx` — placeholders & permission actions
 - `src/shared/components/ui/__tests__/button.test.tsx`
 
+Both `render` and `renderWithRouter` stub the `AuthContext` directly so tests
+never hit real API calls and never need a real token. Pass `{ unauthenticated: true }`
+to `renderWithRouter` for guest-session tests (e.g. the login page).
+
 ### Route Integration Tests
 Exercise the real route tree through a memory data router.
 
 Examples:
-- `src/app/__tests__/App.test.tsx` — routes, redirect, nested params, 404/403, login
+- `src/app/__tests__/App.test.tsx` — routes, redirect, nested params, 404/403, login page
 
 ### API Layer Tests
 Exercise the generated client + HTTP client + error model against MSW.
@@ -83,6 +87,21 @@ backend responses; register them with `server.use(...)` + the `apiUrl` helper.
 | Generated client | Functions/hooks exported, models barrel, do-not-edit header, mutator wiring |
 | Diagnostics | Shows API URL + contract version; success & error probe; no secrets |
 
+**Task 4 — Authentication**
+
+| Area | Goal |
+|---|---|
+| Token storage | get/set/clear in sessionStorage; handles SSR/privacy-mode |
+| Auth interceptor | Bearer header injected when token present; skipped when absent |
+| 401 event system | `setUnauthorizedHandler` / `notifyUnauthorized` wiring |
+| Login schema | Email required/format, password required |
+| `AuthProvider` | Session restore, login flow, logout + cache clear, 401 teardown |
+| `ProtectedRoute` | Loading state, unauthenticated redirect (with `from`), authenticated render |
+| `GuestRoute` | Redirect authenticated users to dashboard / requested route |
+| `RoleGuard` | Redirects unauthorized role/permission to /forbidden |
+| `LoginPage` | Form validation errors, submit flow, 401 error message |
+
+> Authentication tests stub `AuthContext` — no real tokens, no real API calls.
 > API-layer tests never need a running backend, DB, real JWT, internet, or
 > Cloudinary — MSW intercepts everything.
 

@@ -1,5 +1,6 @@
-import { QueryClient } from '@tanstack/react-query'
-import { isApiError } from './errors'
+import { MutationCache, QueryCache, QueryClient } from '@tanstack/react-query'
+import { notifyUnauthorized } from '@/features/auth/auth-events'
+import { isApiError, isUnauthorizedError } from './errors'
 
 /**
  * Shared TanStack Query retry policy.
@@ -17,11 +18,27 @@ export function shouldRetryQuery(failureCount: number, error: unknown): boolean 
 }
 
 /**
+ * Global handler for failed authenticated requests.
+ *
+ * A `401` on any query or mutation means the stored token is missing, expired,
+ * or rejected — the session is dead, so we trigger a global logout + redirect.
+ * `403` is deliberately ignored here: the session is still valid, the user just
+ * lacks permission, and feature code surfaces that locally (e.g. /forbidden).
+ */
+function handleGlobalRequestError(error: unknown): void {
+  if (isUnauthorizedError(error)) {
+    notifyUnauthorized()
+  }
+}
+
+/**
  * Create the application QueryClient with shared defaults. Business-specific
  * cache invalidation is intentionally left to the feature tasks that add it.
  */
 export function createQueryClient(): QueryClient {
   return new QueryClient({
+    queryCache: new QueryCache({ onError: handleGlobalRequestError }),
+    mutationCache: new MutationCache({ onError: handleGlobalRequestError }),
     defaultOptions: {
       queries: {
         staleTime: 60 * 1000,

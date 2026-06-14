@@ -2,24 +2,23 @@ import { createContext, useContext, useMemo } from 'react'
 import type { AdminUser } from './types'
 import type { Permission, Role } from './roles'
 import { hasAnyRole, hasPermission } from './roles'
+import { useAuth } from './use-auth'
 
 /**
- * PLACEHOLDER current user.
+ * Current-user context: the authenticated admin plus role/permission helpers
+ * used to drive UI affordances (hiding write actions, gating navigation).
  *
- * Task 2 is the conception/design phase — authentication is NOT implemented.
- * This is obviously-fake data used only to render the shell. Task 3 will
- * replace the provider's value with the result of `GET /auth/me`.
+ * Two ways to provide a value:
+ *  - In the app, render `<CurrentUserProvider>` WITHOUT a `user` prop inside an
+ *    `AuthProvider`; it reads the signed-in admin from `useAuth()`.
+ *  - In tests and design previews, pass an explicit `user` so the provider is
+ *    self-contained and needs no AuthProvider.
+ *
+ * Authorization here is advisory only — the backend is the authoritative gate.
  */
-export const PLACEHOLDER_USER: AdminUser = {
-  id: 'placeholder-user',
-  fullName: 'Placeholder Admin',
-  email: 'placeholder@penguin.local',
-  role: 'OWNER',
-}
-
 interface CurrentUserContextValue {
   user: AdminUser
-  /** True while the user is mock data (always true in Task 2). */
+  /** True when the user is injected mock data (tests/previews), not /auth/me. */
   isPlaceholder: boolean
   can: (permission: Permission) => boolean
   isRole: (allowed: readonly Role[]) => boolean
@@ -36,20 +35,54 @@ interface CurrentUserProviderProps {
 
 export function CurrentUserProvider({
   children,
-  user = PLACEHOLDER_USER,
-  isPlaceholder = true,
+  user: userOverride,
+  isPlaceholder,
 }: CurrentUserProviderProps) {
+  return userOverride ? (
+    <ProviderWithUser user={userOverride} isPlaceholder={isPlaceholder ?? true}>
+      {children}
+    </ProviderWithUser>
+  ) : (
+    <ProviderFromAuth>{children}</ProviderFromAuth>
+  )
+}
+
+/** Self-contained provider for an explicitly supplied user (tests/previews). */
+function ProviderWithUser({
+  children,
+  user,
+  isPlaceholder,
+}: {
+  children: React.ReactNode
+  user: AdminUser
+  isPlaceholder: boolean
+}) {
   const value = useMemo<CurrentUserContextValue>(
-    () => ({
-      user,
-      isPlaceholder,
-      can: (permission) => hasPermission(user.role, permission),
-      isRole: (allowed) => hasAnyRole(user.role, allowed),
-    }),
+    () => buildValue(user, isPlaceholder),
     [user, isPlaceholder]
   )
-
   return <CurrentUserContext.Provider value={value}>{children}</CurrentUserContext.Provider>
+}
+
+/** App provider: derives the current user from the authentication session. */
+function ProviderFromAuth({ children }: { children: React.ReactNode }) {
+  const { admin } = useAuth()
+  // This provider is only mounted behind a ProtectedRoute, which guarantees an
+  // authenticated admin before rendering. The guard keeps types honest.
+  if (!admin) {
+    throw new Error('CurrentUserProvider requires an authenticated admin')
+  }
+  const value = useMemo<CurrentUserContextValue>(() => buildValue(admin, false), [admin])
+  return <CurrentUserContext.Provider value={value}>{children}</CurrentUserContext.Provider>
+}
+
+function buildValue(user: AdminUser, isPlaceholder: boolean): CurrentUserContextValue {
+  return {
+    user,
+    isPlaceholder,
+    can: (permission) => hasPermission(user.role, permission),
+    isRole: (allowed) => hasAnyRole(user.role, allowed),
+  }
 }
 
 export function useCurrentUser(): CurrentUserContextValue {

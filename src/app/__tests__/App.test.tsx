@@ -42,10 +42,10 @@ describe('application routes', () => {
     expect(screen.getByRole('navigation', { name: 'Main navigation' })).toBeInTheDocument()
   })
 
-  it('renders the standalone login placeholder without the shell', () => {
-    renderWithRouter(routes, { initialEntries: ['/login'] })
+  it('renders the standalone login page without the shell', () => {
+    renderWithRouter(routes, { initialEntries: ['/login'], unauthenticated: true })
     expect(screen.getByRole('button', { name: 'Sign in' })).toBeInTheDocument()
-    expect(screen.getByText('Design preview')).toBeInTheDocument()
+    expect(screen.getByText('Access the Penguin Beauty admin dashboard.')).toBeInTheDocument()
     expect(screen.queryByRole('navigation', { name: 'Main navigation' })).not.toBeInTheDocument()
   })
 })
