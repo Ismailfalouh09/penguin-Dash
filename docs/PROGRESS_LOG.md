@@ -1,5 +1,41 @@
 # Progress Log
 
+## Task 10 - Media Library
+
+**Date:** 2026-06-14
+**Status:** Completed
+
+### What Was Done
+
+Documented the completed media-library workflow across the project docs and aligned the task tracker with the implementation already present in the repo.
+
+Updated coverage:
+- Shared media browsing, multipart upload, metadata editing, and soft delete/archive behavior.
+- Reusable media picker with single/multi-select support and optional inline upload.
+- Supported category, product, reference, and pack integrations.
+- OWNER, ADMIN, and STAFF permission behavior.
+- No direct browser-to-Cloudinary upload path.
+
+### Roadmap
+
+- Task 10 - Completed.
+- Task 11 - Next: Attributes and Quiz Management.
+
+### Verification
+
+Task 10B had already reported the standard verification commands for the media work. They were not rerun in Task 10C:
+
+- `npm run lint`
+- `npm run format:check`
+- `npm test`
+- `npm run build`
+
+Reported result: passing.
+
+### Notes
+
+- The reusable picker is intentionally shared, but it is not yet wired into the entity pages; category, product, reference, and pack screens still use their entity-specific media widgets.
+
 ## Task 9 — Packs
 
 **Date:** 2026-06-14

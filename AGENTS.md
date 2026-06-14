@@ -172,6 +172,16 @@ Product references are purchasable variants under products. They follow the cata
 
 **Permissions**: OWNER and ADMIN can create, edit, deactivate, and manually update stock via `write`. Swatch controls require `media:manage`. STAFF can read reference lists/details but does not receive write or stock actions.
 
+### Media Library (`src/features/media/`)
+
+- `MediaPage` lives at `/media` and is linked from the catalog navigation.
+- `use-media.ts` wraps list/detail/upload/update/delete. Uploads go through `POST /admin/media/upload`; metadata edits use `PATCH /admin/media/:id`; deletion is soft-delete via `DELETE /admin/media/:id`.
+- `MediaUploadDialog` is the standalone upload entrypoint. It accepts JPEG/PNG/WebP, validates size, and never uploads directly from the browser to Cloudinary.
+- `MediaDetailSheet` shows asset metadata and lets OWNER/ADMIN edit alt text only. STAFF can inspect assets but cannot mutate them.
+- `MediaPicker` is the reusable selector for future attachment flows. It supports single or multi-select, optional inline upload, and search/pagination.
+- Category, product, reference, and pack screens keep using their entity-specific media widgets for now. Do not invent a new cross-entity attachment relationship in UI code.
+- Remaining limitation: the reusable picker is not yet wired into those entity pages.
+
 ### Testing
 - Tests live in `__tests__/` folders co-located with the code they test
 - Use `render` from `src/test/utils/render.tsx` for component tests (QueryClient +

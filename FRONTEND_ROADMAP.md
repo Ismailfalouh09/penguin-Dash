@@ -21,6 +21,8 @@
 | Task 15 | Role-Based Access Control — Enforce STAFF restrictions across modules |
 | Task 16 | Polish & Production Readiness — Error boundaries, route guards, a11y audit |
 
+> Current milestone: Task 10 is complete for the media library. Task 11 is next: Attributes and Quiz Management.
+>
 > Ordering note: authentication and the OpenAPI client were originally sketched
 > elsewhere in the plan. In practice the conception/shell (Task 2) and the typed
 > API foundation (Task 3) were built first because every screen depends on them,

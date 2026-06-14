@@ -485,6 +485,20 @@ Task 9 adds bundle management as a first-class catalog workflow:
 - Pages and routes are `/packs`, `/packs/new`, `/packs/:packId`, and `/packs/:packId/edit`. The list page supports search, status, active, and price-mode filters, while the detail page shows pack items, compatibility attributes, and media.
 - Permissions mirror the backend matrix: OWNER and ADMIN can create, edit, archive, and manage media; STAFF can read packs but cannot mutate them.
 
+### 16. Media Library (`src/features/media/`)
+
+Task 10 adds a shared media library for catalog imagery and metadata management:
+
+- `MediaPage` is routed at `/media` and is also exposed in the catalog navigation.
+- `use-media.ts` wraps list/detail/upload/update/delete. It invalidates the list query key (`['/admin/media']`) and the detail query key after writes.
+- `MediaUploadDialog` performs multipart upload through the backend `POST /admin/media/upload` endpoint. The UI supports JPEG, PNG, and WebP, and it does not upload directly from the browser to Cloudinary.
+- `MediaDetailSheet` loads one asset, shows URL/size/format/usage metadata, and lets OWNER/ADMIN edit alt text only. The save operation updates local metadata, not the stored image binary.
+- `MediaPicker` is the reusable selector for future attachment flows. It supports search, pagination, single or multi-select, and optional inline upload when the host passes `canUpload`.
+- `MediaPage` soft-deletes assets instead of hard-deleting them. Deleted assets stay in the backend for historical references and are hidden from the list unless `includeDeleted` is enabled.
+- OWNER and ADMIN can upload, edit metadata, and archive media. STAFF can list and inspect assets but cannot mutate them.
+- Category, product, reference, and pack screens keep using their entity-specific media widgets: category image replace/delete, product cover/gallery upload and reorder, reference swatch upload/delete, and pack cover/gallery upload and reorder.
+- Remaining limitation: the reusable picker is not yet wired into those entity pages, so attachment flows are still entity-specific.
+
 ## TypeScript Configuration
 
 Strict mode is enforced:

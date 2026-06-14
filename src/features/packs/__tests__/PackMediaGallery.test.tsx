@@ -58,10 +58,7 @@ describe('PackMediaGallery', () => {
           status: 201,
         })
       }),
-      http.patch(apiUrl(`/admin/packs/${PACK_ID}/images/reorder`), async ({ request }) => {
-        const body = (await request.json()) as {
-          items: Array<{ imageId: string; position: number }>
-        }
+      http.patch(apiUrl(`/admin/packs/${PACK_ID}/images/reorder`), async () => {
         reordered = true
         return HttpResponse.json([makeImage({ id: 'gallery-a' }), makeImage({ id: 'gallery-b' })])
       }),

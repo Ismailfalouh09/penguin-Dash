@@ -191,6 +191,23 @@ Pack workflows are covered by page and component tests in `src/pages/catalog/__t
 
 MSW handlers needed: `GET /admin/packs`, `GET /admin/packs/:id`, `POST /admin/packs`, `PATCH /admin/packs/:id`, `DELETE /admin/packs/:id`, `POST /admin/packs/:id/images`, `PATCH /admin/packs/:id/images/:imageId`, `PATCH /admin/packs/:id/images/reorder`, `DELETE /admin/packs/:id/images/:imageId`, `GET /admin/products`, and `GET /admin/attributes`.
 
+**Task 10 â€” Media Library**
+
+No dedicated Task 10 feature tests were added with the implementation. Follow-up tests should cover the shared media library and picker workflows.
+
+| Area | Goal (follow-up) |
+|---|---|
+| `MediaPage` | List rendering, search, sort toggles, archived filter, pagination, upload CTA, delete confirmation, and role gating |
+| `MediaUploadDialog` | JPEG/PNG/WebP and size validation, multipart upload, success/error toasts, and reset behavior |
+| `MediaDetailSheet` | Loads asset metadata, edits alt text, shows soft-deleted state, and blocks STAFF mutations |
+| `MediaPicker` | Search, pagination, single/multi-select, optional inline upload, and selection reset on close |
+| Entity integrations | Category, product, reference, and pack flows continue to use their entity-specific media widgets and permission checks |
+| Permission behavior | OWNER and ADMIN can upload/edit/archive; STAFF can list and inspect only |
+
+MSW handlers needed: `GET /admin/media`, `GET /admin/media/:id`, `POST /admin/media/upload`, `PATCH /admin/media/:id`, and `DELETE /admin/media/:id`.
+
+Uploads are backend-mediated only; tests should not assume a direct browser-to-Cloudinary flow. The reusable picker is intentionally shared, but it is not yet wired into the entity pages.
+
 ## Running Tests
 
 ```bash

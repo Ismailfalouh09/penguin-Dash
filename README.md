@@ -60,6 +60,11 @@ admin session; unauthenticated visitors are sent to `/login` with the original
 destination preserved for redirect after sign-in. The shared component layer is
 used by all CRUD feature tasks (6–14).
 
+## Current milestone
+
+- **Task 10 â€” Media Library**: completed shared media browsing, multipart image upload, alt-text metadata editing, soft delete/archive, reusable picker, and category/product/reference/pack integrations. Uploads go through the backend; there is no direct browser-to-Cloudinary path.
+- **Task 11 â€” Attributes and Quiz Management**: next.
+
 ## Commands
 
 | Command | Description |
