@@ -34,4 +34,7 @@ export const ROUTES = {
 
   profile: '/profile',
   forbidden: '/forbidden',
+
+  /** Development-only API diagnostics. */
+  diagnostics: '/diagnostics',
 } as const

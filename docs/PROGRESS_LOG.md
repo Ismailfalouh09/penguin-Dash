@@ -1,5 +1,50 @@
 # Progress Log
 
+## Task 3 — Backend API Integration Foundation
+
+**Date:** 2026-06-14
+**Status:** Completed
+
+### What Was Done
+
+- Verified the OpenAPI contract (`frontend-handoff/openapi.json`): OpenAPI 3.0.0,
+  `bearer` JWT security scheme, 50 paths / 23 tags / 69 schemas, a real
+  `ApiErrorResponse` envelope, and a public `GET /` health endpoint.
+- Added **Orval** (`orval.config.ts`) generating a typed client + TanStack Query
+  hooks into `src/lib/api/generated/` (239 files: per-tag endpoints + a models
+  barrel). GET → `useQuery`, writes → `useMutation`. Output is deterministic.
+- Built one central **HTTP client** (`src/lib/api/http-client.ts`) as Orval's
+  fetch mutator: env-resolved base URL, JSON + multipart bodies, `AbortSignal`
+  cancellation, and a request-interceptor registry as the Task 4 auth hook. No
+  token injection added.
+- Built **error normalization** (`src/lib/api/errors.ts`): `ApiError` model +
+  `normalizeApiError`, `getApiErrorMessage`, `isUnauthorizedError`,
+  `isForbiddenError`, `isNotFoundError`, `isValidationError`, `isNetworkError`.
+- Centralized the **QueryClient** (`src/lib/api/query-client.ts`): no-retry on
+  4xx, limited retry on network/5xx, no mutation retry; wired into providers.
+- Added `apiBaseUrl` to the typed env module (normalized, trailing slash removed).
+- Added a **dev-only diagnostics** page at `/diagnostics` showing config +
+  contract metadata + an on-demand health probe (not in the sidebar).
+- Extended the **MSW** foundation (`apiUrl` helper) for API-layer tests.
+- Added scripts `api:generate` and `api:check`; isolated generated code from
+  ESLint/Prettier and pinned LF via `.gitattributes`.
+- Wrote 35 API tests (HTTP client, error normalization, query integration,
+  generated exports, diagnostics) — 90 tests total passing.
+- Verified lint, format:check, test, build, `api:generate`, determinism, and a
+  browser check of the shell + diagnostics. OpenAPI source files unchanged.
+
+### Key Decisions
+
+- **Orval + custom fetch mutator** (no Axios) → a single HTTP client, native
+  cancellation/multipart, and zero hand-written DTOs.
+- **Generated wrapper** (`{ status, data, headers }`) is the Orval fetch-client
+  standard; consumers read `response.data`.
+- **No auth this task** — only a documented interceptor extension point for
+  Task 4 Bearer injection.
+- Generated code is isolated, deterministic, and never linted/edited by hand.
+
+---
+
 ## Task 2 — Dashboard Conception & Design System
 
 **Date:** 2026-06-14

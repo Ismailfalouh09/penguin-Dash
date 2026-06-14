@@ -37,9 +37,19 @@ Exercise the real route tree through a memory data router.
 Examples:
 - `src/app/__tests__/App.test.tsx` — routes, redirect, nested params, 404/403, login
 
+### API Layer Tests
+Exercise the generated client + HTTP client + error model against MSW.
+
+Examples:
+- `src/lib/api/__tests__/errors.test.ts` — error normalization (validation, 401/403/404, network, unknown)
+- `src/lib/api/__tests__/http-client.test.ts` — base URL, JSON & multipart, cancellation, no auth header, interceptors
+- `src/lib/api/__tests__/query-integration.test.tsx` — generated query with the app QueryClient, retry policy
+- `src/lib/api/__tests__/generated.test.ts` — generated exports, models barrel, do-not-edit header
+- `src/pages/__tests__/DiagnosticsPage.test.tsx` — config/contract display, probe success & normalized error
+
 ### Feature Integration Tests (future)
-For feature workflows spanning components and API calls. MSW handlers will
-simulate backend responses.
+For feature workflows spanning components and API calls. MSW handlers simulate
+backend responses; register them with `server.use(...)` + the `apiUrl` helper.
 
 ## Coverage Goals
 
@@ -62,6 +72,19 @@ simulate backend responses.
 | Application shell | Renders, mobile drawer opens, sidebar collapses, skip link |
 | Routing | Every placeholder route, nested params, 404 (in shell), 403, login (standalone) |
 | Accessibility | Nav landmark, skip-to-content, keyboard-operable controls |
+
+**Task 3 — API integration**
+
+| Area | Goal |
+|---|---|
+| Error normalization | Validation (array→details), 401/403/404/409/5xx, network, abort, unknown |
+| HTTP client | Base URL, JSON + multipart, cancellation, no auth header, interceptors |
+| TanStack Query | Generated query success + normalized error; 4xx no-retry policy; isolated caches |
+| Generated client | Functions/hooks exported, models barrel, do-not-edit header, mutator wiring |
+| Diagnostics | Shows API URL + contract version; success & error probe; no secrets |
+
+> API-layer tests never need a running backend, DB, real JWT, internet, or
+> Cloudinary — MSW intercepts everything.
 
 ## Running Tests
 

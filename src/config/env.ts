@@ -17,3 +17,10 @@ if (!parsed.success) {
 }
 
 export const env = parsed.data
+
+/**
+ * Normalized API base URL (trailing slash removed) used by the central HTTP
+ * client. The schema already guarantees this is a valid URL and throws clearly
+ * at startup if it is missing or malformed.
+ */
+export const apiBaseUrl = parsed.data.VITE_API_BASE_URL.replace(/\/+$/, '')

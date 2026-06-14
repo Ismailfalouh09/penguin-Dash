@@ -3,3 +3,6 @@ coverage/
 node_modules/
 frontend-handoff/
 *.lock
+
+# Generated API client — formatted by the Orval generation hook, not format:check
+src/lib/api/generated/

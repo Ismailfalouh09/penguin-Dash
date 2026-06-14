@@ -12,7 +12,9 @@
     "format:check": "prettier --check src",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "api:generate": "orval --config orval.config.ts",
+    "api:check": "orval --config orval.config.ts && git diff --exit-code -- src/lib/api/generated"
   },
   "dependencies": {
     "@radix-ui/react-alert-dialog": "^1.1.16",
@@ -56,6 +58,7 @@
     "eslint-plugin-react-refresh": "^0.4.20",
     "jsdom": "^26.1.0",
     "msw": "^2.10.2",
+    "orval": "^8.17.0",
     "postcss": "^8.5.4",
     "prettier": "^3.5.3",
     "prettier-plugin-tailwindcss": "^0.6.12",

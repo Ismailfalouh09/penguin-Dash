@@ -22,6 +22,7 @@ import { RecommendationRulesPage } from '@/pages/personalization/RecommendationR
 import { OrdersPage } from '@/pages/sales/OrdersPage'
 import { OrderDetailPage } from '@/pages/sales/OrderDetailPage'
 import { ProfilePage } from '@/pages/account/ProfilePage'
+import { DiagnosticsPage } from '@/pages/DiagnosticsPage'
 
 /** Typed helper so each route's handle is checked against RouteHandle. */
 const handle = (h: RouteHandle): RouteHandle => h
@@ -151,6 +152,13 @@ export const routes: RouteObject[] = [
         path: 'forbidden',
         element: <ForbiddenPage />,
         handle: handle({ title: 'Access denied', breadcrumb: 'Access denied' }),
+      },
+
+      // Development-only API diagnostics (not in sidebar navigation).
+      {
+        path: 'diagnostics',
+        element: <DiagnosticsPage />,
+        handle: handle({ title: 'API diagnostics', breadcrumb: 'API diagnostics' }),
       },
 
       // Catch-all (inside the shell so navigation is preserved)

@@ -20,14 +20,16 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 ## Current status
 
 - **Task 1 — Foundation**: ✅ tooling, strict TS, router, query, Tailwind, shadcn, testing.
-- **Task 2 — Conception & design system**: ✅ responsive dashboard shell
-  (collapsible sidebar + mobile drawer + header + breadcrumbs), central
-  navigation config, design tokens, shared UI/page states, and placeholder pages
-  for every planned module. **No business API integration or authentication yet.**
-- **Task 3 — Authentication**: ⏳ next.
+- **Task 2 — Conception & design system**: ✅ responsive dashboard shell, central
+  navigation config, design tokens, shared UI/page states, placeholder pages.
+- **Task 3 — API integration foundation**: ✅ Orval-generated typed client +
+  TanStack Query hooks, one central HTTP client, error normalization, dev
+  diagnostics, MSW foundation. **No authentication or business pages yet.**
+- **Task 4 — Authentication**: ⏳ next.
 
 The dashboard runs against placeholder data only; a clearly-marked placeholder
-user drives the shell until authentication lands in Task 3.
+user drives the shell until authentication lands in Task 4. The generated API
+client is ready for features but no screen calls the backend yet.
 
 ## Commands
 
@@ -42,6 +44,8 @@ user drives the shell until authentication lands in Task 3.
 | `npm test` | Run all tests (single run) |
 | `npm run test:watch` | Run tests in watch mode |
 | `npm run test:coverage` | Run tests with coverage report |
+| `npm run api:generate` | Regenerate the typed API client from the OpenAPI contract |
+| `npm run api:check` | Fail if the generated client is out of sync with the contract |
 
 ## Environment Variables
 
@@ -70,14 +74,23 @@ The backend OpenAPI contract lives in `frontend-handoff/`:
 - **React Router v7** — client-side routing
 - **TanStack Query v5** — server state management
 - **TanStack Table v8** — headless data tables
+- **Orval** — typed API client + query hooks generated from OpenAPI
 - **React Hook Form v7** + **Zod v3** — forms and validation
 - **Tailwind CSS v3** + **shadcn/ui** — styling and components
 - **Vitest v4** + **React Testing Library** + **MSW v2** — testing
 - **ESLint v9** (flat config) + **Prettier v3** — code quality
 
+## API integration
+
+All backend calls go through one generated, typed client. See
+[docs/API_INTEGRATION.md](docs/API_INTEGRATION.md). Regenerate after a contract
+change with `npm run api:generate`. Generated code lives in
+`src/lib/api/generated/` and must never be hand-edited.
+
 ## Documentation
 
 - [Architecture](docs/ARCHITECTURE.md) — Project structure, shell, and patterns
+- [API Integration](docs/API_INTEGRATION.md) — Generated client, HTTP client, errors, query
 - [Dashboard Conception](docs/DASHBOARD_CONCEPTION.md) — Sitemap, routes, navigation, role rules
 - [Design System](docs/DESIGN_SYSTEM.md) — Tokens, typography, components, states
 - [Test Plan](docs/TEST_PLAN.md) — Testing strategy
