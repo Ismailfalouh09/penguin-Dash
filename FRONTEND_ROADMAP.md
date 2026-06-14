@@ -12,7 +12,7 @@
 | **Task 6** | Categories & Brands — List, create, edit, deactivate, image upload (categories); list, create, edit, deactivate (brands) | ✅ **Completed** |
 | **Task 7** | Products — List, create, edit, archive, cover + gallery image management, detail view, references placeholder | ✅ **Completed** |
 | **Task 8** | Product References & Stock — SKU variants, manual stock management, compatibility attributes, swatch images | ✅ **Completed** |
-| **Task 9** | Packs — Bundle management, pack image gallery | ⏳ **Next** |
+| **Task 9** | Packs — Bundle management, pack items, compatibility attributes, archive, and media gallery | ✅ **Completed** |
 | Task 10 | Quiz — Question list, create, edit, reorder |
 | Task 11 | Recommendation Rules — Rule builder, preview engine |
 | Task 12 | Orders — Order list, order detail, status updates |

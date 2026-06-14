@@ -1,5 +1,32 @@
 # Progress Log
 
+## Task 9 — Packs
+
+**Date:** 2026-06-14
+**Status:** Completed
+
+### What Was Done
+
+Recorded the completed pack bundle-management workflow across the project docs and aligned the task tracker with the implementation already present in the repo.
+
+Updated coverage:
+- Pack list, detail, create, and edit routes.
+- Pack item composition with product and reference selection modes.
+- Compatibility attributes sourced from backend attribute groups.
+- Pack media gallery with cover management, gallery uploads, deletion, promotion, and reordering.
+- Archive flow and STAFF permission handling.
+
+### Roadmap
+
+- Task 9 — Completed.
+- Task 10 — Next.
+
+### Notes
+
+- Feature and page tests already exist under `src/features/packs/__tests__/` and `src/pages/catalog/__tests__/`.
+
+---
+
 ## Task 8 — Product References & Stock
 
 **Date:** 2026-06-14

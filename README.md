@@ -53,7 +53,7 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
   image upload/replace/remove through the product-reference media API; manual
   stock updates; reference deactivation. Stock updates are manual. Automatic
   stock reservation and deduction are not implemented.
-- **Task 9 — Packs**: ⏳ next.
+- **Task 9 — Packs**: ✅ pack list/detail/create/edit, bundle composition via pack items, compatibility attributes, archive, and pack media gallery with cover replacement, deletion, promotion, and reordering.
 
 The full authentication system is live. Every route behind `/` requires a valid
 admin session; unauthenticated visitors are sent to `/login` with the original

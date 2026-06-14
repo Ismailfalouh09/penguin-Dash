@@ -78,10 +78,10 @@ router is in [`src/app/router.tsx`](../src/app/router.tsx).
 | `/products/:productId` | Product details | Yes | Detail placeholder |
 | `/products/:productId/edit` | Product form | Yes | Edit placeholder |
 | `/products/:productId/references` | Product references | Yes | References placeholder |
-| `/packs` | Packs | Yes | List placeholder |
-| `/packs/new` | Pack form | Yes | Create placeholder |
-| `/packs/:packId` | Pack details | Yes | Detail placeholder |
-| `/packs/:packId/edit` | Pack form | Yes | Edit placeholder |
+| `/packs` | Packs | Yes | Pack list with search, filters, and archive actions |
+| `/packs/new` | Pack form | Yes | Create a curated bundle |
+| `/packs/:packId` | Pack details | Yes | Bundle details, pack items, compatibility, and media |
+| `/packs/:packId/edit` | Pack form | Yes | Edit bundle configuration and gallery |
 | `/attributes` | Attributes | Yes | List placeholder |
 | `/quiz` | Quiz | Yes | List placeholder |
 | `/recommendation-rules` | Recommendation rules | Yes | List placeholder |
@@ -97,10 +97,10 @@ always available — including the 404 and 403 pages. Each route declares a
 `handle: { title, breadcrumb }` consumed by the layout for the document title
 and breadcrumb trail.
 
-## Main workflows (planned)
+## Main workflows
 
 - **Catalog management**: create/edit products → manage gallery → manage
-  references and stock → group into packs.
+  references and stock → compose packs → manage pack media.
 - **Personalization**: define attributes & options → author quiz questions →
   write recommendation rules that map answers to packs → preview results.
 - **Fulfilment**: review orders → open an order → update its status.

@@ -45,9 +45,12 @@ penguin-Dash/
 │   │   ├── products/            # Product CRUD + media gallery (Task 7)
 │   │   │   ├── components/      # ProductForm, ProductColumns, ProductGallery
 │   │   │   └── hooks/           # use-products.ts (list/detail/create/update/archive/image)
-│   │   └── product-references/  # Reference variants, stock, swatches (Task 8)
-│   │       ├── components/      # ReferenceForm, columns, compatibility, stock, swatch
-│   │       └── hooks/           # use-product-references.ts (list/detail/write/media)
+│   │   ├── product-references/  # Reference variants, stock, swatches (Task 8)
+│   │   │   ├── components/      # ReferenceForm, columns, compatibility, stock, swatch
+│   │   │   └── hooks/           # use-product-references.ts (list/detail/write/media)
+│   │   └── packs/              # Pack CRUD + bundle composition + gallery (Task 9)
+│   │       ├── components/      # PackForm, PackColumns, PackItemsEditor, PackCompatibilityEditor, PackMediaGallery
+│   │       └── hooks/           # use-packs.ts (list/detail/create/update/archive/media)
 │   ├── pages/                   # Route-level page components
 │   │   ├── DashboardOverviewPage.tsx
 │   │   ├── DiagnosticsPage.tsx          # Dev-only API diagnostics (/diagnostics)
@@ -56,7 +59,7 @@ penguin-Dash/
 │   │   ├── ForbiddenPage.tsx / NotFoundPage.tsx
 │   │   ├── _shared/ModulePlaceholder.tsx   # Shared placeholder scaffold
 │   │   ├── catalog/            # Categories (list/new/edit), Brands (list/new/edit),
-│   │   │                       #   Products(+detail/form/refs), Product refs, Packs, Media
+│   │   │                       #   Products(+detail/form/refs), Product refs, Packs(bundle CRUD + media), Media
 │   │   ├── personalization/    # Attributes, Quiz, Recommendation rules
 │   │   ├── sales/              # Orders (+ detail)
 │   │   └── account/           # Profile
@@ -469,6 +472,18 @@ Product references model purchasable product variants such as shades, sizes, or 
 - OWNER and ADMIN can create, edit, deactivate, and manually update stock because those actions require `write`.
 - Swatch upload/replace/remove requires `media:manage`.
 - STAFF can read reference list and detail views, but write, stock, and swatch controls are hidden.
+
+### 15. Pack Management (`src/features/packs/`)
+
+Task 9 adds bundle management as a first-class catalog workflow:
+
+- `use-packs.ts` wraps list/detail/create/update/archive plus pack media hooks, and invalidates `['/admin/packs']` plus the pack detail query key after writes.
+- `PackForm.tsx` uses RHF + Zod for identity, pricing, publishing, pack items, and compatibility attributes. It auto-generates a slug on create, validates pack pricing rules, and warns on unsaved changes.
+- `PackItemsEditor.tsx` loads active products and their active references, supports fixed reference / automatic best reference / customer choice selection modes, and preserves explicit item order.
+- `PackCompatibilityEditor.tsx` loads product attribute groups (`isProductAttribute: true`) and stores compatibility entries with match type, score, and hard filter flags.
+- `PackMediaGallery.tsx` manages cover upload/replace/remove, gallery upload/delete, cover promotion, and gallery reordering. Write actions require both `write` and `media:manage`.
+- Pages and routes are `/packs`, `/packs/new`, `/packs/:packId`, and `/packs/:packId/edit`. The list page supports search, status, active, and price-mode filters, while the detail page shows pack items, compatibility attributes, and media.
+- Permissions mirror the backend matrix: OWNER and ADMIN can create, edit, archive, and manage media; STAFF can read packs but cannot mutate them.
 
 ## TypeScript Configuration
 

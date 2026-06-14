@@ -175,6 +175,22 @@ MSW handlers needed: `GET /admin/products/:id`, `GET /admin/products/:id/referen
 
 Stock updates are manual. Automatic stock reservation and deduction are not implemented.
 
+**Task 9 â€” Packs**
+
+Pack workflows are covered by page and component tests in `src/pages/catalog/__tests__/` and `src/features/packs/__tests__/PackMediaGallery.test.tsx`.
+
+| Area | Coverage |
+|---|---|
+| `PacksPage` | Loading, empty, and error states; URL state passthrough; role-gated New button; archive confirmation cancel flow |
+| `PackDetailPage` | Loads pack data, renders identity, pricing, items, compatibility, and media, then archives back to the list |
+| `PackFormPage` (create) | Loads product and attribute options, auto-fills the slug on blur, submits nested items and compatibility attributes, validates pricing, supports cancel, and blocks STAFF |
+| `PackFormPage` (edit) | Loads the pack, pre-fills nested values, shows the media section, updates the pack, supports cancel back to detail, and blocks STAFF |
+| `PackMediaGallery` | Cover upload/replace/remove, gallery add, delete confirmation, promote-to-cover, and reorder actions |
+| `PackItemsEditor` / `PackCompatibilityEditor` | Active product/reference loading, selection-mode switching, score validation, and removal flows |
+| Permission behavior | OWNER and ADMIN see write and media actions; STAFF can read but cannot mutate |
+
+MSW handlers needed: `GET /admin/packs`, `GET /admin/packs/:id`, `POST /admin/packs`, `PATCH /admin/packs/:id`, `DELETE /admin/packs/:id`, `POST /admin/packs/:id/images`, `PATCH /admin/packs/:id/images/:imageId`, `PATCH /admin/packs/:id/images/reorder`, `DELETE /admin/packs/:id/images/:imageId`, `GET /admin/products`, and `GET /admin/attributes`.
+
 ## Running Tests
 
 ```bash

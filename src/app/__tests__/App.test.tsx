@@ -21,10 +21,25 @@ describe('application routes', () => {
     expect(screen.getByRole('heading', { level: 1, name: 'Overview' })).toBeInTheDocument()
   })
 
-  it('renders a catalog placeholder page', () => {
+  it('renders the packs page', async () => {
+    server.use(
+      http.get(apiUrl('/admin/packs'), () =>
+        HttpResponse.json({
+          data: [],
+          meta: {
+            page: 1,
+            pageSize: 20,
+            totalItems: 0,
+            totalPages: 1,
+            hasNextPage: false,
+            hasPreviousPage: false,
+          },
+        })
+      )
+    )
     renderWithRouter(routes, { initialEntries: ['/packs'] })
     expect(screen.getByRole('heading', { level: 1, name: 'Packs' })).toBeInTheDocument()
-    expect(screen.getByText('Not yet implemented')).toBeInTheDocument()
+    expect(await screen.findByText('No packs found')).toBeInTheDocument()
   })
 
   it('resolves a nested dynamic product route', async () => {
