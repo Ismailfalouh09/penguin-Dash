@@ -40,8 +40,13 @@ const productSchema = z.object({
   name: z.string().min(1, 'Name is required').max(200),
   slug: z.string().min(1, 'Slug is required').max(200),
   description: z.string().optional(),
-  basePrice: z.number({ invalid_type_error: 'Base price must be a number' }).nonnegative('Must be 0 or more'),
-  costPrice: z.number({ invalid_type_error: 'Cost price must be a number' }).nonnegative().optional(),
+  basePrice: z
+    .number({ invalid_type_error: 'Base price must be a number' })
+    .nonnegative('Must be 0 or more'),
+  costPrice: z
+    .number({ invalid_type_error: 'Cost price must be a number' })
+    .nonnegative()
+    .optional(),
   currency: z.string().min(1, 'Currency is required'),
   status: z.enum(['DRAFT', 'ACTIVE', 'ARCHIVED']).optional(),
   isActive: z.boolean().optional(),
@@ -62,14 +67,16 @@ export function ProductForm({ defaultValues, onSubmit, isSubmitting, mode }: Pro
   const categoriesQuery = useCategoryList({ pageSize: 100 })
   const brandsQuery = useBrandList({ pageSize: 100 })
 
-  const rawCategories = categoriesQuery.data?.status === 200
-    ? (categoriesQuery.data.data as unknown as PaginatedResponse<AdminCategoryResponse>)
-    : null
+  const rawCategories =
+    categoriesQuery.data?.status === 200
+      ? (categoriesQuery.data.data as unknown as PaginatedResponse<AdminCategoryResponse>)
+      : null
   const categories = rawCategories?.data ?? []
 
-  const rawBrands = brandsQuery.data?.status === 200
-    ? (brandsQuery.data.data as unknown as PaginatedResponse<AdminBrandResponse>)
-    : null
+  const rawBrands =
+    brandsQuery.data?.status === 200
+      ? (brandsQuery.data.data as unknown as PaginatedResponse<AdminBrandResponse>)
+      : null
   const brands = rawBrands?.data ?? []
 
   const form = useForm<ProductFormValues>({
@@ -128,7 +135,10 @@ export function ProductForm({ defaultValues, onSubmit, isSubmitting, mode }: Pro
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Name <span aria-hidden="true" className="text-destructive">*</span>
+                    Name{' '}
+                    <span aria-hidden="true" className="text-destructive">
+                      *
+                    </span>
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -150,7 +160,10 @@ export function ProductForm({ defaultValues, onSubmit, isSubmitting, mode }: Pro
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Slug <span aria-hidden="true" className="text-destructive">*</span>
+                    Slug{' '}
+                    <span aria-hidden="true" className="text-destructive">
+                      *
+                    </span>
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -177,7 +190,7 @@ export function ProductForm({ defaultValues, onSubmit, isSubmitting, mode }: Pro
                       placeholder="Optional product description"
                       disabled={isSubmitting}
                       rows={4}
-                      className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none"
+                      className="flex min-h-[80px] w-full resize-none rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                     />
                   </FormControl>
                   <FormMessage />
@@ -193,7 +206,10 @@ export function ProductForm({ defaultValues, onSubmit, isSubmitting, mode }: Pro
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Category <span aria-hidden="true" className="text-destructive">*</span>
+                    Category{' '}
+                    <span aria-hidden="true" className="text-destructive">
+                      *
+                    </span>
                   </FormLabel>
                   <Select
                     value={field.value}
@@ -202,7 +218,9 @@ export function ProductForm({ defaultValues, onSubmit, isSubmitting, mode }: Pro
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder={categoriesQuery.isLoading ? 'Loading…' : 'Select a category'} />
+                        <SelectValue
+                          placeholder={categoriesQuery.isLoading ? 'Loading…' : 'Select a category'}
+                        />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -231,7 +249,9 @@ export function ProductForm({ defaultValues, onSubmit, isSubmitting, mode }: Pro
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder={brandsQuery.isLoading ? 'Loading…' : 'No brand'} />
+                        <SelectValue
+                          placeholder={brandsQuery.isLoading ? 'Loading…' : 'No brand'}
+                        />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -257,7 +277,10 @@ export function ProductForm({ defaultValues, onSubmit, isSubmitting, mode }: Pro
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      Base price <span aria-hidden="true" className="text-destructive">*</span>
+                      Base price{' '}
+                      <span aria-hidden="true" className="text-destructive">
+                        *
+                      </span>
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -289,7 +312,9 @@ export function ProductForm({ defaultValues, onSubmit, isSubmitting, mode }: Pro
                         placeholder="0.00"
                         disabled={isSubmitting}
                         value={field.value ?? ''}
-                        onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
+                        onChange={(e) =>
+                          field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)
+                        }
                       />
                     </FormControl>
                     <FormMessage />
@@ -304,7 +329,10 @@ export function ProductForm({ defaultValues, onSubmit, isSubmitting, mode }: Pro
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Currency <span aria-hidden="true" className="text-destructive">*</span>
+                    Currency{' '}
+                    <span aria-hidden="true" className="text-destructive">
+                      *
+                    </span>
                   </FormLabel>
                   <FormControl>
                     <Input

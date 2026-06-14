@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { MemoryRouter } from 'react-router-dom'
 import { AuthContext, type AuthContextValue } from '@/features/auth/auth-context'
 import { CurrentUserProvider } from '@/features/auth/current-user'
+import { ToastProvider } from '@/shared/components/ui/toast'
 import type { AdminUser } from '@/features/auth/types'
 import type { Role } from '@/features/auth/roles'
 
@@ -54,11 +55,13 @@ function AllProviders({ children, initialEntries, role }: AllProvidersProps) {
   const admin = makeTestUser(role)
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthContext.Provider value={makeTestAuthValue(admin)}>
-        <CurrentUserProvider user={admin}>
-          <MemoryRouter initialEntries={initialEntries}>{children}</MemoryRouter>
-        </CurrentUserProvider>
-      </AuthContext.Provider>
+      <ToastProvider>
+        <AuthContext.Provider value={makeTestAuthValue(admin)}>
+          <CurrentUserProvider user={admin}>
+            <MemoryRouter initialEntries={initialEntries}>{children}</MemoryRouter>
+          </CurrentUserProvider>
+        </AuthContext.Provider>
+      </ToastProvider>
     </QueryClientProvider>
   )
 }

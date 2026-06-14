@@ -18,7 +18,10 @@ import { useProductList, useProductArchive } from '@/features/products/hooks/use
 import { useProductColumns } from '@/features/products/components/ProductColumns'
 import type { ProductResponse } from '@/lib/api'
 import type { PaginatedResponse } from '@/shared/lib/pagination'
-import type { AdminProductsControllerFindAllStatus, AdminProductsControllerFindAllSortBy } from '@/lib/api'
+import type {
+  AdminProductsControllerFindAllStatus,
+  AdminProductsControllerFindAllSortBy,
+} from '@/lib/api'
 
 const STATUS_OPTIONS = [
   { label: 'Draft', value: 'DRAFT' },
@@ -36,13 +39,23 @@ export function ProductsPage() {
   const archive = useProductArchive()
   const archiveConfirm = useConfirmDialog<ProductResponse>()
 
-  const { page, limit, search, sortBy, sortOrder, filters, setPage, setLimit, setSearch, setFilter } =
-    useListQueryState({
-      defaultLimit: 20,
-      allowedLimits: DEFAULT_PAGE_SIZE_OPTIONS,
-      defaultSortBy: 'createdAt',
-      defaultSortOrder: 'desc',
-    })
+  const {
+    page,
+    limit,
+    search,
+    sortBy,
+    sortOrder,
+    filters,
+    setPage,
+    setLimit,
+    setSearch,
+    setFilter,
+  } = useListQueryState({
+    defaultLimit: 20,
+    allowedLimits: DEFAULT_PAGE_SIZE_OPTIONS,
+    defaultSortBy: 'createdAt',
+    defaultSortOrder: 'desc',
+  })
 
   const statusFilter = filters['status'] ?? null
   const isActiveFilter = filters['isActive'] ?? null
@@ -51,15 +64,16 @@ export function ProductsPage() {
     page,
     pageSize: limit,
     search: search || undefined,
-    status: statusFilter as AdminProductsControllerFindAllStatus | undefined,
+    status: (statusFilter ?? undefined) as AdminProductsControllerFindAllStatus | undefined,
     isActive: isActiveFilter === 'true' ? true : isActiveFilter === 'false' ? false : undefined,
     sortBy: (sortBy ?? undefined) as AdminProductsControllerFindAllSortBy | undefined,
     sortOrder: (sortOrder ?? undefined) as 'asc' | 'desc' | undefined,
   })
 
-  const rawData = query.data?.status === 200
-    ? (query.data.data as unknown as PaginatedResponse<ProductResponse>)
-    : null
+  const rawData =
+    query.data?.status === 200
+      ? (query.data.data as unknown as PaginatedResponse<ProductResponse>)
+      : null
 
   const products = rawData?.data ?? []
   const meta = rawData?.meta
@@ -78,7 +92,11 @@ export function ProductsPage() {
         description: `"${target.name}" has been archived. All its references have been deactivated.`,
       })
     } else {
-      toast({ tone: 'error', title: 'Archive failed', description: 'Could not archive the product. Try again.' })
+      toast({
+        tone: 'error',
+        title: 'Archive failed',
+        description: 'Could not archive the product. Try again.',
+      })
     }
   }
 

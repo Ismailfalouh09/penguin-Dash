@@ -3,6 +3,7 @@ import { createMemoryRouter, RouterProvider, type RouteObject } from 'react-rout
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AuthContext, type AuthContextValue } from '@/features/auth/auth-context'
 import { CurrentUserProvider } from '@/features/auth/current-user'
+import { ToastProvider } from '@/shared/components/ui/toast'
 import { makeTestUser } from './render'
 import type { AdminUser } from '@/features/auth/types'
 import type { Role } from '@/features/auth/roles'
@@ -50,17 +51,21 @@ export function renderWithRouter(routes: RouteObject[], options?: RenderRouterOp
 
   const tree = unauthenticated ? (
     <QueryClientProvider client={queryClient}>
-      <AuthContext.Provider value={authValue}>
-        <RouterProvider router={router} />
-      </AuthContext.Provider>
+      <ToastProvider>
+        <AuthContext.Provider value={authValue}>
+          <RouterProvider router={router} />
+        </AuthContext.Provider>
+      </ToastProvider>
     </QueryClientProvider>
   ) : (
     <QueryClientProvider client={queryClient}>
-      <AuthContext.Provider value={authValue}>
-        <CurrentUserProvider user={admin}>
-          <RouterProvider router={router} />
-        </CurrentUserProvider>
-      </AuthContext.Provider>
+      <ToastProvider>
+        <AuthContext.Provider value={authValue}>
+          <CurrentUserProvider user={admin}>
+            <RouterProvider router={router} />
+          </CurrentUserProvider>
+        </AuthContext.Provider>
+      </ToastProvider>
     </QueryClientProvider>
   )
 

@@ -24,7 +24,9 @@ interface UseProductColumnsOptions {
   onArchive: (product: ProductResponse) => void
 }
 
-export function useProductColumns({ onArchive }: UseProductColumnsOptions): ColumnDef<ProductResponse, unknown>[] {
+export function useProductColumns({
+  onArchive,
+}: UseProductColumnsOptions): ColumnDef<ProductResponse, unknown>[] {
   const navigate = useNavigate()
   const { can } = useCurrentUser()
   const canWrite = can('write')
@@ -65,24 +67,20 @@ export function useProductColumns({ onArchive }: UseProductColumnsOptions): Colu
     {
       id: 'category',
       header: 'Category',
-      cell: ({ row }) => (
-        <span className="text-sm">{row.original.category.name}</span>
-      ),
+      cell: ({ row }) => <span className="text-sm">{row.original.category?.name ?? '—'}</span>,
     },
     {
       id: 'brand',
       header: 'Brand',
       cell: ({ row }) => (
-        <span className="text-sm text-muted-foreground">
-          {row.original.brand?.name ?? '—'}
-        </span>
+        <span className="text-sm text-muted-foreground">{row.original.brand?.name ?? '—'}</span>
       ),
     },
     {
       accessorKey: 'basePrice',
       header: 'Price',
       cell: ({ row }) => (
-        <span className="tabular-nums text-sm">
+        <span className="text-sm tabular-nums">
           {row.original.basePrice.toFixed(2)} {row.original.currency}
         </span>
       ),
@@ -91,7 +89,7 @@ export function useProductColumns({ onArchive }: UseProductColumnsOptions): Colu
       id: 'references',
       header: 'Refs',
       cell: ({ row }) => {
-        const count = row.original.references.length
+        const count = row.original.references?.length ?? 0
         return (
           <div className="flex items-center gap-1 text-sm text-muted-foreground">
             <Package className="size-3.5" aria-hidden="true" />
@@ -105,11 +103,7 @@ export function useProductColumns({ onArchive }: UseProductColumnsOptions): Colu
       header: 'Status',
       cell: ({ row }) => {
         const s = row.original.status
-        return (
-          <StatusBadge tone={STATUS_TONE[s] ?? 'neutral'}>
-            {STATUS_LABEL[s] ?? s}
-          </StatusBadge>
-        )
+        return <StatusBadge tone={STATUS_TONE[s] ?? 'neutral'}>{STATUS_LABEL[s] ?? s}</StatusBadge>
       },
     },
     {
@@ -138,16 +132,11 @@ export function useProductColumns({ onArchive }: UseProductColumnsOptions): Colu
               destructive: true,
               separatorBefore: true,
               onSelect: () => onArchive(product),
-            } as typeof actions[0])
+            } as (typeof actions)[0])
           }
         }
 
-        return (
-          <RowActions
-            actions={actions}
-            label={`Actions for ${product.name}`}
-          />
-        )
+        return <RowActions actions={actions} label={`Actions for ${product.name}`} />
       },
     },
   ]

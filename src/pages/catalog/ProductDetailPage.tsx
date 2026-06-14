@@ -52,9 +52,7 @@ export function ProductDetailPage() {
   const archiveConfirm = useConfirmDialog<ProductResponse>()
 
   const product =
-    detailQuery.data?.status === 200
-      ? (detailQuery.data.data as unknown as ProductResponse)
-      : null
+    detailQuery.data?.status === 200 ? (detailQuery.data.data as unknown as ProductResponse) : null
 
   const handleArchiveConfirm = async () => {
     if (!product) return
@@ -68,7 +66,11 @@ export function ProductDetailPage() {
       })
       navigate(ROUTES.products)
     } else {
-      toast({ tone: 'error', title: 'Archive failed', description: 'Could not archive the product.' })
+      toast({
+        tone: 'error',
+        title: 'Archive failed',
+        description: 'Could not archive the product.',
+      })
     }
   }
 
@@ -113,10 +115,7 @@ export function ProductDetailPage() {
                   </Link>
                 </Button>
                 {product.status !== 'ARCHIVED' && (
-                  <Button
-                    variant="destructive"
-                    onClick={() => archiveConfirm.open(product)}
-                  >
+                  <Button variant="destructive" onClick={() => archiveConfirm.open(product)}>
                     <Archive className="size-4" />
                     Archive
                   </Button>
@@ -130,7 +129,9 @@ export function ProductDetailPage() {
           <dl className="space-y-3">
             <InfoRow label="Name">{product.name}</InfoRow>
             <InfoRow label="Slug">
-              <code className="rounded bg-muted px-1.5 py-0.5 text-xs font-mono">{product.slug}</code>
+              <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs">
+                {product.slug}
+              </code>
             </InfoRow>
             <InfoRow label="Category">{product.category.name}</InfoRow>
             <InfoRow label="Brand">{product.brand?.name ?? '—'}</InfoRow>
@@ -165,9 +166,7 @@ export function ProductDetailPage() {
             description="Product variants. Manage them on the references page."
             action={
               <Button variant="outline" size="sm" asChild>
-                <Link to={ROUTES.productReferences(product.id)}>
-                  Manage references
-                </Link>
+                <Link to={ROUTES.productReferences(product.id)}>Manage references</Link>
               </Button>
             }
           >
@@ -186,12 +185,14 @@ export function ProductDetailPage() {
                   {product.references.map((ref) => (
                     <tr key={ref.id}>
                       <td className="py-2">
-                        <code className="rounded bg-muted px-1.5 py-0.5 text-xs font-mono">
+                        <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs">
                           {ref.referenceCode}
                         </code>
                       </td>
                       <td className="py-2">{ref.referenceName}</td>
-                      <td className="py-2 text-muted-foreground">{typeof ref.sku === 'string' ? ref.sku : '—'}</td>
+                      <td className="py-2 text-muted-foreground">
+                        {typeof ref.sku === 'string' ? ref.sku : '—'}
+                      </td>
                       <td className="py-2 text-right tabular-nums">{ref.stockQuantity}</td>
                       <td className="py-2">
                         <StatusBadge tone={ref.isActive ? 'success' : 'neutral'}>

@@ -16,9 +16,7 @@ export function ProductReferencesPage() {
   const detailQuery = useProductDetail(productId ?? '')
 
   const product =
-    detailQuery.data?.status === 200
-      ? (detailQuery.data.data as unknown as ProductResponse)
-      : null
+    detailQuery.data?.status === 200 ? (detailQuery.data.data as unknown as ProductResponse) : null
 
   if (detailQuery.isLoading) {
     return (

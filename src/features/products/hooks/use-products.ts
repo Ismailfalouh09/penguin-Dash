@@ -40,6 +40,10 @@ export function useProductCreate() {
         const result = await adminProductsControllerCreate(dto)
         await queryClient.invalidateQueries({ queryKey: ['/admin/products'] })
         return result
+      } catch {
+        // The HTTP client throws on non-2xx; callers branch on a missing result
+        // to show safe error feedback instead of crashing the page.
+        return undefined
       } finally {
         setIsPending(false)
       }
@@ -64,6 +68,8 @@ export function useProductUpdate(id: string) {
           queryKey: getAdminProductsControllerFindOneQueryKey(id),
         })
         return result
+      } catch {
+        return undefined
       } finally {
         setIsPending(false)
       }
@@ -88,6 +94,8 @@ export function useProductArchive() {
           queryKey: getAdminProductsControllerFindOneQueryKey(id),
         })
         return result
+      } catch {
+        return undefined
       } finally {
         setIsPending(false)
       }
@@ -111,6 +119,8 @@ export function useProductImageUpload(productId: string) {
           queryKey: getAdminProductsControllerFindOneQueryKey(productId),
         })
         return result
+      } catch {
+        return undefined
       } finally {
         setIsPending(false)
       }
@@ -134,6 +144,8 @@ export function useProductImageDelete(productId: string) {
           queryKey: getAdminProductsControllerFindOneQueryKey(productId),
         })
         return result
+      } catch {
+        return undefined
       } finally {
         setIsPending(false)
       }
@@ -157,6 +169,8 @@ export function useProductImageReorder(productId: string) {
           queryKey: getAdminProductsControllerFindOneQueryKey(productId),
         })
         return result
+      } catch {
+        return undefined
       } finally {
         setIsPending(false)
       }

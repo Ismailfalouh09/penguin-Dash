@@ -4,10 +4,7 @@ import { Button } from '@/shared/components/ui/button'
 import { ConfirmDialog } from '@/shared/components/feedback/ConfirmDialog'
 import { useConfirmDialog } from '@/shared/hooks/use-confirm-dialog'
 import { useToast } from '@/shared/hooks/use-toast'
-import {
-  useProductImageUpload,
-  useProductImageDelete,
-} from '../hooks/use-products'
+import { useProductImageUpload, useProductImageDelete } from '../hooks/use-products'
 import { productMediaControllerUpdate } from '@/lib/api/generated/endpoints/admin-product-media/admin-product-media'
 import { useQueryClient } from '@tanstack/react-query'
 import { getAdminProductsControllerFindOneQueryKey } from '@/lib/api/generated/endpoints/admin-products/admin-products'
@@ -39,9 +36,17 @@ export function ProductGallery({ productId, coverImage, images, canWrite }: Prod
     const result = await uploadHook.mutate({ file, role: 'COVER' })
     if (coverInputRef.current) coverInputRef.current.value = ''
     if (result && result.status === 201) {
-      toast({ tone: 'success', title: 'Cover updated', description: 'The cover image has been set.' })
+      toast({
+        tone: 'success',
+        title: 'Cover updated',
+        description: 'The cover image has been set.',
+      })
     } else {
-      toast({ tone: 'error', title: 'Upload failed', description: 'Could not upload the cover image.' })
+      toast({
+        tone: 'error',
+        title: 'Upload failed',
+        description: 'Could not upload the cover image.',
+      })
     }
   }
 
@@ -53,7 +58,11 @@ export function ProductGallery({ productId, coverImage, images, canWrite }: Prod
     if (result && result.status === 201) {
       toast({ tone: 'success', title: 'Image added', description: 'Gallery image has been added.' })
     } else {
-      toast({ tone: 'error', title: 'Upload failed', description: 'Could not upload the gallery image.' })
+      toast({
+        tone: 'error',
+        title: 'Upload failed',
+        description: 'Could not upload the gallery image.',
+      })
     }
   }
 
@@ -81,6 +90,9 @@ export function ProductGallery({ productId, coverImage, images, canWrite }: Prod
       } else {
         toast({ tone: 'error', title: 'Failed', description: 'Could not set this image as cover.' })
       }
+    } catch {
+      // The HTTP client throws on non-2xx — surface safe feedback instead.
+      toast({ tone: 'error', title: 'Failed', description: 'Could not set this image as cover.' })
     } finally {
       setPromotingId(null)
     }
@@ -90,7 +102,7 @@ export function ProductGallery({ productId, coverImage, images, canWrite }: Prod
     <div className="space-y-6">
       {/* Cover image */}
       <div>
-        <h3 className="text-sm font-medium mb-3">Cover image</h3>
+        <h3 className="mb-3 text-sm font-medium">Cover image</h3>
         <div className="flex items-start gap-4">
           <div className="relative size-32 shrink-0 overflow-hidden rounded-lg border border-border bg-muted">
             {coverImage ? (
@@ -152,7 +164,7 @@ export function ProductGallery({ productId, coverImage, images, canWrite }: Prod
 
       {/* Gallery */}
       <div>
-        <div className="flex items-center justify-between mb-3">
+        <div className="mb-3 flex items-center justify-between">
           <h3 className="text-sm font-medium">Gallery</h3>
           {canWrite && (
             <>
@@ -184,7 +196,10 @@ export function ProductGallery({ productId, coverImage, images, canWrite }: Prod
         ) : (
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
             {galleryImages.map((img) => (
-              <div key={img.id} className="group relative aspect-square overflow-hidden rounded-lg border border-border bg-muted">
+              <div
+                key={img.id}
+                className="group relative aspect-square overflow-hidden rounded-lg border border-border bg-muted"
+              >
                 <img
                   src={img.urls.thumbnail}
                   alt={typeof img.altText === 'string' ? img.altText : 'Gallery image'}

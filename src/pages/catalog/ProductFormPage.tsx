@@ -9,7 +9,11 @@ import { ErrorState as ForbiddenState } from '@/shared/components/common/ErrorSt
 import { useToast } from '@/shared/hooks/use-toast'
 import { ProductForm } from '@/features/products/components/ProductForm'
 import { ProductGallery } from '@/features/products/components/ProductGallery'
-import { useProductDetail, useProductCreate, useProductUpdate } from '@/features/products/hooks/use-products'
+import {
+  useProductDetail,
+  useProductCreate,
+  useProductUpdate,
+} from '@/features/products/hooks/use-products'
 import { useCurrentUser } from '@/features/auth/current-user'
 import { ROUTES } from '@/config/routes'
 import type { CreateProductDto, ProductResponse } from '@/lib/api'
@@ -62,20 +66,29 @@ export function ProductFormPage() {
   const handleSubmit = async (data: CreateProductDto) => {
     if (isEdit && productId) {
       const result = await update.mutate(data)
-      if (result && result.status === 200) {
-        toast({ tone: 'success', title: 'Product updated', description: 'Changes have been saved.' })
+      if (result && result.status >= 200 && result.status < 300) {
+        toast({
+          tone: 'success',
+          title: 'Product updated',
+          description: 'Changes have been saved.',
+        })
         navigate(ROUTES.product(productId))
       } else {
         toast({
           tone: 'error',
           title: 'Update failed',
-          description: 'Could not save changes. Check for duplicate slugs or missing required fields.',
+          description:
+            'Could not save changes. Check for duplicate slugs or missing required fields.',
         })
       }
     } else {
       const result = await create.mutate(data)
-      if (result && result.status === 200) {
-        toast({ tone: 'success', title: 'Product created', description: 'The product has been created.' })
+      if (result && result.status >= 200 && result.status < 300) {
+        toast({
+          tone: 'success',
+          title: 'Product created',
+          description: 'The product has been created.',
+        })
         navigate(ROUTES.products)
       } else {
         toast({
