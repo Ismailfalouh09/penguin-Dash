@@ -73,6 +73,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => setUnauthorizedHandler(clearSession), [clearSession])
 
   // One-time session restoration on startup.
+  //
+  // React StrictMode fires effects twice in development (mount → cleanup →
+  // remount). The cleanup resets restoredRef so the second (real) mount can
+  // re-run the fetch. The cancelled flag prevents the first (discarded) async
+  // result from updating state after the cleanup fires.
   const restoredRef = useRef(false)
   useEffect(() => {
     if (restoredRef.current) return
@@ -85,14 +90,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     let cancelled = false
+
     void (async () => {
+      // 10 s timeout so a dead backend never leaves the app stuck on the
+      // loading screen indefinitely.
+      const timeoutId = setTimeout(() => {
+        if (cancelled) return
+        clearStoredToken()
+        setAdmin(null)
+        setStatus('unauthenticated')
+      }, 10_000)
+
       try {
         const data = await fetchMe()
+        clearTimeout(timeoutId)
         if (cancelled) return
         setAdmin(fromCurrentAdmin(data))
         setStatus('authenticated')
       } catch {
-        // Invalid/expired token — discard it and fall back to signed-out.
+        clearTimeout(timeoutId)
+        // Invalid/expired token or network failure — discard and sign out.
         if (cancelled) return
         clearStoredToken()
         setAdmin(null)
@@ -101,7 +118,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     })()
 
     return () => {
+      // Allow StrictMode's second mount to re-run the restoration.
+      // cancelled suppresses any stale async result from the first cycle.
       cancelled = true
+      restoredRef.current = false
     }
   }, [])
 
