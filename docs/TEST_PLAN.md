@@ -121,6 +121,22 @@ These components are generic and contain no business logic, so the coverage goal
 | `FormActions` | Submit spinner when `isSubmitting`, cancel click |
 | Form field primitives | `aria-invalid` when error, `aria-describedby` wiring |
 
+**Task 6 — Categories & Brands**
+
+No dedicated unit or component tests were added in Task 6 (the shared component layer from Task 5 already covers the generic building blocks). Feature integration tests for the list and form flows should be added as follow-up work. Expected patterns:
+
+| Area | Goal (follow-up) |
+|---|---|
+| `CategoriesPage` | List renders rows, search filters, status filter, deactivate confirm flow |
+| `CategoryNewPage` | Form submit → create mutation → success toast → redirect |
+| `CategoryEditPage` | Load detail, populate form, update mutation, image replace/delete |
+| `BrandsPage` | List renders rows, search/status filter, deactivate confirm |
+| `BrandNewPage` / `BrandEditPage` | Create and update mutation flows |
+| `useCategoryDeactivate` / `useBrandDeactivate` | Invalidates list and detail query keys |
+| `CategoryImageUpload` | Replace triggers multipart upload; delete triggers confirm → delete endpoint |
+
+Use the MSW handler pattern in the existing [handler section](#msw-handler-pattern-feature-tasks) — register `GET /admin/categories`, `GET /admin/brands`, `PATCH /admin/categories/:id/deactivate`, etc.
+
 ## Running Tests
 
 ```bash

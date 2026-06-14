@@ -36,12 +36,17 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
   indication, submit loading), confirmation and delete dialogs, toast notification
   system, `ForbiddenState` inline component, pagination types matching the backend
   envelope. A dev-only demo at `/components-demo` exercises all components.
-- **Task 6 — Categories**: ⏳ next.
+- **Task 6 — Categories & Brands**: ✅ list, create, edit, deactivate, image
+  upload/remove for categories; list, create, edit, deactivate for brands. Both
+  modules reuse the Task 5 shared component layer (data table, pagination, search,
+  filters, form layout, confirmation dialogs, toasts, URL state). Brand logo
+  upload is not in scope (no backend contract for it).
+- **Task 7 — Attributes**: ⏳ next.
 
 The full authentication system is live. Every route behind `/` requires a valid
 admin session; unauthenticated visitors are sent to `/login` with the original
 destination preserved for redirect after sign-in. The shared component layer is
-ready for all CRUD feature tasks (6–14).
+used by all CRUD feature tasks (6–14).
 
 ## Commands
 

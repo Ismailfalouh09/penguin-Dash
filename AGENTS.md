@@ -102,6 +102,28 @@ All list pages, form pages, confirmation dialogs and toast feedback follow a fix
 - `DataTable` handles loading/empty/error inline — no conditional rendering needed around it.
 - Use `<ForbiddenState>` (from `@/shared/components/common`) for inline 403s inside a page section, not for whole-route 403s (those use `<ForbiddenPage>` via `RoleGuard`).
 
+### Catalog CRUD pattern (established in Task 6 — reuse for Task 7+)
+
+Each catalog feature follows this three-layer structure. Do not reinvent it.
+
+**Feature hooks** (`src/features/<name>/hooks/use-<name>.ts`):
+- List hook wraps the Orval `useQuery`; detail hook wraps `useQuery` for single entity.
+- Write hooks (`useCreate`, `useUpdate`, `useDeactivate`) use `useState`/`useCallback` — NOT `useMutation`. They call the generated imperative function directly, then `queryClient.invalidateQueries` for both the list key (`['/admin/<entity>']`) and the Orval-generated detail key (`getAdmin<Name>ControllerFindOneQueryKey(id)`).
+- Image hooks follow the same pattern using `categoryMediaControllerReplace/Delete`.
+
+**Feature components** (`src/features/<name>/components/`):
+- `<Name>Columns.tsx` — `use<Name>Columns({ onDeactivate })` returns `ColumnDef[]` with a trailing `RowActions` column (Edit + Deactivate). Guard write actions with role checks.
+- `<Name>Form.tsx` — RHF + Zod, accepts `defaultValues`, `onSubmit`, `isSubmitting`, `mode: 'create' | 'edit'`. Cancel → `navigate(ROUTES.<entity>)`.
+
+**Pages** (`src/pages/catalog/`):
+- List page: `useListQueryState` → query → `DataTable` + `DataTablePagination` + `SearchInput` + `SelectFilter(isActive)` + `ConfirmDialog` for deactivation + `PermissionGuard` on write button.
+- New page: `PageHeader` + `<Name>Form mode="create"` + success toast + navigate back.
+- Edit page: load detail via `use<Name>Detail`, show `LoadingState`/`ErrorState` while loading, then `<Name>Form mode="edit"`.
+
+**Routes**: nest as `{ path: '<entity>', children: [{ index, element: List }, { path: 'new', ... }, { path: ':entityId/edit', ... }] }`. Add `ROUTES.<entityNew>` and `ROUTES.<entityEdit>(id)` to `src/config/routes.ts`.
+
+**Deactivation rule**: never implement hard-delete in the UI unless the backend explicitly exposes a DELETE endpoint. Always use the deactivate pattern.
+
 ### Testing
 - Tests live in `__tests__/` folders co-located with the code they test
 - Use `render` from `src/test/utils/render.tsx` for component tests (QueryClient +

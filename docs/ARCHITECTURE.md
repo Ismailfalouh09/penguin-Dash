@@ -22,7 +22,13 @@ penguin-Dash/
 │   │   ├── route-handle.ts      # RouteHandle type (title + breadcrumb)
 │   │   └── navigation.ts        # Central nav config (groups, items, role filter)
 │   ├── features/                # Feature modules
-│   │   └── auth/                # Full authentication system (Task 4)
+│   │   ├── auth/                # Full authentication system (Task 4)
+│   │   ├── categories/          # Category CRUD + image upload (Task 6)
+│   │   │   ├── components/      # CategoryForm, CategoryColumns, CategoryImageUpload
+│   │   │   └── hooks/           # use-categories.ts (list/detail/create/update/deactivate/image)
+│   │   └── brands/              # Brand CRUD (Task 6)
+│   │       ├── components/      # BrandForm, BrandColumns
+│   │       └── hooks/           # use-brands.ts (list/detail/create/update/deactivate)
 │   │       ├── roles.ts         # Role, Permission, matrix, helpers
 │   │       ├── types.ts         # AdminUser UI type + fromCurrentAdmin mapper
 │   │       ├── auth-context.ts  # AuthContext + AuthContextValue + AuthStatus
@@ -43,7 +49,8 @@ penguin-Dash/
 │   │   ├── LoginPage.tsx                # Real login form (POST /auth/login)
 │   │   ├── ForbiddenPage.tsx / NotFoundPage.tsx
 │   │   ├── _shared/ModulePlaceholder.tsx   # Shared placeholder scaffold
-│   │   ├── catalog/            # Categories, Brands, Products(+detail/form/refs), Packs, Media
+│   │   ├── catalog/            # Categories (list/new/edit), Brands (list/new/edit),
+│   │   │                       #   Products(+detail/form/refs), Packs, Media
 │   │   ├── personalization/    # Attributes, Quiz, Recommendation rules
 │   │   ├── sales/              # Orders (+ detail)
 │   │   └── account/           # Profile
@@ -355,6 +362,34 @@ Never duplicate URL query-string parsing. Never re-implement pagination or searc
 - Toast viewport has `role="region" aria-label="Notifications"`; items use `role="status" aria-live="polite"`.
 - `FormLabel` with `required` renders an accessible `*` indicator (hidden from screen readers as decoration; field's `aria-required` comes from the underlying input).
 - All custom interactive controls (`Checkbox`, sort buttons, search-clear) are keyboard-navigable with visible focus rings.
+
+### 12. Feature CRUD Pattern (established in Task 6)
+
+Every catalog CRUD feature follows a consistent three-layer structure:
+
+**Feature hooks** (`src/features/<name>/hooks/use-<name>.ts`):
+- `use<Name>List(params)` — wraps the generated `useQuery` hook for the paginated list endpoint.
+- `use<Name>Detail(id)` — wraps `useQuery` for the single-entity endpoint.
+- `use<Name>Create()` / `use<Name>Update(id)` / `use<Name>Deactivate()` — manual `useState`-based mutation wrappers that call the generated imperative function, then call `queryClient.invalidateQueries` for the list and (where applicable) detail query keys. Returns `{ mutate, isPending }`.
+- Cache-invalidation keys match the Orval-generated query-key shape: `['/admin/<entities>']` for lists, `getAdmin<Name>ControllerFindOneQueryKey(id)` for detail.
+
+**Feature components** (`src/features/<name>/components/`):
+- `<Name>Columns.tsx` — `useBrandColumns` / `useCategoryColumns` hooks return `ColumnDef[]`; accept `{ onDeactivate }` callback. Render `RowActions` with Edit (navigate) and Deactivate (open confirm dialog) options. OWNER/ADMIN only see write actions via `PermissionGuard`-style guards.
+- `<Name>Form.tsx` — RHF + Zod form accepting `defaultValues`, `onSubmit`, `isSubmitting`, and `mode: 'create' | 'edit'`. Renders `FormLayout` → `FormSection` → fields → `FormActions`.
+
+**Page components** (`src/pages/catalog/`):
+- `<Name>sPage.tsx` — list page; calls `useListQueryState`, renders `SearchInput` + `SelectFilter` (isActive), `DataTable`, `DataTablePagination`, `ConfirmDialog` for deactivation, `PermissionGuard`-wrapped "New" button.
+- `<Name>NewPage.tsx` — create page; renders `PageHeader` + `<Name>Form mode="create"`.
+- `<Name>EditPage.tsx` — edit page; fetches detail via `use<Name>Detail`, renders loading/error states, then `PageHeader` + `<Name>Form mode="edit"`.
+
+**Routes** (`src/app/router.tsx`):
+Each entity uses nested routes: `<entity>` (index → list), `<entity>/new`, `<entity>/:entityId/edit`. Each nested route has its own `handle({ title, breadcrumb })`.
+
+**Deactivation, not deletion**:
+Categories and brands are never hard-deleted from the UI. The list page offers a "Deactivate" action that calls the backend deactivate endpoint and marks the entity inactive. The `isActive` field is filterable via `SelectFilter`. The entity can be reactivated by editing the form's `isActive` checkbox.
+
+**Category image workflow** (`CategoryImageUpload`):
+Displayed on the `CategoryEditPage` (edit mode only, above the form). Shows the current image (`currentImage.urls.card`), previews the selected file locally before upload, calls `categoryMediaControllerReplace` (multipart), and calls `categoryMediaControllerDelete` with a confirm dialog for removal. Invalidates both the detail and list queries after each operation. Brand logo upload is **not implemented** — no backend contract exists for it in the current OpenAPI spec.
 
 ## TypeScript Configuration
 

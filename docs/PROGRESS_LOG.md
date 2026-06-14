@@ -1,5 +1,62 @@
 # Progress Log
 
+## Task 6 — Categories & Brands
+
+**Date:** 2026-06-14
+**Status:** Completed
+
+### What Was Done
+
+Implemented full CRUD management for the Categories and Brands catalog modules. Both modules consume the Task 5 shared component layer without modification to shared code.
+
+**Categories feature** (`src/features/categories/`):
+- `use-categories.ts` — hooks: `useCategoryList`, `useCategoryDetail`, `useCategoryCreate`, `useCategoryUpdate`, `useCategoryDeactivate`, `useCategoryImageReplace`, `useCategoryImageDelete`. All write hooks use a manual `useState`/`useCallback` pattern (not `useMutation`) and invalidate relevant TanStack Query keys after success.
+- `CategoryForm.tsx` — RHF + Zod form for `code`, `name`, `description`, `isActive`. Accepts `mode: 'create' | 'edit'` and `defaultValues`. Cancel navigates to `/categories`.
+- `CategoryColumns.tsx` — `useCategoryColumns({ onDeactivate })` returns column definitions; trailing `RowActions` column with Edit (navigates to `/categories/:id/edit`) and Deactivate (opens confirm dialog).
+- `CategoryImageUpload.tsx` — shown on the edit page only. Displays current image (`image.urls.card`), shows a local preview while uploading, calls `categoryMediaControllerReplace` (multipart), and `categoryMediaControllerDelete` with a `ConfirmDialog`. Invalidates detail + list queries on success.
+
+**Brands feature** (`src/features/brands/`):
+- `use-brands.ts` — hooks: `useBrandList`, `useBrandDetail`, `useBrandCreate`, `useBrandUpdate`, `useBrandDeactivate`. Same pattern as categories; no image hooks (brand logo not in contract).
+- `BrandForm.tsx` — RHF + Zod form for `name`, `description`, `isActive`.
+- `BrandColumns.tsx` — `useBrandColumns({ onDeactivate })` with Edit + Deactivate row actions.
+
+**Pages** (`src/pages/catalog/`):
+- `CategoriesPage.tsx` — list with `SearchInput`, `SelectFilter` (isActive: Active/Inactive/All), `DataTable`, `DataTablePagination`, `PermissionGuard`-wrapped "New category" button, `ConfirmDialog` for deactivation. Replaces the Task 2 `ModulePlaceholder`.
+- `CategoryNewPage.tsx` — create form page; success navigates to `/categories`.
+- `CategoryEditPage.tsx` — edit page; loads detail, shows `LoadingState`/`ErrorState` while loading, renders `CategoryImageUpload` + `CategoryForm`.
+- `BrandsPage.tsx` — same pattern as `CategoriesPage`; replaces the Task 2 `ModulePlaceholder`.
+- `BrandNewPage.tsx` / `BrandEditPage.tsx` — same pattern as category pages; no image section.
+
+**Routing** (`src/app/router.tsx`, `src/config/routes.ts`):
+- Categories and brands are now nested-route groups with index (list), `new`, and `:id/edit` children.
+- New route constants: `ROUTES.categoryNew`, `ROUTES.categoryEdit(id)`, `ROUTES.brandNew`, `ROUTES.brandEdit(id)`.
+
+**Cache-invalidation conventions**:
+- List key: `['/admin/categories']` or `['/admin/brands']` — invalidated by create, update, deactivate, and image operations.
+- Detail key: `getAdminCategoriesControllerFindOneQueryKey(id)` / `getAdminBrandsControllerFindOneQueryKey(id)` — invalidated by update, deactivate, and image operations.
+
+**Role behavior**:
+- All roles (OWNER, ADMIN, STAFF) see list, search, and status-filter UI.
+- "New category / New brand" button is gated with `<PermissionGuard permission="write">` — STAFF does not see it.
+- Edit and Deactivate row actions are conditionally rendered per the column definitions when permission is `write`.
+
+### Results
+
+- **Build**: green — no type errors.
+- **Lint**: 0 errors; pre-existing fast-refresh warnings unchanged.
+- **No new tests added** — follow-up integration tests are planned (see TEST_PLAN.md Task 6 section).
+- Generated API files unchanged. `.env` not staged. `frontend-handoff/` not modified. No backend code added.
+
+### Key Decisions
+
+- **Deactivation over deletion**: the backend exposes a `PATCH /deactivate` endpoint rather than DELETE. The UI reflects this — there is no hard-delete action. Deactivated entities are filterable by `isActive=false`.
+- **Manual mutation hooks (not `useMutation`)**: `useState`/`useCallback` wrappers were used for mutations to avoid the `useMutation` v5 arity issue and allow direct `await` in page handlers without composing `onSuccess`/`onError`.
+- **Category image on edit page only**: image upload requires a real `categoryId`, so it is only shown on the `CategoryEditPage`, not on the create form.
+- **No brand logo**: the current OpenAPI contract has no brand image endpoint. The feature is not implemented to avoid an unsupported backend contract.
+- **URL state reuse**: both list pages use `useListQueryState` exactly as documented in AGENTS.md — no direct `useSearchParams` calls anywhere in feature code.
+
+---
+
 ## Task 5 — Shared Operational Components
 
 **Date:** 2026-06-14

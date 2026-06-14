@@ -9,7 +9,11 @@ import { LoginPage } from '@/pages/LoginPage'
 import { ForbiddenPage } from '@/pages/ForbiddenPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 import { CategoriesPage } from '@/pages/catalog/CategoriesPage'
+import { CategoryNewPage } from '@/pages/catalog/CategoryNewPage'
+import { CategoryEditPage } from '@/pages/catalog/CategoryEditPage'
 import { BrandsPage } from '@/pages/catalog/BrandsPage'
+import { BrandNewPage } from '@/pages/catalog/BrandNewPage'
+import { BrandEditPage } from '@/pages/catalog/BrandEditPage'
 import { ProductsPage } from '@/pages/catalog/ProductsPage'
 import { ProductDetailPage } from '@/pages/catalog/ProductDetailPage'
 import { ProductFormPage } from '@/pages/catalog/ProductFormPage'
@@ -61,13 +65,37 @@ export const routes: RouteObject[] = [
           // Catalog
           {
             path: 'categories',
-            element: <CategoriesPage />,
             handle: handle({ title: 'Categories', breadcrumb: 'Categories' }),
+            children: [
+              { index: true, element: <CategoriesPage /> },
+              {
+                path: 'new',
+                element: <CategoryNewPage />,
+                handle: handle({ title: 'New category', breadcrumb: 'New' }),
+              },
+              {
+                path: ':categoryId/edit',
+                element: <CategoryEditPage />,
+                handle: handle({ title: 'Edit category', breadcrumb: 'Edit' }),
+              },
+            ],
           },
           {
             path: 'brands',
-            element: <BrandsPage />,
             handle: handle({ title: 'Brands', breadcrumb: 'Brands' }),
+            children: [
+              { index: true, element: <BrandsPage /> },
+              {
+                path: 'new',
+                element: <BrandNewPage />,
+                handle: handle({ title: 'New brand', breadcrumb: 'New' }),
+              },
+              {
+                path: ':brandId/edit',
+                element: <BrandEditPage />,
+                handle: handle({ title: 'Edit brand', breadcrumb: 'Edit' }),
+              },
+            ],
           },
           {
             path: 'products',

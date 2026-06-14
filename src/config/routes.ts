@@ -10,7 +10,12 @@ export const ROUTES = {
   dashboard: '/dashboard',
 
   categories: '/categories',
+  categoryNew: '/categories/new',
+  categoryEdit: (categoryId = ':categoryId') => `/categories/${categoryId}/edit`,
+
   brands: '/brands',
+  brandNew: '/brands/new',
+  brandEdit: (brandId = ':brandId') => `/brands/${brandId}/edit`,
 
   products: '/products',
   productNew: '/products/new',
