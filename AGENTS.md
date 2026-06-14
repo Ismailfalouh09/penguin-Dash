@@ -152,6 +152,26 @@ Products extend the Task 6 catalog pattern with additional concerns. Reference t
 - List key: `['/admin/products']` — invalidated by create, update, archive.
 - Detail key: `getAdminProductsControllerFindOneQueryKey(id)` — invalidated by update, archive, any image operation.
 
+### Product References & Stock extension (Task 8)
+
+Product references are purchasable variants under products. They follow the catalog CRUD pattern, with product-scoped list/create routes and global reference detail/edit routes.
+
+**Reference workflows**: `ProductReferencesPage` lists references for `/products/:productId/references` with search, `isActive`, and `inStock` filters, pagination, row actions, and a write-gated New Reference button. `ReferenceDetailPage` shows identity, price delta, status, stock, compatibility attributes, and swatch media. `ReferenceNewPage` creates a reference from `/products/:productId/references/new`; `ReferenceEditPage` edits `/product-references/:referenceId/edit`.
+
+**Immutable code**: `referenceCode` is required on create and read-only on edit. Do not add UI that mutates reference codes after creation.
+
+**Default reference**: the form exposes `isDefault`. The backend enforces a single default reference per product; setting a reference as default unsets the previous default automatically.
+
+**Compatibility attributes**: use backend attribute groups through `useAttributeGroups()` and submit `attributes` as reference attribute inputs. The editor supports match type and score entries; saving replaces the reference compatibility list.
+
+**Swatch images**: `ReferenceSwatchUpload` uses the real product-reference media endpoints (`productReferenceMediaControllerReplace` and `productReferenceMediaControllerDelete`). One swatch image per reference is supported. Do not fake uploads or route through the generic media library.
+
+**Manual stock only**: stock updates use `adminProductReferencesControllerUpdateStock` from `StockUpdateDialog` and require stock quantity, reserved quantity, and low-stock threshold. Stock updates are manual. Automatic stock reservation and deduction are not implemented.
+
+**Archive/deactivation behavior**: references are deactivated through `adminProductReferencesControllerDeactivate`; there is no hard-delete UI. Product archive still cascades to references on the backend.
+
+**Permissions**: OWNER and ADMIN can create, edit, deactivate, and manually update stock via `write`. Swatch controls require `media:manage`. STAFF can read reference lists/details but does not receive write or stock actions.
+
 ### Testing
 - Tests live in `__tests__/` folders co-located with the code they test
 - Use `render` from `src/test/utils/render.tsx` for component tests (QueryClient +

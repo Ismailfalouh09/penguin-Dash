@@ -156,6 +156,25 @@ MSW handlers needed: `GET /admin/products`, `GET /admin/products/:id`, `POST /ad
 
 Use `apiUrl('/admin/products')` from `src/test/mocks/api.ts`. The paginated list response must match the backend envelope (`{ data: [...], meta: { page, pageSize, totalItems, totalPages, hasNextPage, hasPreviousPage } }`).
 
+**Task 8 — Product References & Stock**
+
+No dedicated Task 8 feature tests were added with the implementation. Feature integration tests should be added as follow-up work.
+
+| Area | Goal (follow-up) |
+|---|---|
+| `ProductReferencesPage` | Loads product name, renders reference rows, search, isActive/inStock filters, pagination, deactivate confirm flow |
+| `ReferenceDetailPage` | Loads reference, renders identity, stock, compatibility attributes, swatch image, and permission-gated actions |
+| `ReferenceNewPage` | Form submit → create reference → success toast → redirect to product references list |
+| `ReferenceEditPage` | Load detail, populate form, keep reference code read-only, update → navigate to detail |
+| `CompatibilityEditor` | Loads backend attribute groups, adds/removes compatibility entries, validates score range |
+| `ReferenceSwatchUpload` | Replace/delete call the real product-reference media endpoints with multipart upload/delete handlers |
+| `StockUpdateDialog` | Manual stock submit calls update-stock endpoint with stock, reserved, and low-stock threshold fields |
+| Permission behavior | OWNER/ADMIN show write, stock, and media actions; STAFF can read but cannot mutate |
+
+MSW handlers needed: `GET /admin/products/:id`, `GET /admin/products/:id/references`, `GET /admin/product-references/:id`, `POST /admin/products/:id/references`, `PATCH /admin/product-references/:id`, `PATCH /admin/product-references/:id/deactivate`, `PATCH /admin/product-references/:id/stock`, `POST /admin/product-references/:id/media`, and `DELETE /admin/product-references/:id/media`.
+
+Stock updates are manual. Automatic stock reservation and deduction are not implemented.
+
 ## Running Tests
 
 ```bash

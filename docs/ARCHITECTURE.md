@@ -23,28 +23,31 @@ penguin-Dash/
 │   │   └── navigation.ts        # Central nav config (groups, items, role filter)
 │   ├── features/                # Feature modules
 │   │   ├── auth/                # Full authentication system (Task 4)
+│   │   │   ├── roles.ts         # Role, Permission, matrix, helpers
+│   │   │   ├── types.ts         # AdminUser UI type + fromCurrentAdmin mapper
+│   │   │   ├── auth-context.ts  # AuthContext + AuthContextValue + AuthStatus
+│   │   │   ├── auth-events.ts   # Global 401 handler registry (decoupled from React)
+│   │   │   ├── auth-interceptor.ts # Bearer-header request interceptor
+│   │   │   ├── token-storage.ts # sessionStorage accessors (get/set/clear)
+│   │   │   ├── login-schema.ts  # Zod schema for login form (email + password)
+│   │   │   ├── AuthProvider.tsx # Session owner: login, logout, restore, 401 handler
+│   │   │   ├── use-auth.ts      # useAuth() hook (reads AuthContext)
+│   │   │   ├── current-user.tsx # CurrentUserProvider + useCurrentUser
+│   │   │   ├── ProtectedRoute.tsx # Redirects unauthenticated users to /login
+│   │   │   ├── GuestRoute.tsx   # Redirects authenticated users away from /login
+│   │   │   └── RoleGuard.tsx    # Route-level role/permission redirect to /forbidden
 │   │   ├── categories/          # Category CRUD + image upload (Task 6)
 │   │   │   ├── components/      # CategoryForm, CategoryColumns, CategoryImageUpload
 │   │   │   └── hooks/           # use-categories.ts (list/detail/create/update/deactivate/image)
 │   │   ├── brands/              # Brand CRUD (Task 6)
 │   │   │   ├── components/      # BrandForm, BrandColumns
 │   │   │   └── hooks/           # use-brands.ts (list/detail/create/update/deactivate)
-│   │   └── products/            # Product CRUD + media gallery (Task 7)
-│   │       ├── components/      # ProductForm, ProductColumns, ProductGallery
-│   │       └── hooks/           # use-products.ts (list/detail/create/update/archive/image)
-│   │       ├── roles.ts         # Role, Permission, matrix, helpers
-│   │       ├── types.ts         # AdminUser UI type + fromCurrentAdmin mapper
-│   │       ├── auth-context.ts  # AuthContext + AuthContextValue + AuthStatus
-│   │       ├── auth-events.ts   # Global 401 handler registry (decoupled from React)
-│   │       ├── auth-interceptor.ts # Bearer-header request interceptor
-│   │       ├── token-storage.ts # sessionStorage accessors (get/set/clear)
-│   │       ├── login-schema.ts  # Zod schema for login form (email + password)
-│   │       ├── AuthProvider.tsx # Session owner: login, logout, restore, 401 handler
-│   │       ├── use-auth.ts      # useAuth() hook (reads AuthContext)
-│   │       ├── current-user.tsx # CurrentUserProvider + useCurrentUser
-│   │       ├── ProtectedRoute.tsx # Redirects unauthenticated users to /login
-│   │       ├── GuestRoute.tsx   # Redirects authenticated users away from /login
-│   │       └── RoleGuard.tsx    # Route-level role/permission redirect to /forbidden
+│   │   ├── products/            # Product CRUD + media gallery (Task 7)
+│   │   │   ├── components/      # ProductForm, ProductColumns, ProductGallery
+│   │   │   └── hooks/           # use-products.ts (list/detail/create/update/archive/image)
+│   │   └── product-references/  # Reference variants, stock, swatches (Task 8)
+│   │       ├── components/      # ReferenceForm, columns, compatibility, stock, swatch
+│   │       └── hooks/           # use-product-references.ts (list/detail/write/media)
 │   ├── pages/                   # Route-level page components
 │   │   ├── DashboardOverviewPage.tsx
 │   │   ├── DiagnosticsPage.tsx          # Dev-only API diagnostics (/diagnostics)
@@ -53,7 +56,7 @@ penguin-Dash/
 │   │   ├── ForbiddenPage.tsx / NotFoundPage.tsx
 │   │   ├── _shared/ModulePlaceholder.tsx   # Shared placeholder scaffold
 │   │   ├── catalog/            # Categories (list/new/edit), Brands (list/new/edit),
-│   │   │                       #   Products(+detail/form/refs), Packs, Media
+│   │   │                       #   Products(+detail/form/refs), Product refs, Packs, Media
 │   │   ├── personalization/    # Attributes, Quiz, Recommendation rules
 │   │   ├── sales/              # Orders (+ detail)
 │   │   └── account/           # Profile
@@ -423,7 +426,49 @@ Products extend the Task 6 CRUD pattern with a richer set of concerns.
 - Archive action is `PermissionGuard`-wrapped; on success, navigates back to the products list.
 
 **ProductReferencesPage** (`src/pages/catalog/ProductReferencesPage.tsx`):
-- Placeholder page. Loads the product name via `useProductDetail` to show a meaningful title, then renders `ComingSoonState` with a planned-features list. Full implementation deferred to Task 8.
+- Product-scoped reference list for `/products/:productId/references`. Loads the product name via `useProductDetail`, then renders a server-backed `DataTable` with search, `isActive`, and `inStock` filters, pagination, view/edit/update-stock/deactivate row actions, and a write-gated New Reference button.
+- Deactivation uses `adminProductReferencesControllerDeactivate`; there is no hard-delete UI.
+
+### 14. Product References & Stock (Task 8)
+
+Product references model purchasable product variants such as shades, sizes, or SKUs. The Task 8 UI adds list, detail, create, and edit workflows without introducing backend or OpenAPI changes.
+
+**Routes and pages**:
+- `/products/:productId/references` lists references for a product.
+- `/products/:productId/references/new` creates a new reference for that product.
+- `/product-references/:referenceId` shows a read-only reference detail view.
+- `/product-references/:referenceId/edit` edits an existing reference.
+
+**Reference form behavior**:
+- `referenceCode` is required on create and immutable on edit; edit mode renders it disabled/read-only.
+- `isDefault` can be set from the form. The backend enforces one default reference per product and unsets the previous default automatically.
+- `isActive` controls active/inactive status. Inactive references remain visible through filters and can be reactivated by editing.
+- Create mode can set initial stock fields. Edit mode updates identity, pricing, flags, and compatibility; stock changes use the manual stock dialog.
+
+**Compatibility attributes**:
+- `CompatibilityEditor` loads real attribute groups from `useAttributeGroups()` (`GET /admin/attributes/groups` through the generated client).
+- Admins add group/option/match-type/score entries. The saved `attributes` payload replaces the reference compatibility list.
+- The detail page renders the current compatibility attributes read-only with match type and score.
+
+**Swatch image workflow**:
+- `ReferenceSwatchUpload` manages one swatch image per reference.
+- Upload/replace calls `productReferenceMediaControllerReplace(referenceId, { file, altText })`.
+- Remove calls `productReferenceMediaControllerDelete(referenceId)`.
+- Swatch management uses the real backend API and invalidates reference detail/list queries after changes.
+
+**Manual stock workflow**:
+- `StockUpdateDialog` calls `adminProductReferencesControllerUpdateStock(referenceId, { stockQuantity, reservedQuantity, lowStockThreshold })`.
+- Stock updates are manual. Automatic stock reservation and deduction are not implemented.
+- The list and detail pages display stock and reserved quantity; the low-stock threshold is informational in the UI and does not block orders.
+
+**Archive/deactivation behavior**:
+- Individual references are deactivated, not deleted. The deactivate row/detail action is hidden for already-inactive references.
+- Product archive remains product-level behavior and cascades to product references on the backend.
+
+**Permissions**:
+- OWNER and ADMIN can create, edit, deactivate, and manually update stock because those actions require `write`.
+- Swatch upload/replace/remove requires `media:manage`.
+- STAFF can read reference list and detail views, but write, stock, and swatch controls are hidden.
 
 ## TypeScript Configuration
 

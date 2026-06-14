@@ -1,5 +1,46 @@
 # Progress Log
 
+## Task 8 — Product References & Stock
+
+**Date:** 2026-06-14
+**Status:** Completed
+
+### Task 8B Documentation Results
+
+Documented the completed Task 8 product-reference and stock workflows across the project docs. Task 8A implementation was already present; Task 8B did not add features or refactor working code.
+
+Updated coverage:
+- Reference list, detail, create, and edit workflows.
+- Immutable `referenceCode` behavior after creation.
+- `isDefault` behavior, with the backend enforcing one default reference per product.
+- Compatibility attributes loaded from backend attribute groups and saved as replacement reference attribute inputs.
+- Swatch image upload/replace/remove through the real product-reference media API.
+- Manual stock updates through the update-stock endpoint.
+- Reference deactivation, with no hard-delete UI; product archive still cascades to references on the backend.
+- OWNER, ADMIN, and STAFF permission behavior.
+
+Stock updates are manual. Automatic stock reservation and deduction are not implemented.
+
+### Verification
+
+- **Lint**: passed with 0 errors and 4 existing fast-refresh warnings.
+- **Format check**: failed; Prettier reported 32 source files needing formatting. No bulk formatting was run because Task 8B is limited to documentation and commit safety.
+- **Tests**: passed after rerunning outside the sandbox due to a Windows `spawn EPERM` while loading Vite config in the sandbox — 21 files / 138 tests passed.
+- **Build**: passed after rerunning outside the sandbox due to the same `spawn EPERM` issue. Vite emitted a large-chunk warning only.
+
+### Roadmap
+
+- Task 8 — Completed.
+- Task 9 — Next.
+
+### Remaining Limitations
+
+- No dedicated Task 8 feature tests were added with the implementation; follow-up integration tests are documented in `docs/TEST_PLAN.md`.
+- Automatic stock reservation and deduction are not implemented.
+- Manual stock updates require admin action.
+
+---
+
 ## Task 7 — Products
 
 **Date:** 2026-06-14

@@ -18,6 +18,8 @@ import { ProductsPage } from '@/pages/catalog/ProductsPage'
 import { ProductDetailPage } from '@/pages/catalog/ProductDetailPage'
 import { ProductFormPage } from '@/pages/catalog/ProductFormPage'
 import { ProductReferencesPage } from '@/pages/catalog/ProductReferencesPage'
+import { ReferenceNewPage, ReferenceEditPage } from '@/pages/catalog/ReferenceFormPage'
+import { ReferenceDetailPage } from '@/pages/catalog/ReferenceDetailPage'
 import { PacksPage } from '@/pages/catalog/PacksPage'
 import { PackDetailPage } from '@/pages/catalog/PackDetailPage'
 import { PackFormPage } from '@/pages/catalog/PackFormPage'
@@ -119,8 +121,31 @@ export const routes: RouteObject[] = [
               },
               {
                 path: ':productId/references',
-                element: <ProductReferencesPage />,
                 handle: handle({ title: 'Product references', breadcrumb: 'References' }),
+                children: [
+                  { index: true, element: <ProductReferencesPage /> },
+                  {
+                    path: 'new',
+                    element: <ReferenceNewPage />,
+                    handle: handle({ title: 'New reference', breadcrumb: 'New' }),
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            path: 'product-references',
+            handle: handle({ title: 'Product references', breadcrumb: 'References' }),
+            children: [
+              {
+                path: ':referenceId',
+                element: <ReferenceDetailPage />,
+                handle: handle({ title: 'Reference details', breadcrumb: 'Details' }),
+              },
+              {
+                path: ':referenceId/edit',
+                element: <ReferenceEditPage />,
+                handle: handle({ title: 'Edit reference', breadcrumb: 'Edit' }),
               },
             ],
           },

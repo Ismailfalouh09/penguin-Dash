@@ -46,9 +46,14 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
   references summary), product create/edit form (category + brand selection, slug
   auto-generation, pricing, status, isActive), cover image upload/replace/remove,
   gallery image upload/delete/promote-to-cover, product archive (cascades to
-  references on the backend). Product references and stock management are deferred
-  to Task 8.
-- **Task 8 — Product References & Stock**: ⏳ next.
+  references on the backend).
+- **Task 8 — Product References & Stock**: ✅ reference list, detail, create, and
+  edit workflows; immutable reference codes after creation; default-reference
+  flag handling; compatibility attributes from backend attribute groups; swatch
+  image upload/replace/remove through the product-reference media API; manual
+  stock updates; reference deactivation. Stock updates are manual. Automatic
+  stock reservation and deduction are not implemented.
+- **Task 9 — Packs**: ⏳ next.
 
 The full authentication system is live. Every route behind `/` requires a valid
 admin session; unauthenticated visitors are sent to `/login` with the original

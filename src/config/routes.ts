@@ -22,6 +22,9 @@ export const ROUTES = {
   product: (productId = ':productId') => `/products/${productId}`,
   productEdit: (productId = ':productId') => `/products/${productId}/edit`,
   productReferences: (productId = ':productId') => `/products/${productId}/references`,
+  productReferenceNew: (productId = ':productId') => `/products/${productId}/references/new`,
+  productReference: (referenceId = ':referenceId') => `/product-references/${referenceId}`,
+  productReferenceEdit: (referenceId = ':referenceId') => `/product-references/${referenceId}/edit`,
 
   packs: '/packs',
   packNew: '/packs/new',
