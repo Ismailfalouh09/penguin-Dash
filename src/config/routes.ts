@@ -32,7 +32,14 @@ export const ROUTES = {
   packEdit: (packId = ':packId') => `/packs/${packId}/edit`,
 
   attributes: '/attributes',
+  attributeGroupNew: '/attributes/new',
+  attributeGroup: (groupId = ':groupId') => `/attributes/${groupId}`,
+  attributeGroupEdit: (groupId = ':groupId') => `/attributes/${groupId}/edit`,
+
   quiz: '/quiz',
+  quizQuestionNew: '/quiz/new',
+  quizQuestionEdit: (questionId = ':questionId') => `/quiz/${questionId}/edit`,
+
   recommendationRules: '/recommendation-rules',
 
   orders: '/orders',

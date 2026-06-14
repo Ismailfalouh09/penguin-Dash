@@ -48,9 +48,16 @@ penguin-Dash/
 │   │   ├── product-references/  # Reference variants, stock, swatches (Task 8)
 │   │   │   ├── components/      # ReferenceForm, columns, compatibility, stock, swatch
 │   │   │   └── hooks/           # use-product-references.ts (list/detail/write/media)
-│   │   └── packs/              # Pack CRUD + bundle composition + gallery (Task 9)
-│   │       ├── components/      # PackForm, PackColumns, PackItemsEditor, PackCompatibilityEditor, PackMediaGallery
-│   │       └── hooks/           # use-packs.ts (list/detail/create/update/archive/media)
+│   │   ├── packs/              # Pack CRUD + bundle composition + gallery (Task 9)
+│   │   │   ├── components/      # PackForm, PackColumns, PackItemsEditor, PackCompatibilityEditor, PackMediaGallery
+│   │   │   └── hooks/           # use-packs.ts (list/detail/create/update/archive/media)
+│   │   ├── attributes/         # Attribute groups + options CRUD (Task 11)
+│   │   │   ├── components/      # AttributeGroupColumns, AttributeGroupForm, AttributeOptionColumns, AttributeOptionForm
+│   │   │   └── hooks/           # use-attributes.ts (group list/detail/create/update/deactivate)
+│   │   │                        # use-attribute-options.ts (option list/detail/create/update/deactivate)
+│   │   └── quiz/               # Quiz question CRUD + reorder (Task 11)
+│   │       ├── components/      # QuizQuestionColumns, QuizQuestionForm, QuizReorderDialog
+│   │       └── hooks/           # use-quiz.ts (list/detail/create/update/deactivate/reorder)
 │   ├── pages/                   # Route-level page components
 │   │   ├── DashboardOverviewPage.tsx
 │   │   ├── DiagnosticsPage.tsx          # Dev-only API diagnostics (/diagnostics)
@@ -60,7 +67,10 @@ penguin-Dash/
 │   │   ├── _shared/ModulePlaceholder.tsx   # Shared placeholder scaffold
 │   │   ├── catalog/            # Categories (list/new/edit), Brands (list/new/edit),
 │   │   │                       #   Products(+detail/form/refs), Product refs, Packs(bundle CRUD + media), Media
-│   │   ├── personalization/    # Attributes, Quiz, Recommendation rules
+│   │   ├── personalization/    # AttributesPage (group list), AttributeGroupDetailPage (option list),
+│   │   │                       #   AttributeGroupNewPage, AttributeGroupEditPage,
+│   │   │                       #   QuizPage (question list), QuizQuestionNewPage, QuizQuestionEditPage,
+│   │   │                       #   Recommendation rules
 │   │   ├── sales/              # Orders (+ detail)
 │   │   └── account/           # Profile
 │   ├── lib/api/                 # API integration layer (Tasks 3–5)

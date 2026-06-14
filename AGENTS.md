@@ -172,6 +172,27 @@ Product references are purchasable variants under products. They follow the cata
 
 **Permissions**: OWNER and ADMIN can create, edit, deactivate, and manually update stock via `write`. Swatch controls require `media:manage`. STAFF can read reference lists/details but does not receive write or stock actions.
 
+### Attributes & Quiz (Task 11)
+
+#### Attribute groups and options
+
+- `src/features/attributes/hooks/use-attributes.ts` — `useAttributeGroupList`, `useAttributeGroupDetail`, `useAttributeGroupCreate`, `useAttributeGroupUpdate`, `useAttributeGroupDeactivate`. All write hooks follow the `useState`/`useCallback` pattern (no `useMutation`).
+- `src/features/attributes/hooks/use-attribute-options.ts` — `useAttributeOptionList(groupId, params)`, detail, create, update, deactivate. Options are scoped to their parent attribute group; list-key invalidation uses the group-scoped path `/admin/attributes/${groupId}/options`.
+- Attribute-group list is at `/attributes` (`AttributesPage`). Each group links to its detail page (`/attributes/:groupId`) which hosts the option list, inline create-option dialog, and inline edit-option dialog.
+- Attribute groups are deactivated, not hard-deleted. Options are deactivated, not hard-deleted. There is no backend image contract for attribute-group or attribute-option images; do not implement image upload for these entities.
+
+#### Quiz questions
+
+- `src/features/quiz/hooks/use-quiz.ts` — `useQuizQuestionList`, `useQuizQuestionDetail`, `useQuizQuestionCreate`, `useQuizQuestionUpdate`, `useQuizQuestionDeactivate`, `useQuizQuestionsReorder`.
+- Each quiz question is bound to an **attribute group** (`attributeGroupId`). The attribute group selection is immutable after creation; the `attributeGroupId` field is rendered as read-only (`disabled`) in edit mode.
+- Quiz answer options (`options`) are sourced from the attribute options of the selected attribute group. Saving a question **replaces** the full option list; there is no partial add/remove via a separate endpoint.
+- Step order (`stepOrder`) controls the display order of questions. The `QuizReorderDialog` component provides an up/down UI that submits a `ReorderQuizQuestionsDto` via `adminQuizControllerReorder`.
+- Only one active question is allowed per attribute group (enforced by the backend).
+- Quiz questions are deactivated, not hard-deleted.
+- Quiz-option images are not implemented (no backend contract).
+
+**Permissions**: OWNER and ADMIN can create, edit, deactivate, and reorder attribute groups, attribute options, and quiz questions (`write`). STAFF can view lists and details but does not receive write actions.
+
 ### Media Library (`src/features/media/`)
 
 - `MediaPage` lives at `/media` and is linked from the catalog navigation.

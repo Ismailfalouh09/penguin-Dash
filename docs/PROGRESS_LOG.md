@@ -1,5 +1,58 @@
 # Progress Log
 
+## Task 11 — Attributes & Quiz
+
+**Date:** 2026-06-14
+**Status:** Completed
+
+### What Was Done
+
+Implemented and manually verified the full attribute-group, attribute-option, and quiz-question management workflows.
+
+**Attribute groups** (`src/features/attributes/`)
+- `AttributesPage` — paginated list with search, `isActive` filter, deactivate confirm, and a write-gated New button.
+- `AttributeGroupDetailPage` — loads the group and renders its attribute options with inline create/edit dialogs and a deactivate confirm.
+- `AttributeGroupNewPage` / `AttributeGroupEditPage` — form pages using `AttributeGroupForm` (RHF + Zod).
+- Attribute groups are deactivated, not hard-deleted.
+- Attribute-group image upload is not implemented (no backend contract).
+
+**Attribute options**
+- Options are scoped to their parent attribute group and accessed through `AttributeGroupDetailPage`.
+- `useAttributeOptionList(groupId, params)` fetches with group-scoped cache key `/admin/attributes/${groupId}/options`.
+- Create, update, and deactivate hooks invalidate both the group-scoped option key and the top-level `/admin/attributes` key.
+- Attribute-option image upload is not implemented (no backend contract).
+
+**Quiz questions** (`src/features/quiz/`)
+- `QuizPage` — paginated list with search, status, deactivate confirm, and a write-gated New button; opens `QuizReorderDialog` for step-order management.
+- `QuizQuestionNewPage` / `QuizQuestionEditPage` — form pages using `QuizQuestionForm`.
+- `QuizQuestionForm` — attribute group select loads all active groups; selecting a group loads its active options; options are added from the available pool and removed individually; saving replaces the full option list.
+- Attribute group is immutable after creation; the field is `disabled` in edit mode and shows an explanatory note.
+- `QuizReorderDialog` — up/down list UI that submits `ReorderQuizQuestionsDto` via `adminQuizControllerReorder`.
+- Quiz questions are deactivated, not hard-deleted.
+- Quiz-option images are not implemented (no backend contract).
+
+**Permissions**: OWNER and ADMIN receive full write access (create, edit, deactivate, reorder). STAFF can view lists and details but does not see write actions.
+
+**Routes added**:
+- `/attributes` (group list), `/attributes/new`, `/attributes/:groupId` (detail + option list), `/attributes/:groupId/edit`
+- `/quiz` (question list), `/quiz/new`, `/quiz/:questionId/edit`
+
+### Roadmap
+
+- Task 11 — Completed.
+- Task 12 — Next: Recommendation Rules and Preview.
+
+### Verification
+
+Manual test by the user confirmed the implementation is working. Standard verification commands (`npm run lint`, `npm run format:check`, `npm test`, `npm run build`) were not rerun in Task 11C.
+
+### Notes
+
+- No feature tests were added in Task 11. Follow-up test goals are documented in `docs/TEST_PLAN.md`.
+- The backend enforces one active quiz question per attribute group; the UI shows an explanatory note on the `isActive` field but does not enforce this client-side.
+
+---
+
 ## Task 10 - Media Library
 
 **Date:** 2026-06-14

@@ -13,15 +13,14 @@
 | **Task 7** | Products — List, create, edit, archive, cover + gallery image management, detail view, references placeholder | ✅ **Completed** |
 | **Task 8** | Product References & Stock — SKU variants, manual stock management, compatibility attributes, swatch images | ✅ **Completed** |
 | **Task 9** | Packs — Bundle management, pack items, compatibility attributes, archive, and media gallery | ✅ **Completed** |
-| Task 10 | Quiz — Question list, create, edit, reorder |
-| Task 11 | Recommendation Rules — Rule builder, preview engine |
-| Task 12 | Orders — Order list, order detail, status updates |
-| Task 13 | Attributes & Options — Attribute groups, options, deactivation |
-| Task 14 | Media Library — Generic media upload, entity-specific image management |
-| Task 15 | Role-Based Access Control — Enforce STAFF restrictions across modules |
-| Task 16 | Polish & Production Readiness — Error boundaries, route guards, a11y audit |
+| **Task 11** | Attributes & Quiz — Attribute groups, attribute options, quiz questions, step ordering, option replacement | ✅ **Completed** |
+| Task 12 | Recommendation Rules — Rule builder, preview engine | **Next** |
+| Task 13 | Orders — Order list, order detail, status updates |
+| Task 14 | Role-Based Access Control — Enforce STAFF restrictions across modules |
+| Task 15 | Polish & Production Readiness — Error boundaries, route guards, a11y audit |
 
-> Current milestone: Task 10 is complete for the media library. Task 11 is next: Attributes and Quiz Management.
+> Current milestone: Task 11 is complete. Attribute-group and attribute-option management, quiz-question CRUD with attribute binding and option replacement, step-order reorder dialog, and OWNER/ADMIN/STAFF permission enforcement are all live.
+> Task 12 is next: Recommendation Rules and Preview.
 >
 > Ordering note: authentication and the OpenAPI client were originally sketched
 > elsewhere in the plan. In practice the conception/shell (Task 2) and the typed

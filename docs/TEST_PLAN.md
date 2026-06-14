@@ -208,6 +208,26 @@ MSW handlers needed: `GET /admin/media`, `GET /admin/media/:id`, `POST /admin/me
 
 Uploads are backend-mediated only; tests should not assume a direct browser-to-Cloudinary flow. The reusable picker is intentionally shared, but it is not yet wired into the entity pages.
 
+**Task 11 — Attributes & Quiz**
+
+No dedicated Task 11 feature tests were added with the implementation. Feature integration tests should be added as follow-up work.
+
+| Area | Goal (follow-up) |
+|---|---|
+| `AttributesPage` | List renders attribute groups, search, isActive filter, pagination, deactivate confirm flow |
+| `AttributeGroupDetailPage` | Loads group, renders option list, inline create/edit dialogs, deactivate confirm |
+| `AttributeGroupNewPage` / `AttributeGroupEditPage` | Create and update mutation flows, navigate on success |
+| `AttributeOptionForm` | Name/code/label validation, create and update mutations |
+| `QuizPage` | List renders questions, attribute-group and status filters, deactivate confirm, reorder dialog opens |
+| `QuizQuestionNewPage` | Group selection loads options, option add/remove, create mutation, navigate on success |
+| `QuizQuestionEditPage` | Group field is disabled in edit mode, existing options pre-loaded, update mutation |
+| `QuizReorderDialog` | Up/down buttons reorder list, save sends correct stepOrder sequence, cancel reverts |
+| Permission behavior | OWNER/ADMIN show write actions; STAFF sees read-only lists with no create/edit/deactivate buttons |
+
+MSW handlers needed: `GET /admin/attributes`, `GET /admin/attributes/:groupId`, `POST /admin/attributes/groups`, `PATCH /admin/attributes/groups/:groupId`, `PATCH /admin/attributes/groups/:groupId/deactivate`, `GET /admin/attributes/:groupId/options`, `POST /admin/attributes/:groupId/options`, `PATCH /admin/attributes/options/:id`, `PATCH /admin/attributes/options/:id/deactivate`, `GET /admin/quiz/questions`, `GET /admin/quiz/questions/:id`, `POST /admin/quiz/questions`, `PATCH /admin/quiz/questions/:id`, `PATCH /admin/quiz/questions/:id/deactivate`, and `PATCH /admin/quiz/questions/reorder`.
+
+Attribute-group image upload and quiz-option image upload are not in scope; do not add MSW handlers or assertions for those endpoints.
+
 ## Running Tests
 
 ```bash

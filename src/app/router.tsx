@@ -25,7 +25,12 @@ import { PackDetailPage } from '@/pages/catalog/PackDetailPage'
 import { PackFormPage } from '@/pages/catalog/PackFormPage'
 import { MediaPage } from '@/pages/catalog/MediaPage'
 import { AttributesPage } from '@/pages/personalization/AttributesPage'
+import { AttributeGroupDetailPage } from '@/pages/personalization/AttributeGroupDetailPage'
+import { AttributeGroupNewPage } from '@/pages/personalization/AttributeGroupNewPage'
+import { AttributeGroupEditPage } from '@/pages/personalization/AttributeGroupEditPage'
 import { QuizPage } from '@/pages/personalization/QuizPage'
+import { QuizQuestionNewPage } from '@/pages/personalization/QuizQuestionNewPage'
+import { QuizQuestionEditPage } from '@/pages/personalization/QuizQuestionEditPage'
 import { RecommendationRulesPage } from '@/pages/personalization/RecommendationRulesPage'
 import { OrdersPage } from '@/pages/sales/OrdersPage'
 import { OrderDetailPage } from '@/pages/sales/OrderDetailPage'
@@ -180,13 +185,42 @@ export const routes: RouteObject[] = [
           // Personalization
           {
             path: 'attributes',
-            element: <AttributesPage />,
             handle: handle({ title: 'Attributes', breadcrumb: 'Attributes' }),
+            children: [
+              { index: true, element: <AttributesPage /> },
+              {
+                path: 'new',
+                element: <AttributeGroupNewPage />,
+                handle: handle({ title: 'New attribute group', breadcrumb: 'New' }),
+              },
+              {
+                path: ':groupId',
+                element: <AttributeGroupDetailPage />,
+                handle: handle({ title: 'Attribute group details', breadcrumb: 'Details' }),
+              },
+              {
+                path: ':groupId/edit',
+                element: <AttributeGroupEditPage />,
+                handle: handle({ title: 'Edit attribute group', breadcrumb: 'Edit' }),
+              },
+            ],
           },
           {
             path: 'quiz',
-            element: <QuizPage />,
             handle: handle({ title: 'Quiz', breadcrumb: 'Quiz' }),
+            children: [
+              { index: true, element: <QuizPage /> },
+              {
+                path: 'new',
+                element: <QuizQuestionNewPage />,
+                handle: handle({ title: 'New quiz question', breadcrumb: 'New' }),
+              },
+              {
+                path: ':questionId/edit',
+                element: <QuizQuestionEditPage />,
+                handle: handle({ title: 'Edit quiz question', breadcrumb: 'Edit' }),
+              },
+            ],
           },
           {
             path: 'recommendation-rules',

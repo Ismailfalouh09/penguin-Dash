@@ -54,6 +54,7 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
   stock updates; reference deactivation. Stock updates are manual. Automatic
   stock reservation and deduction are not implemented.
 - **Task 9 — Packs**: ✅ pack list/detail/create/edit, bundle composition via pack items, compatibility attributes, archive, and pack media gallery with cover replacement, deletion, promotion, and reordering.
+- **Task 11 — Attributes & Quiz**: ✅ attribute-group list/create/edit/deactivate; attribute-option list/create/edit/deactivate scoped to each group; quiz-question list/create/edit/deactivate with attribute-group binding and answer-option configuration; drag-free step-order reorder dialog; immutable attribute-group assignment after quiz-question creation; quiz-option replacement on save; OWNER/ADMIN write access; STAFF read-only.
 
 The full authentication system is live. Every route behind `/` requires a valid
 admin session; unauthenticated visitors are sent to `/login` with the original
@@ -62,8 +63,8 @@ used by all CRUD feature tasks (6–14).
 
 ## Current milestone
 
-- **Task 10 â€” Media Library**: completed shared media browsing, multipart image upload, alt-text metadata editing, soft delete/archive, reusable picker, and category/product/reference/pack integrations. Uploads go through the backend; there is no direct browser-to-Cloudinary path.
-- **Task 11 â€” Attributes and Quiz Management**: next.
+- **Task 11 — Attributes & Quiz**: completed. Attribute groups and options are manageable via list, create, edit, and deactivate. Quiz questions are bound to an attribute group; options are sourced from that group and replaced on each save. Step order is editable via a reorder dialog. Attribute-group images and quiz-option images are not implemented (no backend contract).
+- **Task 12 — Recommendation Rules and Preview**: next.
 
 ## Commands
 
