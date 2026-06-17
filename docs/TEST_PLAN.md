@@ -228,6 +228,22 @@ MSW handlers needed: `GET /admin/attributes`, `GET /admin/attributes/:groupId`, 
 
 Attribute-group image upload and quiz-option image upload are not in scope; do not add MSW handlers or assertions for those endpoints.
 
+**Task 12 — Recommendation Rules & Preview**
+
+No dedicated Task 12 feature tests were added with the implementation. Feature integration tests should be added as follow-up work.
+
+| Area | Goal (follow-up) |
+|---|---|
+| `RecommendationRulesPage` | List renders rows, search, `isActive`/`targetType`/`conditionType` filters, pagination, row actions, and deactivate confirm flow |
+| `RecommendationRuleForm` | Create and edit flows, immutable code in edit mode, active/inactive toggle, cancel navigation |
+| `RecommendationRuleDetailPage` | Loads rule, renders identity and scoring fields, and shows the write-gated edit button |
+| `RecommendationRulePreviewPage` | Runs backend preview with a customer profile ID, renders ranked packs, handles empty results, and shows algorithm version / score metadata |
+| Permission behavior | OWNER/ADMIN show create/edit/deactivate; OWNER/ADMIN/STAFF can preview; backend scoring stays authoritative |
+
+MSW handlers needed: `GET /admin/recommendation-rules`, `GET /admin/recommendation-rules/:id`, `POST /admin/recommendation-rules`, `PATCH /admin/recommendation-rules/:id`, `DELETE /admin/recommendation-rules/:id`, and `POST /admin/recommendation-rules/preview`.
+
+Preview results are non-persistent. The tests should assert that the frontend displays the backend response and does not model stored recommendation history or reimplement scoring.
+
 ## Running Tests
 
 ```bash

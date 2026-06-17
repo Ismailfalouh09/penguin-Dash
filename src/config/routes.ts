@@ -41,6 +41,10 @@ export const ROUTES = {
   quizQuestionEdit: (questionId = ':questionId') => `/quiz/${questionId}/edit`,
 
   recommendationRules: '/recommendation-rules',
+  recommendationRuleNew: '/recommendation-rules/new',
+  recommendationRulePreview: '/recommendation-rules/preview',
+  recommendationRule: (ruleId = ':ruleId') => `/recommendation-rules/${ruleId}`,
+  recommendationRuleEdit: (ruleId = ':ruleId') => `/recommendation-rules/${ruleId}/edit`,
 
   orders: '/orders',
   order: (orderId = ':orderId') => `/orders/${orderId}`,

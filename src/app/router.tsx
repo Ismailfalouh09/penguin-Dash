@@ -32,6 +32,10 @@ import { QuizPage } from '@/pages/personalization/QuizPage'
 import { QuizQuestionNewPage } from '@/pages/personalization/QuizQuestionNewPage'
 import { QuizQuestionEditPage } from '@/pages/personalization/QuizQuestionEditPage'
 import { RecommendationRulesPage } from '@/pages/personalization/RecommendationRulesPage'
+import { RecommendationRuleDetailPage } from '@/pages/personalization/RecommendationRuleDetailPage'
+import { RecommendationRuleNewPage } from '@/pages/personalization/RecommendationRuleNewPage'
+import { RecommendationRuleEditPage } from '@/pages/personalization/RecommendationRuleEditPage'
+import { RecommendationRulePreviewPage } from '@/pages/personalization/RecommendationRulePreviewPage'
 import { OrdersPage } from '@/pages/sales/OrdersPage'
 import { OrderDetailPage } from '@/pages/sales/OrderDetailPage'
 import { ProfilePage } from '@/pages/account/ProfilePage'
@@ -224,8 +228,30 @@ export const routes: RouteObject[] = [
           },
           {
             path: 'recommendation-rules',
-            element: <RecommendationRulesPage />,
             handle: handle({ title: 'Recommendation rules', breadcrumb: 'Recommendation rules' }),
+            children: [
+              { index: true, element: <RecommendationRulesPage /> },
+              {
+                path: 'new',
+                element: <RecommendationRuleNewPage />,
+                handle: handle({ title: 'New recommendation rule', breadcrumb: 'New' }),
+              },
+              {
+                path: 'preview',
+                element: <RecommendationRulePreviewPage />,
+                handle: handle({ title: 'Recommendation preview', breadcrumb: 'Preview' }),
+              },
+              {
+                path: ':ruleId',
+                element: <RecommendationRuleDetailPage />,
+                handle: handle({ title: 'Rule details', breadcrumb: 'Details' }),
+              },
+              {
+                path: ':ruleId/edit',
+                element: <RecommendationRuleEditPage />,
+                handle: handle({ title: 'Edit recommendation rule', breadcrumb: 'Edit' }),
+              },
+            ],
           },
 
           // Sales

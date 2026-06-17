@@ -19,42 +19,43 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 
 ## Current status
 
-- **Task 1 — Foundation**: ✅ tooling, strict TS, router, query, Tailwind, shadcn, testing.
-- **Task 2 — Conception & design system**: ✅ responsive dashboard shell, central
+- **Task 1 — Foundation**: tooling, strict TS, router, query, Tailwind, shadcn, testing.
+- **Task 2 — Conception & design system**: responsive dashboard shell, central
   navigation config, design tokens, shared UI/page states, placeholder pages.
-- **Task 3 — API integration foundation**: ✅ Orval-generated typed client +
+- **Task 3 — API integration foundation**: Orval-generated typed client +
   TanStack Query hooks, one central HTTP client, error normalization, dev
   diagnostics, MSW foundation.
-- **Task 4 — Authentication**: ✅ login page, JWT storage (sessionStorage), session
+- **Task 4 — Authentication**: login page, JWT storage (sessionStorage), session
   restoration via `GET /auth/me`, Bearer-header injection, protected and guest
   routes, requested-route redirect, role guards, `401`/`403` handling, logout +
   query-cache cleanup. No refresh-token flow (single access token only).
-- **Task 5 — Shared operational components**: ✅ generic data table (TanStack Table
+- **Task 5 — Shared operational components**: generic data table (TanStack Table
   v8, server-side sort/pagination/filtering, loading/empty/error states, row
   selection, row actions), pagination control, search/filter toolbar, URL
   query-state hook, form-layout components (RHF wiring, field errors, required
   indication, submit loading), confirmation and delete dialogs, toast notification
   system, `ForbiddenState` inline component, pagination types matching the backend
   envelope. A dev-only demo at `/components-demo` exercises all components.
-- **Task 6 — Categories & Brands**: ✅ list, create, edit, deactivate, image
+- **Task 6 — Categories & Brands**: list, create, edit, deactivate, image
   upload/remove for categories; list, create, edit, deactivate for brands. Both
   modules reuse the Task 5 shared component layer (data table, pagination, search,
   filters, form layout, confirmation dialogs, toasts, URL state). Brand logo
   upload is not in scope (no backend contract for it).
-- **Task 7 — Products**: ✅ product list (search, status/isActive filters,
+- **Task 7 — Products**: product list (search, status/isActive filters,
   server-side sort/pagination), product detail view (info, pricing, cover + gallery,
   references summary), product create/edit form (category + brand selection, slug
   auto-generation, pricing, status, isActive), cover image upload/replace/remove,
   gallery image upload/delete/promote-to-cover, product archive (cascades to
   references on the backend).
-- **Task 8 — Product References & Stock**: ✅ reference list, detail, create, and
+- **Task 8 — Product References & Stock**: reference list, detail, create, and
   edit workflows; immutable reference codes after creation; default-reference
   flag handling; compatibility attributes from backend attribute groups; swatch
   image upload/replace/remove through the product-reference media API; manual
   stock updates; reference deactivation. Stock updates are manual. Automatic
   stock reservation and deduction are not implemented.
-- **Task 9 — Packs**: ✅ pack list/detail/create/edit, bundle composition via pack items, compatibility attributes, archive, and pack media gallery with cover replacement, deletion, promotion, and reordering.
-- **Task 11 — Attributes & Quiz**: ✅ attribute-group list/create/edit/deactivate; attribute-option list/create/edit/deactivate scoped to each group; quiz-question list/create/edit/deactivate with attribute-group binding and answer-option configuration; drag-free step-order reorder dialog; immutable attribute-group assignment after quiz-question creation; quiz-option replacement on save; OWNER/ADMIN write access; STAFF read-only.
+- **Task 9 — Packs**: pack list/detail/create/edit, bundle composition via pack items, compatibility attributes, archive, and pack media gallery with cover replacement, deletion, promotion, and reordering.
+- **Task 11 — Attributes & Quiz**: attribute-group list/create/edit/deactivate; attribute-option list/create/edit/deactivate scoped to each group; quiz-question list/create/edit/deactivate with attribute-group binding and answer-option configuration; drag-free step-order reorder dialog; immutable attribute-group assignment after quiz-question creation; quiz-option replacement on save; OWNER/ADMIN write access; STAFF read-only.
+- **Task 12 — Recommendation Rules & Preview**: recommendation-rule list, detail, create/edit, deactivate, and non-persistent preview workflows; immutable rule-code behavior on edit; backend-authoritative scoring; OWNER/ADMIN write access; OWNER/ADMIN/STAFF preview access.
 
 The full authentication system is live. Every route behind `/` requires a valid
 admin session; unauthenticated visitors are sent to `/login` with the original
@@ -63,8 +64,8 @@ used by all CRUD feature tasks (6–14).
 
 ## Current milestone
 
-- **Task 11 — Attributes & Quiz**: completed. Attribute groups and options are manageable via list, create, edit, and deactivate. Quiz questions are bound to an attribute group; options are sourced from that group and replaced on each save. Step order is editable via a reorder dialog. Attribute-group images and quiz-option images are not implemented (no backend contract).
-- **Task 12 — Recommendation Rules and Preview**: next.
+- **Task 12 — Recommendation Rules & Preview**: completed. Recommendation rules are manageable via list, create, edit, deactivate, detail, and non-persistent preview flows. Rule code is immutable on edit, and the backend remains authoritative for scoring.
+- **Task 13 — Order Management**: next.
 
 ## Commands
 

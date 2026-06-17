@@ -1,5 +1,40 @@
 # Progress Log
 
+## Task 12 — Recommendation Rules & Preview
+
+**Date:** 2026-06-17
+**Status:** Completed
+
+### What Was Done
+
+Documented the completed recommendation-rule and preview workflow across the project docs and aligned the roadmap with the implementation already present in the repo.
+
+Updated coverage:
+- Recommendation-rule list, detail, create, edit, and deactivate workflows.
+- Immutable rule-code behavior in edit mode.
+- Soft deactivation behavior, with inactive rules excluded from future previews and results.
+- Preview workflow for customer profile IDs.
+- Preview result display: algorithm version, ranked packs, match percentage, total score, reason summary, and selected items.
+- OWNER, ADMIN, and STAFF permissions.
+- Backend-authoritative scoring; the frontend does not reimplement ranking.
+- Manual user verification reported Task 12A as working.
+
+### Roadmap
+
+- Task 12 - Completed.
+- Task 13 - Next: Order Management.
+
+### Verification
+
+Manual test by the user confirmed the Task 12A implementation. Standard verification commands were not rerun in Task 12C.
+
+### Notes
+
+- The preview endpoint is non-persistent; it returns ranked packs for display only.
+- No feature tests were added in Task 12. Follow-up test goals are documented in `docs/TEST_PLAN.md`.
+
+---
+
 ## Task 11 — Attributes & Quiz
 
 **Date:** 2026-06-14

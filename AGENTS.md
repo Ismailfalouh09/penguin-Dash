@@ -193,6 +193,17 @@ Product references are purchasable variants under products. They follow the cata
 
 **Permissions**: OWNER and ADMIN can create, edit, deactivate, and reorder attribute groups, attribute options, and quiz questions (`write`). STAFF can view lists and details but does not receive write actions.
 
+### Recommendation Rules & Preview (`src/features/recommendation-rules/`)
+
+- `use-recommendation-rules.ts` wraps list, detail, create, update, deactivate, and preview. Create/update/deactivate invalidate the recommendation-rule list key and detail key. Preview posts `CreateRecommendationDto` to `POST /admin/recommendation-rules/preview` and returns backend-ranked packs without persisting a recommendation session or result.
+- `RecommendationRulesPage` is the list page. Use `useListQueryState` with search, `isActive`, `targetType`, and `conditionType` filters, pagination, row actions, a write-gated New button, and a preview button gated by `recommendations:preview`.
+- `RecommendationRuleForm` uses RHF + Zod for create/edit. `code` is immutable in edit mode and rendered read-only; status is active/inactive. Create/edit pages should navigate back to the list on success.
+- `RecommendationRuleDetailPage` shows code, name, target, condition, score, weight, and status. The edit action is write-gated.
+- `RecommendationRulePreviewPage` accepts a customer profile ID, calls the backend preview, and renders the returned algorithm version, ranked packs, match percentage, total score, reason summary, and selected items. It is non-persistent and must never reimplement scoring in the frontend.
+- Permissions: OWNER and ADMIN can create, edit, and deactivate via `write`. OWNER, ADMIN, and STAFF can preview via `recommendations:preview`. The backend stays authoritative for scoring.
+- Deactivation is a soft state change, not a hard delete; inactive rules should be excluded from future previews and results. Reactivation happens by editing the rule.
+- Routes: `/recommendation-rules`, `/recommendation-rules/new`, `/recommendation-rules/preview`, `/recommendation-rules/:ruleId`, `/recommendation-rules/:ruleId/edit`.
+
 ### Media Library (`src/features/media/`)
 
 - `MediaPage` lives at `/media` and is linked from the catalog navigation.

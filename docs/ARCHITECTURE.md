@@ -58,6 +58,9 @@ penguin-Dash/
 │   │   └── quiz/               # Quiz question CRUD + reorder (Task 11)
 │   │       ├── components/      # QuizQuestionColumns, QuizQuestionForm, QuizReorderDialog
 │   │       └── hooks/           # use-quiz.ts (list/detail/create/update/deactivate/reorder)
+│   │   ├── recommendation-rules/ # Recommendation rule CRUD + preview (Task 12)
+│   │   │   ├── components/      # RecommendationRuleForm, RecommendationRuleColumns
+│   │   │   └── hooks/           # use-recommendation-rules.ts (list/detail/create/update/deactivate/preview)
 │   ├── pages/                   # Route-level page components
 │   │   ├── DashboardOverviewPage.tsx
 │   │   ├── DiagnosticsPage.tsx          # Dev-only API diagnostics (/diagnostics)
@@ -70,7 +73,8 @@ penguin-Dash/
 │   │   ├── personalization/    # AttributesPage (group list), AttributeGroupDetailPage (option list),
 │   │   │                       #   AttributeGroupNewPage, AttributeGroupEditPage,
 │   │   │                       #   QuizPage (question list), QuizQuestionNewPage, QuizQuestionEditPage,
-│   │   │                       #   Recommendation rules
+│   │   │                       #   RecommendationRuleDetailPage, RecommendationRuleNewPage,
+│   │   │                       #   RecommendationRuleEditPage, RecommendationRulePreviewPage
 │   │   ├── sales/              # Orders (+ detail)
 │   │   └── account/           # Profile
 │   ├── lib/api/                 # API integration layer (Tasks 3–5)
@@ -483,7 +487,20 @@ Product references model purchasable product variants such as shades, sizes, or 
 - Swatch upload/replace/remove requires `media:manage`.
 - STAFF can read reference list and detail views, but write, stock, and swatch controls are hidden.
 
-### 15. Pack Management (`src/features/packs/`)
+### 15. Recommendation Rules (`src/features/recommendation-rules/`)
+
+Task 12 adds backend-authoritative recommendation-rule management and preview workflows:
+
+- `use-recommendation-rules.ts` wraps list/detail/create/update/deactivate/preview. Create/update/deactivate invalidate `['/admin/recommendation-rules']` and the detail query key. Preview posts `CreateRecommendationDto` to `POST /admin/recommendation-rules/preview` and returns the backend-ranked `RecommendationResponse` without creating persistent sessions or results.
+- `RecommendationRulesPage` is the list page. It uses `useListQueryState` with search, `isActive`, `targetType`, and `conditionType` filters, pagination, row actions, a write-gated New button, and a preview button gated by `recommendations:preview`.
+- `RecommendationRuleForm.tsx` uses RHF + Zod for create/edit. `code` is immutable in edit mode and rendered read-only. The status toggle marks a rule active or inactive.
+- `RecommendationRuleDetailPage` shows code, name, target, condition, score, weight, and status, with a write-gated edit action.
+- `RecommendationRulePreviewPage` accepts a customer profile ID, calls the backend preview, and renders the returned algorithm version, ranked packs, match percentage, total score, reason summary, and selected items. The preview is non-persistent and must not reimplement scoring in the frontend.
+- Permissions mirror the backend matrix: OWNER and ADMIN can create, edit, and deactivate via `write`; OWNER, ADMIN, and STAFF can preview via `recommendations:preview`.
+- Deactivation is a soft state change, not a hard delete. Inactive rules should not affect future previews or results, and they can be reactivated by editing the rule.
+- Routes are `/recommendation-rules`, `/recommendation-rules/new`, `/recommendation-rules/preview`, `/recommendation-rules/:ruleId`, and `/recommendation-rules/:ruleId/edit`.
+
+### 16. Pack Management (`src/features/packs/`)
 
 Task 9 adds bundle management as a first-class catalog workflow:
 
@@ -495,7 +512,7 @@ Task 9 adds bundle management as a first-class catalog workflow:
 - Pages and routes are `/packs`, `/packs/new`, `/packs/:packId`, and `/packs/:packId/edit`. The list page supports search, status, active, and price-mode filters, while the detail page shows pack items, compatibility attributes, and media.
 - Permissions mirror the backend matrix: OWNER and ADMIN can create, edit, archive, and manage media; STAFF can read packs but cannot mutate them.
 
-### 16. Media Library (`src/features/media/`)
+### 17. Media Library (`src/features/media/`)
 
 Task 10 adds a shared media library for catalog imagery and metadata management:
 
