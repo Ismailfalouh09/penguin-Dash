@@ -58,6 +58,7 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 - **Task 12 — Recommendation Rules & Preview**: recommendation-rule list, detail, create/edit, deactivate, and non-persistent preview workflows; immutable rule-code behavior on edit; backend-authoritative scoring; OWNER/ADMIN write access; OWNER/ADMIN/STAFF preview access.
 - **Task 13 — Orders**: order list, order detail, customer and delivery info, ordered-item display, status updates, and status history. OWNER, ADMIN, and STAFF can read orders; status updates are gated to authorized admins. Manual user verification reported Task 13A as working. Current limitations: no delivery-provider integration, no WhatsApp confirmation, no payment integration, no automatic stock deduction, and no stock reservation.
 - **Task 14 — Dashboard Overview**: live dashboard built from backend-backed counts, recent orders, alerts, and role-aware shortcuts. Manual user verification reported Task 14A as working. The page does not invent analytics, and richer revenue, stock, and fulfillment statistics are not exposed by the backend yet.
+- **Task 16 — Final UI, Accessibility and Security Fixes**: release-hardening pass for the shell, profile page, not-found page, media/product/order/recommendation actions, and layout accessibility. Manual user checking reported Task 16A as working. No fake analytics, tracking scripts, or hardcoded production numbers were added.
 
 The full authentication system is live. Every route behind `/` requires a valid
 admin session; unauthenticated visitors are sent to `/login` with the original
@@ -67,7 +68,8 @@ used by all CRUD feature tasks (6–14).
 ## Current milestone
 
 - **Task 14 — Dashboard Overview**: completed. The overview shows live counts, recent orders, alerts, and operational shortcuts without inventing statistics.
-- **Task 15 — Final UI, Accessibility and Security Fixes**: next.
+- **Task 16 — Final UI, Accessibility and Security Fixes**: completed. The release-hardening pass tightened accessibility, session-safe UI behavior, and production-ready copy.
+- **Admin Dashboard MVP**: completed.
 
 ## Commands
 
@@ -131,6 +133,7 @@ change with `npm run api:generate`. Generated code lives in
 - [API Integration](docs/API_INTEGRATION.md) — Generated client, HTTP client, errors, query
 - [Dashboard Conception](docs/DASHBOARD_CONCEPTION.md) — Sitemap, routes, navigation, role rules
 - [Design System](docs/DESIGN_SYSTEM.md) — Tokens, typography, components, states
+- [Deployment](docs/DEPLOYMENT.md) — Production environment, static hosting, and release notes
 - [Test Plan](docs/TEST_PLAN.md) — Testing strategy
 - [Progress Log](docs/PROGRESS_LOG.md) — Task completion history
 - [Frontend Roadmap](FRONTEND_ROADMAP.md) — Planned tasks 1–16

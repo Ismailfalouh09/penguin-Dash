@@ -255,6 +255,18 @@ Preview results are non-persistent. The tests should assert that the frontend di
 
 Manual user verification reported Task 13A as working. Task 13C only updated documentation, so no automated verification commands were rerun.
 
+**Task 16 — Final UI, Accessibility, and Security Fixes**
+
+| Area | Goal |
+|---|---|
+| `Header` and shell layout | Breadcrumb visibility across breakpoints and cleaner navigation behavior |
+| `ProfilePage` and `NotFoundPage` | Real account data from `GET /auth/me` and decorative-only 404 numbering |
+| Media, product, order, and recommendation actions | Accessible labels, table semantics, and focus behavior |
+| Deployment guide | Route fallback, API base URL, session behavior, and hosting notes documented in `docs/DEPLOYMENT.md` |
+| Security behavior | No fake analytics, tracking scripts, or hardcoded production numbers |
+
+Manual production check reported Task 16A as working. Task 16C only updated documentation, so no automated verification commands were rerun.
+
 ## Running Tests
 
 ```bash

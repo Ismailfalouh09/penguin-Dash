@@ -227,6 +227,7 @@ export function PackMediaGallery({
                 value={coverAltText}
                 onChange={(event) => setCoverAltText(event.target.value)}
                 placeholder="Cover alt text"
+                aria-label="Cover image alt text"
                 disabled={isPending}
                 className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50"
               />
@@ -279,6 +280,7 @@ export function PackMediaGallery({
                 value={galleryAltText}
                 onChange={(event) => setGalleryAltText(event.target.value)}
                 placeholder="Gallery alt text"
+                aria-label="New gallery image alt text"
                 disabled={isPending}
                 className="flex h-9 w-44 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50"
               />
@@ -311,7 +313,7 @@ export function PackMediaGallery({
                   className="size-full object-cover"
                 />
                 {canWrite && (
-                  <div className="absolute inset-0 flex items-center justify-center gap-1 bg-background/65 opacity-0 transition-opacity group-hover:opacity-100">
+                  <div className="absolute inset-0 flex items-center justify-center gap-1 bg-background/65 opacity-0 transition-opacity focus-within:opacity-100 group-hover:opacity-100">
                     {activeImageId === image.id ? (
                       <Loader2 className="size-5 animate-spin" aria-hidden="true" />
                     ) : (
@@ -321,44 +323,44 @@ export function PackMediaGallery({
                           variant="secondary"
                           size="icon"
                           className="size-7"
-                          title="Move image earlier"
+                          aria-label="Move image earlier"
                           disabled={isPending || index === 0}
                           onClick={() => handleMove(image, -1)}
                         >
-                          <ArrowUp className="size-3.5" />
+                          <ArrowUp className="size-3.5" aria-hidden="true" />
                         </Button>
                         <Button
                           type="button"
                           variant="secondary"
                           size="icon"
                           className="size-7"
-                          title="Move image later"
+                          aria-label="Move image later"
                           disabled={isPending || index === galleryImages.length - 1}
                           onClick={() => handleMove(image, 1)}
                         >
-                          <ArrowDown className="size-3.5" />
+                          <ArrowDown className="size-3.5" aria-hidden="true" />
                         </Button>
                         <Button
                           type="button"
                           variant="secondary"
                           size="icon"
                           className="size-7"
-                          title="Set as cover"
+                          aria-label="Set as cover"
                           disabled={isPending}
                           onClick={() => handlePromote(image)}
                         >
-                          <Star className="size-3.5" />
+                          <Star className="size-3.5" aria-hidden="true" />
                         </Button>
                         <Button
                           type="button"
                           variant="destructive"
                           size="icon"
                           className="size-7"
-                          title="Remove image"
+                          aria-label="Remove image"
                           disabled={isPending}
                           onClick={() => deleteConfirm.open(image)}
                         >
-                          <Trash2 className="size-3.5" />
+                          <Trash2 className="size-3.5" aria-hidden="true" />
                         </Button>
                       </>
                     )}

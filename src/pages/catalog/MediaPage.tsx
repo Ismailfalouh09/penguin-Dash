@@ -68,13 +68,13 @@ function MediaCard({
             </span>
           </div>
         )}
-        <div className="absolute inset-0 flex items-center justify-center gap-1.5 bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
+        <div className="absolute inset-0 flex items-center justify-center gap-1.5 bg-black/50 opacity-0 transition-opacity focus-within:opacity-100 group-hover:opacity-100">
           <Button
             type="button"
             variant="secondary"
             size="icon"
             className="size-8"
-            title="View details"
+            aria-label={`View details for ${name}`}
             onClick={onView}
           >
             <Eye className="size-4" aria-hidden="true" />
@@ -85,7 +85,7 @@ function MediaCard({
               variant="destructive"
               size="icon"
               className="size-8"
-              title="Archive asset"
+              aria-label={`Archive ${name}`}
               onClick={onDelete}
             >
               <Trash2 className="size-4" aria-hidden="true" />
@@ -199,20 +199,40 @@ export function MediaPage() {
         />
 
         {/* Toolbar */}
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="relative flex-1 min-w-48">
-            <ImageIcon className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
-            <input
-              type="search"
-              value={listState.search}
-              onChange={(e) => listState.setSearch(e.target.value)}
-              placeholder="Search media..."
-              className="flex h-9 w-full rounded-md border border-input bg-transparent py-1 pl-9 pr-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-              aria-label="Search media"
-            />
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="relative min-w-48 flex-1">
+              <ImageIcon className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+              <input
+                type="search"
+                value={listState.search}
+                onChange={(e) => listState.setSearch(e.target.value)}
+                placeholder="Search media..."
+                className="flex h-9 w-full rounded-md border border-input bg-transparent py-1 pl-9 pr-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                aria-label="Search media"
+              />
+            </div>
+
+            <label className="flex cursor-pointer items-center gap-2 text-sm text-foreground">
+              <input
+                type="checkbox"
+                checked={includeDeleted}
+                onChange={(e) =>
+                  listState.setFilter('includeDeleted', e.target.checked ? 'true' : null)
+                }
+                className="size-4 rounded border-border"
+              />
+              Show archived
+            </label>
+
+            {listState.hasActiveFilters && (
+              <Button type="button" variant="ghost" size="sm" onClick={listState.clearFilters}>
+                Clear filters
+              </Button>
+            )}
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             {SORT_OPTIONS.map((opt) => (
               <Button
                 key={opt.value}
@@ -220,6 +240,7 @@ export function MediaPage() {
                 variant={listState.sortBy === opt.value ? 'secondary' : 'outline'}
                 size="sm"
                 onClick={() => toggleSort(opt.value)}
+                aria-pressed={listState.sortBy === opt.value}
               >
                 {opt.label}
                 {listState.sortBy === opt.value && (
@@ -228,29 +249,11 @@ export function MediaPage() {
               </Button>
             ))}
           </div>
-
-          <label className="flex cursor-pointer items-center gap-2 text-sm text-foreground">
-            <input
-              type="checkbox"
-              checked={includeDeleted}
-              onChange={(e) =>
-                listState.setFilter('includeDeleted', e.target.checked ? 'true' : null)
-              }
-              className="size-4 rounded border-border"
-            />
-            Show archived
-          </label>
-
-          {listState.hasActiveFilters && (
-            <Button type="button" variant="ghost" size="sm" onClick={listState.clearFilters}>
-              Clear filters
-            </Button>
-          )}
         </div>
 
         {/* Grid */}
         {isLoading ? (
-          <LoadingState />
+          <LoadingState variant="cards" label="Loading media assets…" />
         ) : isError ? (
           <ErrorState
             title="Could not load media"

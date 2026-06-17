@@ -95,18 +95,17 @@ export function RecommendationRulePreviewPage() {
   return (
     <PageContainer>
       <div className="space-y-6">
-        <div className="flex items-center gap-2">
-          <Button asChild variant="ghost" size="sm">
-            <Link to={ROUTES.recommendationRules}>
-              <ArrowLeft className="mr-1 size-4" />
-              Rules
-            </Link>
-          </Button>
-        </div>
-
         <PageHeader
           title="Recommendation preview"
           description="Preview current rule effects for a customer profile. Results are not stored and do not affect any recommendation history."
+          actions={
+            <Button asChild variant="outline" size="sm">
+              <Link to={ROUTES.recommendationRules}>
+                <ArrowLeft className="size-4" />
+                Rules
+              </Link>
+            </Button>
+          }
         />
 
         <div className="rounded-lg border bg-muted/40 px-4 py-3 text-sm text-muted-foreground">

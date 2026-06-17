@@ -171,14 +171,14 @@ export function ProductDetailPage() {
             }
           >
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Product references">
                 <thead>
                   <tr className="border-b border-border">
-                    <th className="pb-2 text-left font-medium text-muted-foreground">Code</th>
-                    <th className="pb-2 text-left font-medium text-muted-foreground">Name</th>
-                    <th className="pb-2 text-left font-medium text-muted-foreground">SKU</th>
-                    <th className="pb-2 text-right font-medium text-muted-foreground">Stock</th>
-                    <th className="pb-2 text-left font-medium text-muted-foreground">Status</th>
+                    <th scope="col" className="pb-2 text-left font-medium text-muted-foreground">Code</th>
+                    <th scope="col" className="pb-2 text-left font-medium text-muted-foreground">Name</th>
+                    <th scope="col" className="pb-2 text-left font-medium text-muted-foreground">SKU</th>
+                    <th scope="col" className="pb-2 text-right font-medium text-muted-foreground">Stock</th>
+                    <th scope="col" className="pb-2 text-left font-medium text-muted-foreground">Status</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">

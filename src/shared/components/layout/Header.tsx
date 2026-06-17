@@ -48,7 +48,7 @@ export function Header({ onOpenMobileNav, onToggleSidebar, sidebarCollapsed }: H
 
       <Separator orientation="vertical" className="hidden h-6 sm:block" />
 
-      <div className="hidden min-w-0 flex-1 sm:block">
+      <div className="min-w-0 flex-1">
         <Breadcrumbs />
       </div>
 

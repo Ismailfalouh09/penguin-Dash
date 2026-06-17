@@ -36,6 +36,8 @@ penguin-Dash/
 │   │   │   ├── ProtectedRoute.tsx # Redirects unauthenticated users to /login
 │   │   │   ├── GuestRoute.tsx   # Redirects authenticated users away from /login
 │   │   │   └── RoleGuard.tsx    # Route-level role/permission redirect to /forbidden
+│   │   ├── dashboard/           # Dashboard overview metrics hook (Task 14)
+│   │   │   └── hooks/           # use-dashboard-data.ts (overview counts and recent orders)
 │   │   ├── categories/          # Category CRUD + image upload (Task 6)
 │   │   │   ├── components/      # CategoryForm, CategoryColumns, CategoryImageUpload
 │   │   │   └── hooks/           # use-categories.ts (list/detail/create/update/deactivate/image)
@@ -63,7 +65,7 @@ penguin-Dash/
 │   │   │   └── hooks/           # use-recommendation-rules.ts (list/detail/create/update/deactivate/preview)
 │   │   └── orders/               # Order list/detail/status updates (Task 13)
 │   ├── pages/                   # Route-level page components
-│   │   ├── DashboardOverviewPage.tsx
+│   │   ├── DashboardOverviewPage.tsx   # Overview dashboard (Task 14)
 │   │   ├── DiagnosticsPage.tsx          # Dev-only API diagnostics (/diagnostics)
 │   │   ├── ComponentsDemoPage.tsx       # Dev-only shared-components demo (/components-demo)
 │   │   ├── LoginPage.tsx                # Real login form (POST /auth/login)
@@ -538,6 +540,16 @@ Task 13 adds backend-driven order management without changing the backend contra
 - `UpdateOrderStatusDialog.tsx` lets authorized admins choose a new status and an optional note before submitting the update.
 - Permissions: OWNER and ADMIN can update order status through `orders:update-status`; STAFF can read order list and detail views but cannot mutate status.
 - Current limitations: no delivery-provider integration, no WhatsApp confirmation, no payment integration, no automatic stock deduction, and no stock reservation.
+
+### 19. Final UI, Accessibility, and Security Fixes (`src/pages/`, `src/shared/components/layout/`)
+
+Task 16 hardens the release without changing backend behavior:
+
+- `Header.tsx` keeps breadcrumbs visible across breakpoints so the shell stays navigable on mobile and desktop.
+- `ProfilePage.tsx` shows the real signed-in admin account from `GET /auth/me` instead of a placeholder section.
+- `NotFoundPage.tsx`, `MediaPage.tsx`, `ProductDetailPage.tsx`, `ProductFormPage.tsx`, `RecommendationRulePreviewPage.tsx`, `OrderDetailPage.tsx`, `PackMediaGallery.tsx`, and `ProductGallery.tsx` received accessibility polish such as explicit labels, better table semantics, and clearer focus behavior.
+- The release does not add analytics or tracking scripts and does not invent production statistics.
+- The backend contract remains authoritative; deployment should still point the client at the configured API base URL and serve the SPA with a route fallback.
 
 ## TypeScript Configuration
 

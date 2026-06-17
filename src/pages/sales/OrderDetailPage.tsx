@@ -223,14 +223,14 @@ export function OrderDetailPage() {
           description={`${order.items?.length ?? 0} item${(order.items?.length ?? 0) !== 1 ? 's' : ''}`}
         >
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Ordered items">
               <thead>
                 <tr className="border-b border-border">
-                  <th className="pb-2 text-left font-medium text-muted-foreground">Product</th>
-                  <th className="pb-2 text-left font-medium text-muted-foreground">Reference</th>
-                  <th className="pb-2 text-right font-medium text-muted-foreground">Unit price</th>
-                  <th className="pb-2 text-right font-medium text-muted-foreground">Qty</th>
-                  <th className="pb-2 text-right font-medium text-muted-foreground">Total</th>
+                  <th scope="col" className="pb-2 text-left font-medium text-muted-foreground">Product</th>
+                  <th scope="col" className="pb-2 text-left font-medium text-muted-foreground">Reference</th>
+                  <th scope="col" className="pb-2 text-right font-medium text-muted-foreground">Unit price</th>
+                  <th scope="col" className="pb-2 text-right font-medium text-muted-foreground">Qty</th>
+                  <th scope="col" className="pb-2 text-right font-medium text-muted-foreground">Total</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">

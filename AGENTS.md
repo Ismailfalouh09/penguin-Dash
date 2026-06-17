@@ -220,6 +220,14 @@ Product references are purchasable variants under products. They follow the cata
 - Alerts currently shown: pending orders needing confirmation and the absence of active recommendation rules.
 - Backend limitations: the overview does not expose revenue, average order value, stock-health, delivery-provider, or fulfillment analytics yet.
 
+### Final UI, Accessibility, and Security Fixes (`src/pages/`, `src/shared/components/layout/`)
+
+- The release-hardening pass removed remaining placeholder content from the shell and account pages. `ProfilePage` now shows the signed-in admin from `GET /auth/me`, and `NotFoundPage` uses decorative-only numbering.
+- Breadcrumbs are visible in the header on all breakpoints, and icon-only controls across media, product, pack, order, and recommendation screens now carry explicit labels.
+- Tables that present order and product reference data now expose clearer semantics for screen readers.
+- The release does not introduce fake production data, analytics, tracking scripts, or hardcoded business numbers.
+- Production-facing routes still rely on the shared SPA router and env-based API config; see `docs/DEPLOYMENT.md` for the hosting checklist.
+
 ### Media Library (`src/features/media/`)
 
 - `MediaPage` lives at `/media` and is linked from the catalog navigation.

@@ -1,6 +1,6 @@
 import { useCurrentUser } from '@/features/auth/current-user'
 import { ROLE_LABELS } from '@/features/auth/roles'
-import { ComingSoonState, PageContainer, PageHeader, SectionCard } from '@/shared/components/common'
+import { PageContainer, PageHeader, SectionCard } from '@/shared/components/common'
 
 export function ProfilePage() {
   const { user } = useCurrentUser()
@@ -10,10 +10,7 @@ export function ProfilePage() {
       <PageHeader title="Profile" description="Your account details." />
 
       <div className="mt-6 space-y-6">
-        <SectionCard
-          title="Account"
-          description="Loaded from GET /auth/me for the signed-in admin."
-        >
+        <SectionCard title="Account">
           <dl className="grid gap-4 sm:grid-cols-2">
             <div>
               <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
@@ -35,11 +32,6 @@ export function ProfilePage() {
             </div>
           </dl>
         </SectionCard>
-
-        <ComingSoonState
-          description="Profile management for the signed-in admin."
-          plannedFeatures={['Load the real profile from GET /auth/me', 'Display session details']}
-        />
       </div>
     </PageContainer>
   )

@@ -206,20 +206,20 @@ export function ProductGallery({ productId, coverImage, images, canWrite }: Prod
                   className="size-full object-cover"
                 />
                 {canWrite && (
-                  <div className="absolute inset-0 flex items-center justify-center gap-1 bg-background/60 opacity-0 transition-opacity group-hover:opacity-100">
+                  <div className="absolute inset-0 flex items-center justify-center gap-1 bg-background/60 opacity-0 transition-opacity focus-within:opacity-100 group-hover:opacity-100">
                     {promotingId === img.id ? (
-                      <Loader2 className="size-5 animate-spin" />
+                      <Loader2 className="size-5 animate-spin" aria-hidden="true" />
                     ) : (
                       <Button
                         type="button"
                         variant="secondary"
                         size="icon"
                         className="size-7"
-                        title="Set as cover"
+                        aria-label="Set as cover image"
                         onClick={() => handlePromoteToCover(img)}
                         disabled={deleteHook.isPending}
                       >
-                        <Star className="size-3.5" />
+                        <Star className="size-3.5" aria-hidden="true" />
                       </Button>
                     )}
                     <Button
@@ -227,11 +227,11 @@ export function ProductGallery({ productId, coverImage, images, canWrite }: Prod
                       variant="destructive"
                       size="icon"
                       className="size-7"
-                      title="Remove image"
+                      aria-label="Remove image"
                       onClick={() => deleteConfirm.open(img)}
                       disabled={deleteHook.isPending || promotingId === img.id}
                     >
-                      <Trash2 className="size-3.5" />
+                      <Trash2 className="size-3.5" aria-hidden="true" />
                     </Button>
                   </div>
                 )}

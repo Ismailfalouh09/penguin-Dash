@@ -16,7 +16,7 @@ export function NotFoundPage() {
       >
         <Compass className="size-7" />
       </span>
-      <p className="text-sm font-medium text-muted-foreground">404</p>
+      <p className="text-sm font-medium text-muted-foreground" aria-hidden="true">404</p>
       <h1 className="mt-1 text-2xl font-semibold tracking-tight text-foreground">Page not found</h1>
       <p className="mt-2 max-w-md text-sm text-muted-foreground">
         The page you are looking for doesn&apos;t exist or may have moved.
