@@ -70,6 +70,15 @@ export function buildRequestUrl(path: string): string {
   return `${apiBaseUrl}${normalizedPath}`
 }
 
+function hasUnresolvedPathParam(path: string): boolean {
+  const pathname = /^https?:\/\//i.test(path)
+    ? new URL(path).pathname
+    : (path.split(/[?#]/, 1)[0] ?? '')
+  return pathname
+    .split('/')
+    .some((segment) => segment.startsWith(':') || segment.toLowerCase().startsWith('%3a'))
+}
+
 async function parseBody(response: Response): Promise<unknown> {
   if (response.status === 204 || response.headers.get('content-length') === '0') {
     return undefined
@@ -97,6 +106,15 @@ interface FetchResponse<TData> {
  * recognize the cancellation.
  */
 export async function customFetch<T>(url: string, init: RequestInit = {}): Promise<T> {
+  if (hasUnresolvedPathParam(url)) {
+    throw new ApiError({
+      status: 400,
+      title: 'Invalid request',
+      message: 'A required route parameter is missing.',
+      code: 'UNRESOLVED_ROUTE_PARAM',
+    })
+  }
+
   const headers = new Headers(headerEntries(init.headers))
   const isFormData = typeof FormData !== 'undefined' && init.body instanceof FormData
 

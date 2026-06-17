@@ -15,12 +15,12 @@
 | **Task 9** | Packs — Bundle management, pack items, compatibility attributes, archive, and media gallery | ✅ **Completed** |
 | **Task 11** | Attributes & Quiz — Attribute groups, attribute options, quiz questions, step ordering, option replacement | ✅ **Completed** |
 | Task 12 | Recommendation Rules — Rule list, create/edit, deactivate, detail, preview | ✅ **Completed** |
-| Task 13 | Orders — Order list, order detail, status updates | **Next: Order Management** |
-| Task 14 | Role-Based Access Control — Enforce STAFF restrictions across modules |
-| Task 15 | Polish & Production Readiness — Error boundaries, route guards, a11y audit |
+| Task 13 | Orders — Order list, order detail, status updates, history | ✅ **Completed** |
+| Task 14 | Dashboard Overview — operational summary, recent orders, alerts | **Next: Dashboard Overview** |
+| Task 15 | Role-Based Access Control — Enforce STAFF restrictions across modules |
+| Task 16 | Polish & Production Readiness — Error boundaries, route guards, a11y audit |
 
-> Current milestone: Task 12 is complete. Recommendation rule management and preview are live, rule code is immutable on edit, and backend scoring remains authoritative.
-> Task 13 is next: Order Management.
+> Current milestone: Task 13 is complete. Order management is documented in the project docs, and the dashboard overview is next.
 >
 > Ordering note: authentication and the OpenAPI client were originally sketched
 > elsewhere in the plan. In practice the conception/shell (Task 2) and the typed

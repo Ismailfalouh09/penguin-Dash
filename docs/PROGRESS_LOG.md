@@ -1,5 +1,38 @@
 # Progress Log
 
+## Task 13 — Orders
+
+**Date:** 2026-06-17
+**Status:** Completed
+
+### What Was Done
+
+Documented the completed order-management workflow across the project docs and aligned the roadmap with the implementation already present in the repo.
+
+Updated coverage:
+- Order list workflow, including customer and delivery summary columns, pack, total, payment status, delivery status, and created date display.
+- Order detail workflow, including customer information, delivery information, ordered items, totals, and status history.
+- Status-update workflow through the order-status dialog.
+- OWNER, ADMIN, and STAFF permissions.
+- Manual user verification reported Task 13A as working.
+- Current limitations: no delivery-provider integration, no WhatsApp confirmation, no payment integration, no automatic stock deduction, and no stock reservation.
+
+### Roadmap
+
+- Task 13 - Completed.
+- Task 14 - Next: Dashboard Overview.
+
+### Verification
+
+Manual test by the user confirmed the Task 13A implementation. Standard verification commands were not rerun in Task 13C.
+
+### Notes
+
+- The order detail page treats customer, delivery, and item payloads defensively because the backend can omit those fields in some cases.
+- No feature tests were added in Task 13C. Follow-up test goals are documented in `docs/TEST_PLAN.md`.
+
+---
+
 ## Task 12 — Recommendation Rules & Preview
 
 **Date:** 2026-06-17

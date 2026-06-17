@@ -56,6 +56,7 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 - **Task 9 — Packs**: pack list/detail/create/edit, bundle composition via pack items, compatibility attributes, archive, and pack media gallery with cover replacement, deletion, promotion, and reordering.
 - **Task 11 — Attributes & Quiz**: attribute-group list/create/edit/deactivate; attribute-option list/create/edit/deactivate scoped to each group; quiz-question list/create/edit/deactivate with attribute-group binding and answer-option configuration; drag-free step-order reorder dialog; immutable attribute-group assignment after quiz-question creation; quiz-option replacement on save; OWNER/ADMIN write access; STAFF read-only.
 - **Task 12 — Recommendation Rules & Preview**: recommendation-rule list, detail, create/edit, deactivate, and non-persistent preview workflows; immutable rule-code behavior on edit; backend-authoritative scoring; OWNER/ADMIN write access; OWNER/ADMIN/STAFF preview access.
+- **Task 13 — Orders**: order list, order detail, customer and delivery info, ordered-item display, status updates, and status history. OWNER, ADMIN, and STAFF can read orders; status updates are gated to authorized admins. Manual user verification reported Task 13A as working. Current limitations: no delivery-provider integration, no WhatsApp confirmation, no payment integration, no automatic stock deduction, and no stock reservation.
 
 The full authentication system is live. Every route behind `/` requires a valid
 admin session; unauthenticated visitors are sent to `/login` with the original
@@ -64,8 +65,8 @@ used by all CRUD feature tasks (6–14).
 
 ## Current milestone
 
-- **Task 12 — Recommendation Rules & Preview**: completed. Recommendation rules are manageable via list, create, edit, deactivate, detail, and non-persistent preview flows. Rule code is immutable on edit, and the backend remains authoritative for scoring.
-- **Task 13 — Order Management**: next.
+- **Task 13 — Orders**: completed. Order management now covers the list workflow, detail workflow, customer and delivery information, ordered items, status updates, and status history.
+- **Task 14 — Dashboard Overview**: next.
 
 ## Commands
 

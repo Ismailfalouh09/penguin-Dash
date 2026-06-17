@@ -204,6 +204,14 @@ Product references are purchasable variants under products. They follow the cata
 - Deactivation is a soft state change, not a hard delete; inactive rules should be excluded from future previews and results. Reactivation happens by editing the rule.
 - Routes: `/recommendation-rules`, `/recommendation-rules/new`, `/recommendation-rules/preview`, `/recommendation-rules/:ruleId`, `/recommendation-rules/:ruleId/edit`.
 
+### Orders (`src/features/orders/`, `src/pages/sales/`)
+
+- `OrdersPage` lists customer orders with customer, delivery, pack, total, payment status, delivery status, and created date columns. Row actions open the detail page and the status-update dialog for authorized users.
+- `OrderDetailPage` shows customer information, delivery information, ordered items, totals, and the status-history timeline. The page handles missing customer or delivery payloads defensively.
+- `UpdateOrderStatusDialog` submits a new status plus an optional note. STAFF can read orders, but only OWNER and ADMIN with `orders:update-status` can mutate order status.
+- `use-orders.ts` wraps the list, detail, and status-update endpoints and guards against unresolved route params so placeholder IDs do not trigger fetches.
+- Current limitations: no delivery-provider integration, no WhatsApp confirmation, no payment integration, no automatic stock deduction, and no stock reservation.
+
 ### Media Library (`src/features/media/`)
 
 - `MediaPage` lives at `/media` and is linked from the catalog navigation.

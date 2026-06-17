@@ -244,6 +244,17 @@ MSW handlers needed: `GET /admin/recommendation-rules`, `GET /admin/recommendati
 
 Preview results are non-persistent. The tests should assert that the frontend displays the backend response and does not model stored recommendation history or reimplement scoring.
 
+**Task 13 — Orders**
+
+| Area | Goal |
+|---|---|
+| `OrdersPage` | List rendering, pagination, row actions, customer/delivery summary columns, and permission-gated status updates |
+| `OrderDetailPage` | Customer information, delivery information, ordered items, totals, and status-history display |
+| `UpdateOrderStatusDialog` | Open/close behavior, status selection, optional note entry, pending state, and reset-on-close behavior |
+| Permission behavior | OWNER and ADMIN can update status; STAFF can read order list/detail views but cannot mutate status |
+
+Manual user verification reported Task 13A as working. Task 13C only updated documentation, so no automated verification commands were rerun.
+
 ## Running Tests
 
 ```bash

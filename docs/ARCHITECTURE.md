@@ -61,6 +61,7 @@ penguin-Dash/
 │   │   ├── recommendation-rules/ # Recommendation rule CRUD + preview (Task 12)
 │   │   │   ├── components/      # RecommendationRuleForm, RecommendationRuleColumns
 │   │   │   └── hooks/           # use-recommendation-rules.ts (list/detail/create/update/deactivate/preview)
+│   │   └── orders/               # Order list/detail/status updates (Task 13)
 │   ├── pages/                   # Route-level page components
 │   │   ├── DashboardOverviewPage.tsx
 │   │   ├── DiagnosticsPage.tsx          # Dev-only API diagnostics (/diagnostics)
@@ -75,7 +76,7 @@ penguin-Dash/
 │   │   │                       #   QuizPage (question list), QuizQuestionNewPage, QuizQuestionEditPage,
 │   │   │                       #   RecommendationRuleDetailPage, RecommendationRuleNewPage,
 │   │   │                       #   RecommendationRuleEditPage, RecommendationRulePreviewPage
-│   │   ├── sales/              # Orders (+ detail)
+│   │   ├── sales/              # Orders (list/detail/status history)
 │   │   └── account/           # Profile
 │   ├── lib/api/                 # API integration layer (Tasks 3–5)
 │   │   ├── http-client.ts       # Single fetch client / Orval mutator
@@ -525,6 +526,18 @@ Task 10 adds a shared media library for catalog imagery and metadata management:
 - OWNER and ADMIN can upload, edit metadata, and archive media. STAFF can list and inspect assets but cannot mutate them.
 - Category, product, reference, and pack screens keep using their entity-specific media widgets: category image replace/delete, product cover/gallery upload and reorder, reference swatch upload/delete, and pack cover/gallery upload and reorder.
 - Remaining limitation: the reusable picker is not yet wired into those entity pages, so attachment flows are still entity-specific.
+
+### 18. Orders (`src/features/orders/`, `src/pages/sales/`)
+
+Task 13 adds backend-driven order management without changing the backend contract:
+
+- `use-orders.ts` wraps the order list, detail, and status-update endpoints. It exposes a concrete-order-id guard so placeholder route params do not trigger fetches.
+- `OrderColumns.tsx` renders order number, customer and delivery summary, pack, total, payment status, delivery status, created date, and per-row actions.
+- `OrdersPage.tsx` uses the shared list-page pattern with order filtering, pagination, row actions, and the status-update dialog for authorized users.
+- `OrderDetailPage.tsx` shows customer information, delivery information, ordered items, totals, and the status-history timeline. It hides sections defensively when the API omits them.
+- `UpdateOrderStatusDialog.tsx` lets authorized admins choose a new status and an optional note before submitting the update.
+- Permissions: OWNER and ADMIN can update order status through `orders:update-status`; STAFF can read order list and detail views but cannot mutate status.
+- Current limitations: no delivery-provider integration, no WhatsApp confirmation, no payment integration, no automatic stock deduction, and no stock reservation.
 
 ## TypeScript Configuration
 
