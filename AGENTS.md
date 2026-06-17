@@ -212,6 +212,14 @@ Product references are purchasable variants under products. They follow the cata
 - `use-orders.ts` wraps the list, detail, and status-update endpoints and guards against unresolved route params so placeholder IDs do not trigger fetches.
 - Current limitations: no delivery-provider integration, no WhatsApp confirmation, no payment integration, no automatic stock deduction, and no stock reservation.
 
+### Dashboard Overview (`src/pages/DashboardOverviewPage.tsx`, `src/features/dashboard/`)
+
+- `use-dashboard-data.ts` aggregates list-backed counts for the overview cards and recent orders. It only surfaces statistics the backend already returns; no fake analytics or hardcoded business numbers are used.
+- `DashboardOverviewPage` shows live counts, a recent-orders section, attention alerts, and quick operational shortcuts. The shortcuts are role-aware: all authenticated roles can read the page, while write shortcuts are hidden behind `PermissionGuard`.
+- Metrics currently shown: pending orders, active products, active packs, active recommendation rules, and media assets.
+- Alerts currently shown: pending orders needing confirmation and the absence of active recommendation rules.
+- Backend limitations: the overview does not expose revenue, average order value, stock-health, delivery-provider, or fulfillment analytics yet.
+
 ### Media Library (`src/features/media/`)
 
 - `MediaPage` lives at `/media` and is linked from the catalog navigation.

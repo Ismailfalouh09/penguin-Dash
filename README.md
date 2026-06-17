@@ -57,6 +57,7 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 - **Task 11 — Attributes & Quiz**: attribute-group list/create/edit/deactivate; attribute-option list/create/edit/deactivate scoped to each group; quiz-question list/create/edit/deactivate with attribute-group binding and answer-option configuration; drag-free step-order reorder dialog; immutable attribute-group assignment after quiz-question creation; quiz-option replacement on save; OWNER/ADMIN write access; STAFF read-only.
 - **Task 12 — Recommendation Rules & Preview**: recommendation-rule list, detail, create/edit, deactivate, and non-persistent preview workflows; immutable rule-code behavior on edit; backend-authoritative scoring; OWNER/ADMIN write access; OWNER/ADMIN/STAFF preview access.
 - **Task 13 — Orders**: order list, order detail, customer and delivery info, ordered-item display, status updates, and status history. OWNER, ADMIN, and STAFF can read orders; status updates are gated to authorized admins. Manual user verification reported Task 13A as working. Current limitations: no delivery-provider integration, no WhatsApp confirmation, no payment integration, no automatic stock deduction, and no stock reservation.
+- **Task 14 — Dashboard Overview**: live dashboard built from backend-backed counts, recent orders, alerts, and role-aware shortcuts. Manual user verification reported Task 14A as working. The page does not invent analytics, and richer revenue, stock, and fulfillment statistics are not exposed by the backend yet.
 
 The full authentication system is live. Every route behind `/` requires a valid
 admin session; unauthenticated visitors are sent to `/login` with the original
@@ -65,8 +66,8 @@ used by all CRUD feature tasks (6–14).
 
 ## Current milestone
 
-- **Task 13 — Orders**: completed. Order management now covers the list workflow, detail workflow, customer and delivery information, ordered items, status updates, and status history.
-- **Task 14 — Dashboard Overview**: next.
+- **Task 14 — Dashboard Overview**: completed. The overview shows live counts, recent orders, alerts, and operational shortcuts without inventing statistics.
+- **Task 15 — Final UI, Accessibility and Security Fixes**: next.
 
 ## Commands
 
