@@ -17,9 +17,11 @@
 | Task 12 | Recommendation Rules — Rule list, create/edit, deactivate, detail, preview | ✅ **Completed** |
 | Task 13 | Orders — Order list, order detail, status updates, history | ✅ **Completed** |
 | Task 14 | Dashboard Overview — operational summary, recent orders, alerts | ✅ **Completed** |
-| Task 15 | Final UI, Accessibility and Security Fixes — polish, a11y, and security hardening | **Next: Final UI, Accessibility and Security Fixes** |
+| Task 15 | Final UI, Accessibility and Security Fixes — polish, a11y, and security hardening | ✅ **Completed** |
+| Task 16 | UI Design Handoff Documentation — screen inventory, component inventory, design system, template adaptation guide | ✅ **Completed** |
+| Task 17 | Deployment and Release Readiness — environment configuration, build optimization, CI/CD, release checklist | **Next** |
 
-> Current milestone: Task 14 is complete. The dashboard overview is live, and the final UI/accessibility/security pass is next.
+> Current milestone: Task 16 is complete. All UI design handoff documentation has been written. Deployment and release readiness is next.
 >
 > Ordering note: authentication and the OpenAPI client were originally sketched
 > elsewhere in the plan. In practice the conception/shell (Task 2) and the typed

@@ -1,5 +1,82 @@
 # Progress Log
 
+## Task 16 — UI Design Handoff Documentation
+
+**Date:** 2026-06-17
+**Status:** Completed
+
+### What Was Done
+
+Created the complete UI design handoff documentation suite to enable a future agent or
+developer to safely integrate a purchased admin template without breaking business logic,
+API integration, or authorization.
+
+**Files created:**
+
+- `docs/UI_DESIGN_HANDOFF.md` — project purpose, frontend stack, routing, auth, roles,
+  API integration, form approach, table approach, media picker, error/loading/empty states,
+  and the critical redesign constraint.
+- `docs/SCREEN_INVENTORY.md` — full inventory of all 30+ screens with route, page name,
+  purpose, API dependencies, components, role access, UI states, and redesign notes.
+- `docs/COMPONENT_INVENTORY.md` — grouped inventory of all reusable shared components
+  with file path, purpose, usage, visual-replaceability, business-logic flag, and
+  migration notes. Covers layout, nav, table, form, dialog, media, state, permission,
+  and utility components.
+- `docs/TEMPLATE_ADAPTATION_GUIDE.md` — step-by-step migration process (8 steps),
+  13 strict future-agent rules, template selection checklist (14 criteria), and FAQ.
+
+**Files updated:**
+
+- `docs/DESIGN_SYSTEM.md` — added "Template Replacement Guide" section documenting what
+  can be replaced vs. what must be preserved.
+- `FRONTEND_ROADMAP.md` — marked Task 16 Completed, added Task 17 (Deployment and
+  Release Readiness) as Next.
+
+### Roadmap
+
+- Task 16 — Completed.
+- Task 17 — Next: Deployment and Release Readiness.
+
+### Verification
+
+Documentation only. No implementation changes, no tests run, no build run.
+Git safety check confirmed: no `.env`, no credentials, no backend code, no OpenAPI
+modifications, no generated file edits, no template files added.
+
+---
+
+## Task 15 — Final UI, Accessibility, and Security Fixes
+
+**Date:** 2026-06-17
+**Status:** Completed
+
+### What Was Done
+
+Documented the final UI, accessibility, security, and deployment-readiness pass across the project docs and aligned the roadmap with the release-ready dashboard MVP.
+
+Updated coverage:
+- Shell and account-page cleanup, including visible breadcrumbs, real profile data, and accessible 404 presentation.
+- Accessibility polish on media, product, order, pack, and recommendation actions, including explicit labels and clearer table semantics.
+- Deployment guidance covering environment variables, route fallback, session behavior, and API base URL configuration.
+- Security notes confirming no fake analytics, tracking scripts, or hardcoded production numbers were introduced.
+- Manual user verification reported Task 16A as working.
+
+### Roadmap
+
+- Task 16 - Completed.
+- Admin Dashboard MVP - Completed.
+
+### Verification
+
+Manual production check by the user confirmed the Task 16A implementation. Standard verification commands were not rerun in Task 16C.
+
+### Notes
+
+- The release remains backend-driven; the dashboard and related pages only surface statistics and states exposed by the server.
+- No feature tests were added in Task 16C. Follow-up test goals are documented in `docs/TEST_PLAN.md`.
+
+---
+
 ## Task 13 — Orders
 
 **Date:** 2026-06-17

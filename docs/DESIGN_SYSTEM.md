@@ -124,3 +124,42 @@ Sidebar collapse state persists in `localStorage`.
 - Keyboard-operable navigation, drawer, menus, tabs (Radix primitives).
 - `prefers-reduced-motion` disables animations/transitions.
 - Status is conveyed by text + icon/dot, not color alone.
+
+## Template Replacement Guide
+
+### Can be replaced by a purchased template
+
+- Buttons — appearance, hover/focus styling, loading spinner
+- Cards — background, border, shadow, padding, border radius
+- Tables — row/cell/header styling (not TanStack Table logic)
+- Sidebar layout — width, collapse animation, group headers
+- Dashboard metric cards and chart components
+- Dialog/modal visual chrome — backdrop, border radius, header
+- Form layout chrome — field borders, focus rings, label positioning
+- Toast appearance — animation, icon, position
+- Color tokens in `globals.css` and `tailwind.config.ts`
+- Typography — font family, size scale, weight
+- Spacing adjustments (Tailwind scale or custom utilities)
+- Loading skeleton shapes and animation
+- Empty state icons and layout
+- Error state icons and layout
+- Badge appearance (pill shape, dot, colors)
+
+### Must be preserved regardless of visual redesign
+
+- `ProtectedRoute` and `GuestRoute` — session enforcement
+- `RoleGuard` — route-level authorization
+- `PermissionGuard` — write-action visibility
+- `useAuth().login` and `useAuth().logout` — backend session contract
+- `AuthProvider` — session lifecycle owner
+- `src/lib/api/http-client.ts` — single HTTP client and auth interceptor
+- `src/lib/api/errors.ts` — error normalization
+- `src/lib/api/generated/` — Orval output, never manually edited
+- Zod validation schemas on all forms
+- `useListQueryState` — URL-synced list state
+- `useMutationFeedback` — mutation toast feedback
+- TanStack Query cache-invalidation keys
+- `sessionStorage` token handling
+- Route structure (paths, nesting, handles)
+- `src/config/env.ts` — typed env access
+- `src/config/navigation.ts` — role-aware nav config
